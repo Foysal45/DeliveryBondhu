@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation"
+    app:startDestination="@id/nav_orderList"
+    >
+
+    <fragment
+        android:id="@+id/nav_orderList"
+        android:name="com.ajkerdeal.app.essential.ui.home.OrderListFragment"
+        android:label="অর্ডার লিস্ট"
+        tools:layout="@layout/fragment_order_list"/>
+
+</navigation>

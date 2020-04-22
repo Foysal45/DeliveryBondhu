@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">Essential Delivery</string>
+    <string name="app_name">ডেলিভারি অ্যাপ</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cd">image</string>
+    <string name="subTitle">Essentials</string>
+    <string name="login">লগইন</string>
+    <string name="login_action">লগইন করুন</string>
+    <string name="helpline">হেল্পলাইন</string>
+    <string name="helpline_number">01922002200</string>
+    <string name="password">পাসওয়ার্ড</string>
+    <string name="mobile_number">মোবাইল নম্বর</string>
+    <string name="order_list">অর্ডার লিস্ট</string>
+    <string name="search_hint">লিস্ট থেকে খুঁজুন ...</string>
+    <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
 </resources>
