@@ -13,4 +13,5 @@
     <string name="order_list">অর্ডার লিস্ট</string>
     <string name="search_hint">লিস্ট থেকে খুঁজুন ...</string>
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
+    <string name="accept">অ্যাকসেপ্ট</string>
 </resources>

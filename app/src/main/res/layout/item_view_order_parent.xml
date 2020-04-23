@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFEABB"
+            android:minHeight="40dp">
+
+            <ImageView
+                android:id="@+id/indicator"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="8dp"
+                android:contentDescription="@string/cd"
+                android:src="@drawable/ic_expand"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:rotation="0"
+                />
+
+            <TextView
+                android:id="@+id/customerName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/black_90"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@id/phone"
+                app:layout_constraintStart_toEndOf="@id/indicator"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Maleka Begum" />
+
+            <TextView
+                android:id="@+id/customerAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/black_80"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@id/phone"
+                app:layout_constraintStart_toStartOf="@id/customerName"
+
+                app:layout_constraintTop_toBottomOf="@id/customerName"
+                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
+
+                />
+
+            <ImageView
+                android:id="@+id/phone"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/cd"
+                android:padding="12dp"
+                android:src="@drawable/ic_phone"
+                android:tint="@color/action_green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/separator_orange"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/customerAddress" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            tools:visibility="visible"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_view_order_child"
+            tools:orientation="vertical" />
+
+    </LinearLayout>
+
+</layout>

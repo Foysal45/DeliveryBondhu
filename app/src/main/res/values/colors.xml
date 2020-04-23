@@ -27,12 +27,16 @@
     <color name="black_25">#40000000</color>
     <color name="black_16">#29000000</color>
     <color name="black_15">#26000000</color>
+    <color name="black_5">#0D000000</color>
 
     <color name="hint">#00000066</color>
     <color name="hint1">#B2B2B2</color>
     <color name="text_second">#929292</color>
     <color name="gradient_orange">#F15B2D</color>
     <color name="gradient_yellow">#F1BD2D</color>
+    <color name="action_green">#45BE59</color>
+    <color name="separator_orange">#FF8C68</color>
+    <color name="separator_gray">#D8D8D8</color>
 
 
 </resources>

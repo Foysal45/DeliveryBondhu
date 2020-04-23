@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 
 class OrderListFragment : Fragment() {
@@ -21,6 +23,19 @@ class OrderListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val list: MutableList<OrderModel> = mutableListOf()
+        for (i in 0..10) {
+            list.add(OrderModel())
+        }
+
+        val dataAdapter = OrderListParentAdapter()
+        dataAdapter.loadData(list)
+        val layoutManagerLinear = LinearLayoutManager(requireContext())
+        with(binding.recyclerView) {
+            setHasFixedSize(true)
+            layoutManager = layoutManagerLinear
+            adapter = dataAdapter
+        }
 
     }
 
