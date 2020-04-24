@@ -112,9 +112,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    //Kodein Dependency Injection
-    implementation "org.kodein.di:kodein-di-generic-jvm:6.5.0"
-    implementation "org.kodein.di:kodein-di-framework-android-x:6.5.0"
+    //koin Dependency Injection
+    def koin_version = '2.1.5'
+    implementation "org.koin:koin-androidx-scope:$koin_version"
+    implementation "org.koin:koin-androidx-fragment:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'

@@ -4,6 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.LoginFragment">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.ajkerdeal.app.essential.ui.auth.AuthViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -62,6 +69,7 @@
                     android:textSize="14sp"
                     tools:text=""
                     android:maxLength="11"
+                    android:text="@={viewModel.userId}"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -90,7 +98,9 @@
                     android:textColor="@color/black_70"
                     android:textSize="14sp"
                     android:maxLength="24"
-                    tools:text="" />
+                    tools:text=""
+                    android:text="@={viewModel.password}"
+                    />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,7 +119,10 @@
                 app:cornerRadius="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
+                app:layout_constraintTop_toBottomOf="@id/passwordLayout"
+                android:onClick="@{viewModel::onLoginClicked}"
+
+                />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -117,7 +130,7 @@
                 android:layout_height="24dp"
                 android:indeterminate="true"
                 android:indeterminateTint="@color/white"
-                android:visibility="gone"
+                android:visibility="@{viewModel.progress ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/loginBtn"
                 app:layout_constraintEnd_toEndOf="@id/loginBtn"
                 app:layout_constraintHorizontal_bias="0.30"
