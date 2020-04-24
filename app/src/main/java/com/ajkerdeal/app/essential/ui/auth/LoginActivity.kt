@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.ui.home.HomeActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,6 +35,12 @@ class LoginActivity : AppCompatActivity() {
         Handler().postDelayed({
             doubleBackToExitPressedOnce = false
         }, 2000L)
+    }
+
+    fun goToHome() {
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

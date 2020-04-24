@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.repository.AppRepository
+import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -43,6 +44,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                     val data = response.body.data
                     if (data != null && data.deliveryUserId != 0) {
 
+                        SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,"")
                         viewState.postValue(ViewState.NextState())
                     } else {
                         viewState.postValue(ViewState.ShowMessage(data?.message))

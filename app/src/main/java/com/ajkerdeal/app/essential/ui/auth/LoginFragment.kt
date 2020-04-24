@@ -1,6 +1,5 @@
 package com.ajkerdeal.app.essential.ui.auth
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ajkerdeal.app.essential.databinding.FragmentLoginBinding
-import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
@@ -43,16 +41,12 @@ class LoginFragment : Fragment() {
                     hideKeyboard()
                 }
                 is ViewState.NextState -> {
-                    goToHome()
+                    (activity as LoginActivity).goToHome()
                 }
             }
         })
 
     }
 
-    private fun goToHome() {
-        val intent = Intent(requireActivity(), HomeActivity::class.java)
-        startActivity(intent)
-        requireActivity().finish()
-    }
+
 }

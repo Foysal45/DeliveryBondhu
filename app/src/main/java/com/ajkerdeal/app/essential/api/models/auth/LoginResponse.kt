@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
     @SerializedName("DeliveryUserId")
-    var deliveryUserId: Int? = 0,
+    var deliveryUserId: Int = 0,
     @SerializedName("MobileNumber")
     var mobileNumber: String? = "",
     @SerializedName("DeliveryUserName")
