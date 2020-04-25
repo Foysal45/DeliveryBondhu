@@ -12,6 +12,7 @@ import com.ajkerdeal.app.essential.utils.exhaustive
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
@@ -60,8 +61,9 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                     viewState.postValue(ViewState.ShowMessage(message))
                 }
                 is NetworkResponse.UnknownError -> {
-                    val message = "কোথাও কোনো সমস্যা হচ্ছে"
+                    val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
                     viewState.postValue(ViewState.ShowMessage(message))
+                    Timber.d(response.error)
                 }
             }.exhaustive
         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,8 +20,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="@color/black_5"
-            android:src="@drawable/ad_logo" />
+            tools:background="@color/black_5"
+            tools:src="@drawable/ad_logo" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -46,7 +47,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)" />
+            tools:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)" />
 
         <TextView
             android:id="@+id/productPrice"
@@ -60,7 +61,7 @@
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/productName"
-            android:text="৳ ৩৭৩" />
+            tools:text="৳ ৩৭৩" />
 
         <TextView
             android:id="@+id/productQuantity"
@@ -77,7 +78,7 @@
             android:textSize="14sp"
             app:layout_constraintBaseline_toBaselineOf="@id/productPrice"
             app:layout_constraintStart_toEndOf="@id/productPrice"
-            android:text="x২" />
+            tools:text="x২" />
 
         <View
             android:id="@+id/separator"

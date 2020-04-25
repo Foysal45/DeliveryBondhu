@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
 
-class OrderListParentAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val dataList: MutableList<OrderModel> = mutableListOf()
+    private val dataList: MutableList<OrderCustomer> = mutableListOf()
+    var onCall: ((number: String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -35,7 +37,7 @@ class OrderListParentAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.recyclerView.visibility = View.VISIBLE
             } else {
                 val currentRotation = holder.binding.indicator.rotation
-                if (currentRotation != 0f){
+                if (currentRotation != 0f) {
                     rotateView(holder.binding.indicator, currentRotation, 0f)
                 }
                 holder.binding.recyclerView.visibility = View.GONE
@@ -43,7 +45,7 @@ class OrderListParentAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
             val dataAdapter = OrderListChildAdapter()
-            dataAdapter.loadData()
+            dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
             with(holder.binding.recyclerView) {
                 setHasFixedSize(false)
                 layoutManager = LinearLayoutManager(this.context)
@@ -54,7 +56,7 @@ class OrderListParentAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    private inner class ViewHolder(val binding: ItemViewOrderParentBinding): RecyclerView.ViewHolder(binding.root) {
+    private inner class ViewHolder(val binding: ItemViewOrderParentBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.parent.setOnClickListener {
@@ -62,13 +64,24 @@ class OrderListParentAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 dataList[adapterPosition].state = !state
                 notifyItemChanged(adapterPosition)
             }
+
+            binding.phone.setOnClickListener {
+                onCall?.invoke(dataList[adapterPosition].customerMobileNumber)
+            }
         }
 
     }
 
-    fun loadData(list: MutableList<OrderModel>) {
+    fun loadInitData(list: MutableList<OrderCustomer>) {
         dataList.clear()
         dataList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun loadMoreData(list: MutableList<OrderCustomer>) {
+        val lastIndex = dataList.lastIndex
+        dataList.addAll(list)
+        notifyItemRangeInserted(lastIndex, list.size)
     }
 
     private fun rotateView(view: View, start: Float = 0f, end: Float = 0f, duration: Long = 200L) {

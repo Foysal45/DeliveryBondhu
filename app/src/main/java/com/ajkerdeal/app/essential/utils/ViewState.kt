@@ -6,4 +6,5 @@ sealed class ViewState {
     data class KeyboardState(val isShow: Boolean = false) : ViewState()
     data class ProgressState(val isShow: Boolean = false) : ViewState()
     data class NextState(val type: Int = 0) : ViewState()
+    data class EmptyViewState(val type: Int = 0) : ViewState()
 }

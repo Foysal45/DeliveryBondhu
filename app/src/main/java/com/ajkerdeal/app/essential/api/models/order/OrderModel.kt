@@ -1,10 +1,21 @@
 package com.ajkerdeal.app.essential.api.models.order
 
+import com.google.gson.annotations.SerializedName
+
 data class OrderModel(
-    var customerName: String = "Maleka Begum",
-    var customerAddress: String = "House#343, Ashkona, Hajj Camp area, Dhaka-1230",
-    var phone: String = "01555555555",
+    @SerializedName("CouponId")
+    var couponId: Int = 0,
+    @SerializedName("ProductTitle")
+    var productTitle: String? = "",
+    @SerializedName("ProductPrice")
+    var productPrice: Int = 0,
+    @SerializedName("ProductQtn")
+    var productQtn: Int = 0,
+    @SerializedName("ImageUrl")
+    var imageUrl: String? = "",
+    @SerializedName("StatusId")
+    var statusId: Int = 0
 
 
-    var state: Boolean = false
+
 )
