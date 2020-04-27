@@ -20,9 +20,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         navController = findNavController(R.id.nav_host_fragment)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-
-        }
     }
 
     override fun onBackPressed() {
