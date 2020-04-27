@@ -38,5 +38,9 @@
     <color name="separator_orange">#FF8C68</color>
     <color name="separator_gray">#D8D8D8</color>
 
+    <color name="button_action_accept">#45BE59</color>
+    <color name="button_action_reject">#ECECEC</color>
+    <color name="button_action_text_gry">#707070</color>
+
 
 </resources>

@@ -17,8 +17,8 @@ import timber.log.Timber
 class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
 
-    val userId = MutableLiveData<String>()
-    val password = MutableLiveData<String>()
+    val userId = MutableLiveData<String>("01715269261")
+    val password = MutableLiveData<String>("123")
 
     val progress = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)

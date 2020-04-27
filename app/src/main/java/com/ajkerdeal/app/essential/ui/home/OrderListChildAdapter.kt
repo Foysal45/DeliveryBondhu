@@ -16,6 +16,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderModel> = mutableListOf()
     private val options = RequestOptions().placeholder(R.drawable.ad_logo)
+    var onActionClicked: ((model: OrderModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -50,7 +51,12 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class ViewHolder(val binding: ItemViewOrderChildBinding): RecyclerView.ViewHolder(binding.root) {
 
+        init {
 
+            binding.acceptBtn1.setOnClickListener {
+                onActionClicked?.invoke(dataList[adapterPosition])
+            }
+        }
 
     }
 

@@ -13,8 +13,18 @@
     <string name="order_list">অর্ডার লিস্ট</string>
     <string name="search_hint">লিস্ট থেকে খুঁজুন ...</string>
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
-    <string name="accept">অ্যাকসেপ্ট</string>
+    <string name="development">Under Development</string>
+
+
     <string name="ping_connect">দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে</string>
     <string name="api_connect_error">দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে"\n"কিছুক্ষণ পর আবার চেষ্টা করুন</string>
     <string name="error_msg">দুঃখিত,কিছুক্ষণ পর আবার চেষ্টা করুন</string>
+    <string name="wait">অপেক্ষা করুন</string>
+
+    <string name="action_accept">অ্যাকসেপ্ট</string>
+    <string name="action_can_not_collect">কালেক্ট করা সম্ভব নয়</string>
+    <string name="action_collected">বাজার থেকে কালেক্ট করা হয়েছে</string>
+    <string name="action_delivered">অর্ডার ডেলিভারি করা হয়েছে</string>
+    <string name="action_canceled">কাস্টমার ডেলিভারি নিতে আগ্রহী নয়</string>
+
 </resources>

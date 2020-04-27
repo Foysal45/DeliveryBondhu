@@ -1,6 +1,7 @@
 package com.ajkerdeal.app.essential.utils
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -66,17 +67,7 @@ fun Fragment.alert(title: CharSequence? = null, message: CharSequence? = null, s
     return dialog
 }
 
-fun timePhase(hourOfDay: Int) =  when (hourOfDay) {
-    in 0..4 -> "রাত"
-    in 5..11 -> "সকাল"
-    in 12..15 -> "দুপুর"
-    in 16..17 -> "বিকাল"
-    in 18..20 -> "সন্ধ্যা"
-    in 21..24 -> "রাত"
-    else -> {
-        ""
-    }
-}
+
 
 fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
     Snackbar.make(this, message, length).also { snackbar ->
@@ -106,6 +97,15 @@ fun Context.isConnectedToNetwork(): Boolean {
         isConnected = connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting == true
     }
     return isConnected
+}
+
+fun Fragment.progressDialog(message: String = getString(R.string.wait)): ProgressDialog {
+
+    val dialog = ProgressDialog(requireContext())
+    with(dialog) {
+        setMessage(message)
+    }
+    return dialog
 }
 
 val <T> T.exhaustive: T

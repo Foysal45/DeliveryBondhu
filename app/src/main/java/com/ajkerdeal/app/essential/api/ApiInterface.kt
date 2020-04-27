@@ -6,6 +6,7 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
+import com.ajkerdeal.app.essential.api.models.order.StatusUpdateModel
 import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.Retrofit
 import retrofit2.http.Body
@@ -19,11 +20,14 @@ interface ApiInterface {
         }
     }
 
-    @POST("SelfDelivery/Login")
+    @POST("api/SelfDelivery/Login")
     suspend fun login(@Body requestBody: LoginRequest): NetworkResponse<ResponseHeader<LoginResponse>, ErrorResponse>
 
-    @POST("SelfDelivery/LoadOrder")
+    @POST("api/SelfDelivery/LoadOrder")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
+
+    @POST("CustomerInfo/ProcessCouponsByCustomer")
+    suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<String, ErrorResponse>
 
     /*@POST("SelfDelivery/LoadOrder")
     fun loadOrderListTest(@Body requestBody: OrderRequest): Call<ResponseHeader<OrderResponse>>*/

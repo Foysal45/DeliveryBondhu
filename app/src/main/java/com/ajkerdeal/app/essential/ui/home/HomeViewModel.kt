@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.order.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SearchType
 import com.ajkerdeal.app.essential.utils.SessionManager
@@ -28,16 +29,15 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         val requestBody = OrderRequest(SessionManager.userId.toString(), index, count)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
-            is SearchType.Status -> requestBody.statusId = searchKey
         }
-
+        viewState.value = ViewState.ProgressState(true, 1)
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.loadOrderList(requestBody)
-            when (response) {
-                is NetworkResponse.Success -> {
-                    Timber.d("${response.body}")
-                    withContext(Dispatchers.Main) {
-
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false, 1)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        //Timber.d("${response.body}")
                         if (response.body != null) {
                             if (response.body.data != null) {
                                 if (response.body.data?.customerOrderList.isNullOrEmpty()) {
@@ -54,26 +54,59 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                                 viewState.value = ViewState.EmptyViewState()
                             }
                         } else {
-                            viewState.setValue(ViewState.EmptyViewState())
+                            viewState.value = ViewState.EmptyViewState()
                         }
                     }
-                }
-                is NetworkResponse.ServerError -> {
-                    val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
-                    viewState.postValue(ViewState.ShowMessage(message))
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
 
-                }
-                is NetworkResponse.NetworkError -> {
-                    val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
-                    viewState.postValue(ViewState.ShowMessage(message))
-                }
-                is NetworkResponse.UnknownError -> {
-                    val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                    viewState.postValue(ViewState.ShowMessage(message))
-                    Timber.d(response.error)
-                }
-            }.exhaustive
         }
     }
 
+    fun updateOrderStatus() {
+
+        val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
+        val model = StatusUpdateModel()
+        requestBody.add(model)
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.orderStatusUpdate(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        val message = "স্টেটাস আপডেট হয়েছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+
+        }
+    }
 }

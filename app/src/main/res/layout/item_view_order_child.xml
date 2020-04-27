@@ -80,33 +80,73 @@
             app:layout_constraintStart_toEndOf="@id/productPrice"
             tools:text="x২" />
 
-        <View
-            android:id="@+id/separator"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="@dimen/margin_from_product_image"
-            android:background="@color/separator_gray"
-            app:layout_constraintBottom_toBottomOf="parent"
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/barrier" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/acceptBtn"
+            android:id="@+id/acceptBtn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_from_product_image"
-            android:layout_marginTop="8dp"
-            android:text="@string/accept"
+            android:layout_marginTop="4dp"
+            android:text="@string/action_accept"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:backgroundTint="@color/action_green"
+            app:backgroundTint="@color/button_action_accept"
             app:icon="@drawable/ic_done"
             app:iconPadding="8dp"
             app:iconSize="20dp"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toBottomOf="@id/productPrice" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/acceptBtn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="0dp"
+            android:text="@string/action_can_not_collect"
+            android:textColor="@color/button_action_text_gry"
+            android:textSize="14sp"
+            app:backgroundTint="@color/button_action_reject"
+            app:icon="@drawable/ic_close"
+            app:iconTint="@color/button_action_text_gry"
+            app:iconPadding="8dp"
+            app:iconSize="20dp"
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/acceptBtn1"
+            android:visibility="gone"
+            />
+
+
+        <TextView
+            android:id="@+id/statusMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="8dp"
+
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/black_70"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/acceptBtn2"
+            tools:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)"
+            android:visibility="gone"
+            />
+
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="8dp"
+            android:background="@color/separator_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusMessage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
