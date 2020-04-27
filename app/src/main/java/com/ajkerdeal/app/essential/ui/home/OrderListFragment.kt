@@ -56,7 +56,8 @@ class OrderListFragment : Fragment() {
             }
         }
         dataAdapter.onActionClicked = { model ->
-            viewModel.updateOrderStatus()
+            requireContext().toast(getString(R.string.development))
+            //viewModel.updateOrderStatus()
         }
 
         viewModel.loadOrderOrSearch()
