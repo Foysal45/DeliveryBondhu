@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.order.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.*
@@ -55,9 +56,21 @@ class OrderListFragment : Fragment() {
                 requireContext().toast("Could not find an activity to place the call")
             }
         }
-        dataAdapter.onActionClicked = { model ->
+        dataAdapter.onActionClicked = { model, orderModel, actionModel ->
             requireContext().toast(getString(R.string.development))
-            //viewModel.updateOrderStatus()
+            val statusModel = StatusUpdateModel().apply {
+                couponId = orderModel.couponId
+                isDone = actionModel.updateStatus
+                comments = actionModel.statusMessage ?: ""
+                orderDate = orderModel.orderDate ?: ""
+                merchantId = orderModel.merchantId
+                dealId = orderModel.dealId
+                customerId = model.customerId
+                deliveryDate = orderModel.deliveryDate ?: ""
+                commentedBy = SessionManager.userId
+                pODNumber = orderModel.pODNumber ?: ""
+            }
+            viewModel.updateOrderStatus(statusModel)
         }
 
         viewModel.loadOrderOrSearch()

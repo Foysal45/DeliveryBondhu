@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -110,3 +111,6 @@ fun Fragment.progressDialog(message: String = getString(R.string.wait)): Progres
 
 val <T> T.exhaustive: T
     get() = this
+
+fun Number.spToPx(context: Context) = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_SP, this.toFloat(), context.resources.displayMetrics).toInt()

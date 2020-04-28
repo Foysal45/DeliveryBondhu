@@ -76,10 +76,10 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun updateOrderStatus() {
+    fun updateOrderStatus(model: StatusUpdateModel) {
 
         val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
-        val model = StatusUpdateModel()
+        //val model = StatusUpdateModel()
         requestBody.add(model)
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO) {

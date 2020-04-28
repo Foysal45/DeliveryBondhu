@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/actionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:backgroundTint="@color/button_action_accept"
+        app:icon="@drawable/ic_done"
+        app:iconPadding="8dp"
+        app:iconSize="20dp"
+        tools:text="ডেলিভারিম্যান ডেলিভারি অ্যাকসেপ্ট করেছে" />
+</layout>
+

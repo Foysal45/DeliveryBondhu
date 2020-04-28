@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
@@ -14,7 +15,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderCustomer> = mutableListOf()
     var onCall: ((number: String?) -> Unit)? = null
-    var onActionClicked: ((model: OrderCustomer) -> Unit)? = null
+    var onActionClicked: ((model: OrderCustomer, orderModel: OrderModel, actionModel: Action) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -53,8 +54,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 adapter = dataAdapter
                 animation = null
             }
-            dataAdapter.onActionClicked = { orderModel ->
-                onActionClicked?.invoke(model)
+            dataAdapter.onActionClicked = { orderModel, actionModel ->
+                onActionClicked?.invoke(model, orderModel, actionModel)
             }
 
         }
