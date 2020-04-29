@@ -1,4 +1,4 @@
-package com.ajkerdeal.app.essential.api.models.order
+package com.ajkerdeal.app.essential.api.models.status
 
 
 import com.google.gson.annotations.SerializedName
@@ -23,5 +23,7 @@ data class StatusUpdateModel(
     @SerializedName("CommentedBy")
     var commentedBy: Int = 0,
     @SerializedName("PODNumber")
-    var pODNumber: String = ""
+    var pODNumber: String = "",
+    @SerializedName("HubName")
+    var hubName: String = ""
 )

@@ -15,6 +15,7 @@
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
     <string name="development">Under Development</string>
 
+    <string name="default_notification_channel_id">Promotion</string>
 
     <string name="ping_connect">দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে</string>
     <string name="api_connect_error">দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে"\n"কিছুক্ষণ পর আবার চেষ্টা করুন</string>

@@ -33,6 +33,8 @@ data class OrderModel(
     @SerializedName("PODNumber")
     var pODNumber: String? = "",
     @SerializedName("Actions")
-    var actions: List<Action>? = listOf()
+    var actions: List<Action>? = listOf(),
 
+    @SerializedName("SourceInfo")
+    var collectionSource: CollectionSource? = null
 )

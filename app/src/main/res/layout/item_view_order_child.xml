@@ -80,6 +80,54 @@
             app:layout_constraintStart_toEndOf="@id/productPrice"
             tools:text="x২" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/collectionPointLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/productPrice"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_collection_point"
+            android:visibility="gone"
+            tools:visibility="visible"
+            >
+
+            <TextView
+                android:id="@+id/collectionAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
+                android:textSize="12sp"
+                android:textColor="@color/button_action_text_gry"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/phoneShop"
+                />
+
+            <ImageView
+                android:id="@+id/phoneShop"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/cd"
+                android:src="@drawable/ic_call"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="1"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -90,7 +138,7 @@
             android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier"
-            app:layout_constraintTop_toBottomOf="@id/productPrice"
+            app:layout_constraintTop_toBottomOf="@id/collectionPointLayout"
 
             tools:listitem="@layout/item_view_action_btn_positive"
             tools:itemCount="2"

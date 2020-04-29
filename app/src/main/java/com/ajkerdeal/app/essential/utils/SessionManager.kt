@@ -131,4 +131,23 @@ object SessionManager {
             }
         }
 
+    var firebaseToken: String
+        get() {
+            return pref.getString("firebaseToken", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("firebaseToken", value)
+            }
+        }
+
+    var deviceId: String
+        get() {
+            return pref.getString("deviceId", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("deviceId", value)
+            }
+        }
 }

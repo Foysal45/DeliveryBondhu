@@ -12,12 +12,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.order.StatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.*
-import kotlinx.android.synthetic.main.fragment_order_list.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -28,6 +28,14 @@ class OrderListFragment : Fragment() {
     private val viewModel: HomeViewModel by inject()
 
     private var dialog: ProgressDialog? = null
+
+    // Lazy loading
+    private var isLoading = false
+    private val visibleThreshold = 5
+    private var totalCount: Int = 0
+    private var firstCall: Int = 0
+
+    private var searchKey: String = "-1"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -79,6 +87,8 @@ class OrderListFragment : Fragment() {
                 Timber.d("initData: ${it.dataList}")
                 dataAdapter.loadInitData(it.dataList)
             } else {
+                isLoading = false
+                firstCall += 20
                 Timber.d("loadMoreData: ${it.dataList}")
                 dataAdapter.loadMoreData(it.dataList)
             }
@@ -121,20 +131,49 @@ class OrderListFragment : Fragment() {
 
         binding.searchBtn.setOnClickListener {
             hideKeyboard()
-            val key = binding.searchET.text.toString()
-            if (key.isNotEmpty()) {
+            searchKey = binding.searchET.text.toString()
+            if (searchKey.isNotEmpty()) {
                 binding.chipsGroup.visibility = View.VISIBLE
-                searchKey.text = key
-                searchKey.setOnClickListener {
+                binding.searchKey.text = searchKey
+                binding.searchKey.setOnClickListener {
+                    searchKey = "-1"
                     binding.searchET.text.clear()
                     binding.chipsGroup.visibility = View.GONE
                     viewModel.loadOrderOrSearch()
                 }
+                binding.searchKey.setOnCloseIconClickListener {
+                    binding.searchKey.performClick()
+                }
 
-                viewModel.loadOrderOrSearch(searchKey = key, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+            viewModel.loadOrderOrSearch(searchKey = searchKey, type = SearchType.Product)
+            /*binding.searchET.text.clear()
+            if (binding.chipsGroup.visibility == View.VISIBLE) {
+                binding.chipsGroup.visibility = View.GONE
+            }*/
+        }
+
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    Timber.d("addOnScrollListener onScrolled: $dx $dy")
+                    val currentItemCount = layoutManagerLinear.itemCount
+                    val lastVisibleItem = layoutManagerLinear.findLastVisibleItemPosition()
+                    Timber.d("onScrolled: \nItemCount: $currentItemCount  <= lastVisible: $lastVisibleItem firstCall : $firstCall  < TotalDeal : $totalCount  ${!isLoading}")
+                    if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
+                        isLoading = true
+                        viewModel.loadOrderOrSearch(firstCall, 20,searchKey = searchKey, type = SearchType.Product)
+                    }
+                }
+            }
+        })
 
         binding.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
 

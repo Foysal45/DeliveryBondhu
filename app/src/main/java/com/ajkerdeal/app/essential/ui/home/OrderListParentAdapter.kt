@@ -57,6 +57,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onActionClicked = { orderModel, actionModel ->
                 onActionClicked?.invoke(model, orderModel, actionModel)
             }
+            dataAdapter.onCall = { number ->
+                onCall?.invoke(number)
+            }
 
         }
     }

@@ -19,6 +19,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val dataList: MutableList<OrderModel> = mutableListOf()
     private val options = RequestOptions().placeholder(R.drawable.ad_logo)
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
+    var onCall: ((number: String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -63,6 +64,14 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 dataAdapter.onActionClicked = { actionModel ->
                     onActionClicked?.invoke(model, actionModel)
                 }
+            }
+
+            if (model.collectionSource != null) {
+                val source = model.collectionSource!!
+                holder.binding.collectionAddress.text = source.sourceAddress
+                holder.binding.collectionPointLayout.visibility = View.VISIBLE
+            } else {
+                holder.binding.collectionPointLayout.visibility = View.GONE
             }
 
 
@@ -134,7 +143,10 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         init {
 
-
+            binding.phoneShop.setOnClickListener {
+                val mobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
+                onCall?.invoke(mobile)
+            }
         }
 
     }

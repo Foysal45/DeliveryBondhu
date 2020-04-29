@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
@@ -10,7 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.ui.auth.LoginActivity
+import com.ajkerdeal.app.essential.utils.SessionManager
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
+import timber.log.Timber
 
 class HomeActivity : AppCompatActivity() {
 
@@ -22,7 +28,20 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         navController = findNavController(R.id.nav_host_fragment)
+        FirebaseMessaging.getInstance().subscribeToTopic("EssentialDeliveryTopic")
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result?.token
+                SessionManager.firebaseToken = token ?: ""
+                Timber.d("FirebaseToken:\n${token}")
+            }
+        }
 
+        if (!SessionManager.isLogin) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     override fun onBackPressed() {

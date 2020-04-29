@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
-import com.ajkerdeal.app.essential.api.models.order.StatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SearchType
 import com.ajkerdeal.app.essential.utils.SessionManager
@@ -88,8 +88,13 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
                     is NetworkResponse.Success -> {
-                        val message = "স্টেটাস আপডেট হয়েছে"
-                        viewState.value = ViewState.ShowMessage(message)
+                        if (response.body.isSuccess) {
+                            val message = "স্টেটাস আপডেট হয়েছে"
+                            viewState.value = ViewState.ShowMessage(message)
+                            loadOrderOrSearch()
+                        } else {
+                            viewState.value = ViewState.ShowMessage(response.body.message)
+                        }
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
