@@ -12,6 +12,6 @@ data class OrderRequest(
     var count: Int = 20,
     @SerializedName("ProductTitle")
     var productTitle: String = "-1",
-    @SerializedName("StatusId")
-    var statusId: String = "-1"
+    @SerializedName("Flag")
+    var flag: Int = 0
 )

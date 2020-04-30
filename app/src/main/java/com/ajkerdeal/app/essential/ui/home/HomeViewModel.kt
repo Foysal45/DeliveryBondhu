@@ -24,9 +24,9 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, searchKey: String = "-1", type: SearchType = SearchType.None) {
+    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, searchKey: String = "-1", type: SearchType = SearchType.None) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count)
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
         }
@@ -114,4 +114,5 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
 
         }
     }
+
 }

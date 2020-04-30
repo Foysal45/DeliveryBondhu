@@ -2,22 +2,30 @@ package com.ajkerdeal.app.essential.ui.home
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -36,6 +44,7 @@ class OrderListFragment : Fragment() {
     private var firstCall: Int = 0
 
     private var searchKey: String = "-1"
+    private var flagAccepted: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -65,7 +74,8 @@ class OrderListFragment : Fragment() {
             }
         }
         dataAdapter.onActionClicked = { model, orderModel, actionModel ->
-            requireContext().toast(getString(R.string.development))
+
+            //requireContext().toast(getString(R.string.development))
             val statusModel = StatusUpdateModel().apply {
                 couponId = orderModel.couponId
                 isDone = actionModel.updateStatus
@@ -78,7 +88,20 @@ class OrderListFragment : Fragment() {
                 commentedBy = SessionManager.userId
                 pODNumber = orderModel.pODNumber ?: ""
             }
-            viewModel.updateOrderStatus(statusModel)
+
+            val source = orderModel.collectionSource?.sourceMessageData
+            if (source?.instructions.isNullOrEmpty()) {
+
+                viewModel.updateOrderStatus(statusModel)
+            } else {
+                orderDialog(source!!.instructions!!) {
+                    viewModel.updateOrderStatus(statusModel)
+                }
+            }
+
+        }
+        dataAdapter.onPictureClicked = {orderModel ->
+            pictureDialog(orderModel)
         }
 
         viewModel.loadOrderOrSearch()
@@ -125,8 +148,8 @@ class OrderListFragment : Fragment() {
         })
 
         binding.acceptFilterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked)
-                requireContext().toast(getString(R.string.development))
+            flagAccepted = if (isChecked) 1 else 0
+            viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
         }
 
         binding.searchBtn.setOnClickListener {
@@ -139,20 +162,20 @@ class OrderListFragment : Fragment() {
                     searchKey = "-1"
                     binding.searchET.text.clear()
                     binding.chipsGroup.visibility = View.GONE
-                    viewModel.loadOrderOrSearch()
+                    viewModel.loadOrderOrSearch(flag = flagAccepted)
                 }
                 binding.searchKey.setOnCloseIconClickListener {
                     binding.searchKey.performClick()
                 }
 
-                viewModel.loadOrderOrSearch(searchKey = searchKey, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
 
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
-            viewModel.loadOrderOrSearch(searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
             /*binding.searchET.text.clear()
             if (binding.chipsGroup.visibility == View.VISIBLE) {
                 binding.chipsGroup.visibility = View.GONE
@@ -169,7 +192,7 @@ class OrderListFragment : Fragment() {
                     Timber.d("onScrolled: \nItemCount: $currentItemCount  <= lastVisible: $lastVisibleItem firstCall : $firstCall  < TotalDeal : $totalCount  ${!isLoading}")
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
-                        viewModel.loadOrderOrSearch(firstCall, 20,searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(firstCall, 20, flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
                     }
                 }
             }
@@ -194,6 +217,76 @@ class OrderListFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         }
+
+        binding.title.setOnClickListener {
+            orderDialog("Message Body", 1) { type ->
+                requireContext().toast(getString(R.string.development))
+            }
+        }
+
+
     }
 
+    override fun onStart() {
+        super.onStart()
+        //Timber.d("onStart called")
+        viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
+    }
+
+    private fun orderDialog(message: String, type: Int = 0, listener: ((type: Int) -> Unit)? = null) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_alert, null)
+        builder.setView(view)
+        val body: TextView = view.findViewById(R.id.body)
+        val positiveBtn: TextView = view.findViewById(R.id.positiveBtn)
+        val actionLayout: LinearLayout = view.findViewById(R.id.actionBtnLayout)
+        val positiveBtn1: MaterialButton = view.findViewById(R.id.positiveBtn1)
+        val negativeBtn: MaterialButton = view.findViewById(R.id.negativeBtn)
+
+        body.text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        if (type == 1) {
+            actionLayout.visibility = View.VISIBLE
+            positiveBtn.visibility = View.GONE
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+        positiveBtn.setOnClickListener {
+            dialog.dismiss()
+            listener?.invoke(0)
+        }
+        positiveBtn1.setOnClickListener {
+            dialog.dismiss()
+            listener?.invoke(0)
+        }
+        negativeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    private fun pictureDialog(model: OrderModel, listener: ((type: Int) -> Unit)? = null) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_product_overview, null)
+        builder.setView(view)
+        val title: TextView = view.findViewById(R.id.title)
+        val productImage: ImageView = view.findViewById(R.id.image)
+        val close: ImageView = view.findViewById(R.id.close)
+
+        title.text = model.productTitle
+        Glide.with(productImage)
+            .load(model.imageUrl)
+            .apply(RequestOptions().placeholder(R.drawable.ic_logo))
+            .into(productImage)
+
+        val dialog = builder.create()
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#B3000000")))
+        dialog.show()
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
 }

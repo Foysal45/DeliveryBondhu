@@ -11,5 +11,7 @@ data class Action(
     @SerializedName("UpdateStatus")
     var updateStatus: Int = 0,
     @SerializedName("StatusMessage")
-    var statusMessage: String? = ""
+    var statusMessage: String? = "",
+    @SerializedName("ColorCode")
+    var colorCode: String = "#FFFFFF"
 )

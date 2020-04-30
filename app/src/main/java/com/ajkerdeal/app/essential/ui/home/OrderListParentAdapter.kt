@@ -16,6 +16,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val dataList: MutableList<OrderCustomer> = mutableListOf()
     var onCall: ((number: String?) -> Unit)? = null
     var onActionClicked: ((model: OrderCustomer, orderModel: OrderModel, actionModel: Action) -> Unit)? = null
+    var onPictureClicked: ((model: OrderModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -59,6 +60,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             dataAdapter.onCall = { number ->
                 onCall?.invoke(number)
+            }
+            dataAdapter.onPictureClicked = {model ->
+                onPictureClicked?.invoke(model)
             }
 
         }

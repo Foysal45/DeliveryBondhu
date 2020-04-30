@@ -11,5 +11,7 @@ data class CollectionSource(
     @SerializedName("SourceMobile")
     var sourceMobile: String? = "",
     @SerializedName("SourceDealPrice")
-    var sourceDealPrice: Int? = 0
+    var sourceDealPrice: Int? = 0,
+    @SerializedName("SourceMessageData")
+    var sourceMessageData: SourceMessageData? = null
 )

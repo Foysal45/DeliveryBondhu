@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
@@ -17,9 +18,10 @@ import com.bumptech.glide.request.RequestOptions
 class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderModel> = mutableListOf()
-    private val options = RequestOptions().placeholder(R.drawable.ad_logo)
+    private val options = RequestOptions().placeholder(R.drawable.ic_logo)
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
     var onCall: ((number: String?) -> Unit)? = null
+    var onPictureClicked: ((model: OrderModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -58,7 +60,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 dataAdapter.loadData(model.actions!! as MutableList<Action>)
                 with(holder.binding.recyclerView) {
                     setHasFixedSize(false)
-                    layoutManager = LinearLayoutManager(holder.binding.recyclerView.context)
+                    layoutManager = LinearLayoutManager(holder.binding.recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
                     adapter = dataAdapter
                 }
                 dataAdapter.onActionClicked = { actionModel ->
@@ -67,9 +69,13 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (model.collectionSource != null) {
-                val source = model.collectionSource!!
-                holder.binding.collectionAddress.text = source.sourceAddress
-                holder.binding.collectionPointLayout.visibility = View.VISIBLE
+                if (model.collectionSource!!.sourceMessageData != null) {
+                    val source = model.collectionSource!!.sourceMessageData
+                    holder.binding.collectionAddress.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    holder.binding.collectionPointLayout.visibility = View.VISIBLE
+                } else {
+                    holder.binding.collectionPointLayout.visibility = View.GONE
+                }
             } else {
                 holder.binding.collectionPointLayout.visibility = View.GONE
             }
@@ -146,6 +152,10 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.phoneShop.setOnClickListener {
                 val mobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
                 onCall?.invoke(mobile)
+            }
+
+            binding.productImage.setOnClickListener {
+                onPictureClicked?.invoke(dataList[adapterPosition])
             }
         }
 

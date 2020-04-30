@@ -27,7 +27,7 @@ interface ApiInterface {
     @POST("api/SelfDelivery/LoadOrder")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
 
-    @POST("CustomerInfo/ProcessCouponsByCustomer")
+    @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>
 
 }

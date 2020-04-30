@@ -1,13 +1,13 @@
 package com.ajkerdeal.app.essential.ui.home
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
-import com.ajkerdeal.app.essential.databinding.ItemViewActionBtnNegativeBinding
 import com.ajkerdeal.app.essential.databinding.ItemViewActionBtnPositiveBinding
 import com.ajkerdeal.app.essential.databinding.ItemViewActionMessageBinding
 
@@ -23,7 +23,7 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> ViewHolder(ItemViewActionBtnPositiveBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            2 -> ViewHolder1(ItemViewActionBtnNegativeBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            2 -> ViewHolder(ItemViewActionBtnPositiveBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             3 -> ViewHolder2(ItemViewActionMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             4 -> ViewHolder2(ItemViewActionMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> ViewHolder(ItemViewActionBtnPositiveBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -39,9 +39,27 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder) {
             is ViewHolder -> {
                 holder.binding.actionBtn.text = model.actionMessage
-            }
-            is ViewHolder1 -> {
-                holder.binding.actionBtn.text = model.actionMessage
+                holder.binding.actionBtn.backgroundTintList = ColorStateList.valueOf(Color.parseColor(model.colorCode))
+
+                if (model.actionType == 1) {
+
+                    val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.white))
+                    with(holder.binding.actionBtn) {
+                        setTextColor(colorText)
+                        icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_done)
+                        iconTint = colorText
+                    }
+
+                } else if (model.actionType == 2) {
+
+                    val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.button_action_text_gry))
+                    with(holder.binding.actionBtn) {
+                        setTextColor(colorText)
+                        icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_close)
+                        iconTint = colorText
+                    }
+
+                }
             }
             is ViewHolder2 -> {
 
@@ -66,13 +84,6 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    private inner class ViewHolder1(val binding: ItemViewActionBtnNegativeBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.actionBtn.setOnClickListener {
-                onActionClicked?.invoke(dataList[adapterPosition])
-            }
-        }
-    }
 
     private inner class ViewHolder2(val binding: ItemViewActionMessageBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
