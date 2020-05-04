@@ -12,6 +12,11 @@ data class OrderCustomer(
     var customerMobileNumber: String? = "",
     @SerializedName("CustomerAddress")
     var customerAddress: String? = "",
+
+    @SerializedName("Actions")
+    var actions: List<Action>? = listOf(),
+    @SerializedName("SourceInfo")
+    var collectionSource: CollectionSource? = null,
     @SerializedName("CustomerOrderDataModel")
     var orderList: List<OrderModel>? = listOf(),
 

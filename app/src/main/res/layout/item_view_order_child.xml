@@ -101,7 +101,7 @@
                 android:paddingBottom="4dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
+                tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
                 android:textSize="12sp"
                 android:textColor="@color/button_action_text_gry"
                 app:layout_constraintTop_toTopOf="parent"
@@ -141,6 +141,7 @@
             android:layout_marginBottom="8dp"
             android:overScrollMode="never"
 
+            tools:visibility="visible"
             tools:listitem="@layout/item_view_action_btn_positive"
             tools:itemCount="2"
             tools:orientation="horizontal"
@@ -217,7 +218,7 @@
             android:id="@+id/separator"
             android:layout_width="0dp"
             android:layout_height="1dp"
-
+            android:layout_marginTop="6dp"
             android:background="@color/separator_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recyclerView"

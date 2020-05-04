@@ -35,7 +35,7 @@
     <color name="gradient_orange">#F15B2D</color>
     <color name="gradient_yellow">#F1BD2D</color>
     <color name="action_green">#45BE59</color>
-    <color name="separator_orange">#FF8C68</color>
+    <color name="separator_orange">#FFDFD5</color>
     <color name="separator_gray">#D8D8D8</color>
 
     <color name="button_action_accept">#45BE59</color>

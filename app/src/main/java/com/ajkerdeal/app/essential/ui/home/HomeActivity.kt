@@ -45,15 +45,19 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
+        if (navController.currentDestination?.id != R.id.nav_dashboard) {
             super.onBackPressed()
-            return
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed()
+                return
+            }
+            doubleBackToExitPressedOnce = true
+            Toast.makeText(this, "অ্যাপটি বন্ধ করতে আবার প্রেস করুন", Toast.LENGTH_SHORT).show()
+            Handler().postDelayed({
+                doubleBackToExitPressedOnce = false
+            }, 2000L)
         }
-        doubleBackToExitPressedOnce = true
-        Toast.makeText(this, "অ্যাপটি বন্ধ করতে আবার প্রেস করুন", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed({
-            doubleBackToExitPressedOnce = false
-        }, 2000L)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {

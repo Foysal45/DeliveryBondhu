@@ -73,29 +73,53 @@ class OrderListFragment : Fragment() {
                 requireContext().toast("Could not find an activity to place the call")
             }
         }
-        dataAdapter.onActionClicked = { model, orderModel, actionModel ->
+        dataAdapter.onActionClicked = { model, actionModel, orderModel  ->
 
-            //requireContext().toast(getString(R.string.development))
-            val statusModel = StatusUpdateModel().apply {
-                couponId = orderModel.couponId
-                isDone = actionModel.updateStatus
-                comments = actionModel.statusMessage ?: ""
-                orderDate = orderModel.orderDate ?: ""
-                merchantId = orderModel.merchantId
-                dealId = orderModel.dealId
-                customerId = model.customerId
-                deliveryDate = orderModel.deliveryDate ?: ""
-                commentedBy = SessionManager.userId
-                pODNumber = orderModel.pODNumber ?: ""
+            val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
+            var instructions: String? = null
+
+            if (orderModel != null) {
+
+                val statusModel = StatusUpdateModel().apply {
+                    couponId = orderModel.couponId
+                    isDone = actionModel.updateStatus
+                    comments = actionModel.statusMessage ?: ""
+                    orderDate = orderModel.orderDate ?: ""
+                    merchantId = orderModel.merchantId
+                    dealId = orderModel.dealId
+                    customerId = model.customerId
+                    deliveryDate = orderModel.deliveryDate ?: ""
+                    commentedBy = SessionManager.userId
+                    pODNumber = orderModel.pODNumber ?: ""
+                }
+                requestBody.add(statusModel)
+                instructions = orderModel.collectionSource?.sourceMessageData?.instructions
+
+            } else {
+
+                model.orderList?.forEach { orderModel ->
+                    val statusModel = StatusUpdateModel().apply {
+                        couponId = orderModel.couponId
+                        isDone = actionModel.updateStatus
+                        comments = actionModel.statusMessage ?: ""
+                        orderDate = orderModel.orderDate ?: ""
+                        merchantId = orderModel.merchantId
+                        dealId = orderModel.dealId
+                        customerId = model.customerId
+                        deliveryDate = orderModel.deliveryDate ?: ""
+                        commentedBy = SessionManager.userId
+                        pODNumber = orderModel.pODNumber ?: ""
+                    }
+                    requestBody.add(statusModel)
+                }
+                instructions = model.collectionSource?.sourceMessageData?.instructions
             }
 
-            val source = orderModel.collectionSource?.sourceMessageData
-            if (source?.instructions.isNullOrEmpty()) {
-
-                viewModel.updateOrderStatus(statusModel)
+            if (instructions.isNullOrEmpty()) {
+                viewModel.updateOrderStatus(requestBody)
             } else {
-                orderDialog(source!!.instructions!!) {
-                    viewModel.updateOrderStatus(statusModel)
+                orderDialog(instructions) {
+                    viewModel.updateOrderStatus(requestBody)
                 }
             }
 
@@ -218,11 +242,11 @@ class OrderListFragment : Fragment() {
             requireActivity().finish()
         }
 
-        binding.title.setOnClickListener {
+        /*binding.title.setOnClickListener {
             orderDialog("Message Body", 1) { type ->
                 requireContext().toast(getString(R.string.development))
             }
-        }
+        }*/
 
 
     }

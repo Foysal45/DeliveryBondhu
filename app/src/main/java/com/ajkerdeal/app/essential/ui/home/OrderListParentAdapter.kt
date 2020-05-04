@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.api.models.order.Action
@@ -15,7 +16,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderCustomer> = mutableListOf()
     var onCall: ((number: String?) -> Unit)? = null
-    var onActionClicked: ((model: OrderCustomer, orderModel: OrderModel, actionModel: Action) -> Unit)? = null
+    var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -46,6 +47,35 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.recyclerView.visibility = View.GONE
             }
 
+            if (model.actions.isNullOrEmpty()) {
+                holder.binding.recyclerViewAction.visibility = View.GONE
+            } else {
+                holder.binding.recyclerViewAction.visibility = View.VISIBLE
+                val dataAdapter = ActionAdapter()
+                dataAdapter.loadData(model.actions!! as MutableList<Action>)
+                with(holder.binding.recyclerViewAction) {
+                    setHasFixedSize(false)
+                    layoutManager = LinearLayoutManager(holder.binding.recyclerViewAction.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = dataAdapter
+                }
+                dataAdapter.onActionClicked = { actionModel ->
+                    onActionClicked?.invoke(model, actionModel, null)
+                }
+            }
+
+            if (model.collectionSource != null) {
+                if (model.collectionSource!!.sourceMessageData != null) {
+                    val source = model.collectionSource!!.sourceMessageData
+                    if (!source?.message.isNullOrEmpty()) {
+                        holder.binding.collectionMsg.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        holder.binding.collectionMsg.visibility = View.VISIBLE
+                    }
+                } else {
+                    holder.binding.collectionMsg.visibility = View.GONE
+                }
+            } else {
+                holder.binding.collectionMsg.visibility = View.GONE
+            }
 
             val dataAdapter = OrderListChildAdapter()
             dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
@@ -56,7 +86,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 animation = null
             }
             dataAdapter.onActionClicked = { orderModel, actionModel ->
-                onActionClicked?.invoke(model, orderModel, actionModel)
+                onActionClicked?.invoke(model,actionModel, orderModel)
             }
             dataAdapter.onCall = { number ->
                 onCall?.invoke(number)

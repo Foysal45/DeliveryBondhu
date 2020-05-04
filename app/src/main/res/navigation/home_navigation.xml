@@ -3,13 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_navigation"
-    app:startDestination="@id/nav_orderList"
+    app:startDestination="@id/nav_dashboard"
     >
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.ajkerdeal.app.essential.ui.home.dashboard.DashboardFragment"
+        android:label="ড্যাশবোর্ড"
+        tools:layout="@layout/fragment_dashboard"
+        >
+        <action android:id="@+id/nav_action_dashboard_orderList"
+            app:destination="@id/nav_orderList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+        <action android:id="@+id/nav_action_dashboard_parcelList"
+            app:destination="@id/nav_parcelList"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_orderList"
         android:name="com.ajkerdeal.app.essential.ui.home.OrderListFragment"
         android:label="অর্ডার লিস্ট"
         tools:layout="@layout/fragment_order_list"/>
+
+    <fragment
+        android:id="@+id/nav_parcelList"
+        android:name="com.ajkerdeal.app.essential.ui.home.parcel.ParcelListFragment"
+        android:label="পার্সেল লিস্ট"
+        tools:layout="@layout/fragment_parcel_list"/>
 
 </navigation>

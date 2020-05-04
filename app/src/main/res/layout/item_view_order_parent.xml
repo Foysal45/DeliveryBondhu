@@ -12,13 +12,13 @@
             android:id="@+id/parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFEABB"
+            android:background="#FFFAF0"
             android:minHeight="40dp">
 
             <ImageView
                 android:id="@+id/indicator"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_margin="8dp"
                 android:contentDescription="@string/cd"
                 android:src="@drawable/ic_expand"
@@ -32,7 +32,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/black_90"
@@ -47,35 +47,83 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:layout_marginStart="8dp"
+                android:paddingStart="5dp"
                 android:ellipsize="end"
                 android:maxLines="3"
                 android:textColor="@color/black_80"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@id/phone"
-                app:layout_constraintStart_toStartOf="@id/customerName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/indicator"
 
-                app:layout_constraintTop_toBottomOf="@id/customerName"
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
-
                 />
 
             <ImageView
                 android:id="@+id/phone"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:contentDescription="@string/cd"
-                android:padding="12dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_call"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/collectionMsg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
+                android:textSize="14sp"
+                android:textColor="@color/black_70"
+                app:layout_constraintTop_toBottomOf="@id/customerAddress"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewAction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/collectionMsg"
+                app:layout_constraintBottom_toTopOf="@id/separator"
+                android:layout_marginBottom="8dp"
+                android:overScrollMode="never"
+                android:visibility="gone"
+
+                tools:visibility="visible"
+                tools:listitem="@layout/item_view_action_btn_positive"
+                tools:itemCount="2"
+                tools:orientation="horizontal"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                />
+
             <View
+                android:id="@+id/separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/separator_orange"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/customerAddress" />
+                app:layout_constraintTop_toBottomOf="@id/customerAddress"
+                app:layout_constraintVertical_bias="1"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
