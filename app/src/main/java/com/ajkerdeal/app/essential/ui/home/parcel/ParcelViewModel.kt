@@ -1,11 +1,11 @@
-package com.ajkerdeal.app.essential.ui.home
+package com.ajkerdeal.app.essential.ui.home.parcel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
-import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
-import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
+import com.ajkerdeal.app.essential.api.models.pod.PodWiseData
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SearchType
@@ -18,21 +18,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class HomeViewModel(private val repository: AppRepository) : ViewModel() {
+class ParcelViewModel(private val repository: AppRepository): ViewModel() {
 
     val progress = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
-    val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
+    val pagingState = MutableLiveData<PagingModel<MutableList<PodWiseData>>>()
 
     fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, searchKey: String = "-1", type: SearchType = SearchType.None) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag)
+        val requestBody = PodOrderRequest(SessionManager.userId.toString(), index, count, flag = flag)
         when (type) {
-            is SearchType.Product -> requestBody.productTitle = searchKey
+            is SearchType.Product -> requestBody.podNumber = searchKey
         }
         viewState.value = ViewState.ProgressState(true, 1)
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.loadOrderList(requestBody)
+            val response = repository.loadOrderPodWiseList(requestBody)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false, 1)
                 when (response) {
@@ -40,14 +40,14 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                         //Timber.d("${response.body}")
                         if (response.body != null) {
                             if (response.body.data != null) {
-                                if (response.body.data?.customerOrderList.isNullOrEmpty()) {
+                                if (response.body.data?.podWiseDataModel.isNullOrEmpty()) {
                                     viewState.value = ViewState.EmptyViewState()
                                 } else {
                                     if (index == 0) {
                                         Timber.d("Init data loaded")
-                                        pagingState.value = PagingModel(true, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(true, response.body.data!!.podWiseDataModel!!.toMutableList())
                                     } else {
-                                        pagingState.value = PagingModel(false, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(false, response.body.data!!.podWiseDataModel!!.toMutableList())
                                     }
                                 }
                             } else {
@@ -115,5 +115,4 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
 
         }
     }
-
 }

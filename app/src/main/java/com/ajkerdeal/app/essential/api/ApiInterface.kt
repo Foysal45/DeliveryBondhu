@@ -6,6 +6,8 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
+import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
+import com.ajkerdeal.app.essential.api.models.pod.PodOrderResponse
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -26,6 +28,9 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/LoadOrder")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
+
+    @POST("api/SelfDelivery/LoadOrderPodWise")
+    suspend fun loadOrderPodWiseList(@Body requestBody: PodOrderRequest): NetworkResponse<ResponseHeader<PodOrderResponse>, ErrorResponse>
 
     @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>

@@ -107,7 +107,6 @@
 }
 ##---------------End: proguard configuration for Gson  ----------
 
--dontwarn com.crashlytics.**
 
 # ServiceLoader support
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
@@ -124,3 +123,9 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+#Firebase Crashlytics
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-keep class com.google.firebase.crashlytics.** { *; }
+-dontwarn com.google.firebase.crashlytics.**

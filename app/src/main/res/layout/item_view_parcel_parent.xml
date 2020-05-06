@@ -34,17 +34,18 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textColor="@color/black_90"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@id/phone"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Maleka Begum" />
 
             <TextView
                 android:id="@+id/customerAddress"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="8dp"
@@ -53,22 +54,13 @@
                 android:maxLines="3"
                 android:textColor="@color/black_80"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@id/phone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/indicator"
+                app:layout_constraintTop_toBottomOf="@id/customerName"
 
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
                 />
 
-            <ImageView
-                android:id="@+id/phone"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@string/cd"
-                android:padding="8dp"
-                android:src="@drawable/ic_call"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+
 
             <TextView
                 android:id="@+id/collectionMsg"

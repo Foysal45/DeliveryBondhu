@@ -7,5 +7,7 @@ data class SourceMessageData(
     @SerializedName("Message")
     var message: String? = "",
     @SerializedName("Instructions")
-    var instructions: String? = ""
+    var instructions: String? = "",
+    @SerializedName("Status")
+    var status: String? = ""
 )

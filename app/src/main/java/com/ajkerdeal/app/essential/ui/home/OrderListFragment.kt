@@ -313,4 +313,9 @@ class OrderListFragment : Fragment() {
             dialog.dismiss()
         }
     }
+
+    override fun onDestroyView() {
+        binding.unbind()
+        super.onDestroyView()
+    }
 }

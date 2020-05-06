@@ -1,9 +1,11 @@
 package com.ajkerdeal.app.essential.ui.home
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,13 +45,17 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 .into(holder.binding.productImage)
 
             holder.binding.productName.text = model.productTitle
-            holder.binding.productPrice.text = "৳ ${DigitConverter.toBanglaDigit(model.productPrice)}"
-            holder.binding.productQuantity.text = "x ${DigitConverter.toBanglaDigit(model.productQtn)}"
+
+            val total = model.productPrice * model.productQtn
+            val banglaPrice = DigitConverter.toBanglaDigit(model.productPrice)
+            val banglaQuantity = DigitConverter.toBanglaDigit(model.productQtn)
+            val banglaTotal = DigitConverter.toBanglaDigit(total)
+            holder.binding.productPrice.text = "৳ $banglaPrice x $banglaQuantity = ৳ $banglaTotal"
 
             if (position == dataList.lastIndex) {
-                holder.binding.separator.visibility = View.GONE
+                holder.binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.separator.context, R.color.white))
             } else {
-                holder.binding.separator.visibility = View.VISIBLE
+                holder.binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.separator.context, R.color.separator_gray))
             }
 
             if (model.actions.isNullOrEmpty()) {
@@ -71,8 +77,20 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             if (model.collectionSource != null) {
                 if (model.collectionSource!!.sourceMessageData != null) {
                     val source = model.collectionSource!!.sourceMessageData
-                    holder.binding.collectionAddress.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    holder.binding.collectionPointLayout.visibility = View.VISIBLE
+                    if (source?.message.isNullOrEmpty()) {
+                        holder.binding.collectionPointLayout.visibility = View.GONE
+                    } else {
+                        holder.binding.collectionAddress.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        holder.binding.collectionPointLayout.visibility = View.VISIBLE
+                    }
+
+                    if (source?.status.isNullOrEmpty()){
+                        holder.binding.orderStatus.visibility = View.GONE
+                    } else {
+                        holder.binding.orderStatus.text = HtmlCompat.fromHtml(source?.status ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        holder.binding.orderStatus.visibility = View.VISIBLE
+                    }
+
                 } else {
                     holder.binding.collectionPointLayout.visibility = View.GONE
                 }

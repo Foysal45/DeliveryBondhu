@@ -1,30 +1,32 @@
-package com.ajkerdeal.app.essential.ui.home
+package com.ajkerdeal.app.essential.ui.home.parcel
 
 import android.animation.ObjectAnimator
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
-import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
+import com.ajkerdeal.app.essential.api.models.pod.PodWiseData
+import com.ajkerdeal.app.essential.databinding.ItemViewParcelParentBinding
+import com.ajkerdeal.app.essential.ui.home.ActionAdapter
+import com.ajkerdeal.app.essential.ui.home.OrderListParentAdapter
+import com.ajkerdeal.app.essential.utils.DigitConverter
 
-class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val dataList: MutableList<OrderCustomer> = mutableListOf()
+    private val dataList: MutableList<PodWiseData> = mutableListOf()
     var onCall: ((number: String?) -> Unit)? = null
-    var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
+    var onActionClicked: ((model: PodWiseData, orderCustomer: OrderCustomer, actionModel: Action, orderModel: OrderModel?) -> Unit)? = null
+    var onActionClickedParent: ((model: PodWiseData, actionModel: Action) -> Unit)? = null
+    var onActionClickedCustomer: ((model: PodWiseData, orderCustomer: OrderCustomer, actionModel: Action) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
-    var isChildView: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemViewParcelParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -36,8 +38,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             val model = dataList[position]
 
-            holder.binding.customerName.text = model.customerName
-            holder.binding.customerAddress.text = model.customerAddress
+            holder.binding.customerName.text = "পার্সেল নং: ${model.podNumber}"
+            holder.binding.customerAddress.text = "আয়: ৳ ${DigitConverter.toBanglaDigit(model.totalPodCommission)}  কাস্টমার: ${DigitConverter.toBanglaDigit(model.totalCustomer)}"
 
             if (model.state) {
                 val currentRotation = holder.binding.indicator.rotation
@@ -63,21 +65,16 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     adapter = dataAdapter
                 }
                 dataAdapter.onActionClicked = { actionModel ->
-                    onActionClicked?.invoke(model, actionModel, null)
+                    onActionClickedParent?.invoke(model, actionModel)
                 }
             }
 
-            if (model.collectionSource != null) {
-                if (model.collectionSource!!.sourceMessageData != null) {
-                    val source = model.collectionSource!!.sourceMessageData
-                    if (!source?.message.isNullOrEmpty()) {
-                        holder.binding.collectionMsg.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        holder.binding.collectionMsg.visibility = View.VISIBLE
-                    } else {
-                        if ( holder.binding.collectionMsg.visibility == View.VISIBLE){
-                            holder.binding.collectionMsg.visibility = View.GONE
-                        }
-                    }
+            if (model.customerMessageData != null) {
+
+                val source = model.customerMessageData!!
+                if (!source?.message.isNullOrEmpty()) {
+                    holder.binding.collectionMsg.text = HtmlCompat.fromHtml(source?.message ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    holder.binding.collectionMsg.visibility = View.VISIBLE
                 } else {
                     if ( holder.binding.collectionMsg.visibility == View.VISIBLE){
                         holder.binding.collectionMsg.visibility = View.GONE
@@ -89,29 +86,36 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
 
-            val dataAdapter = OrderListChildAdapter()
-            dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
-            with(holder.binding.recyclerView) {
-                setHasFixedSize(false)
-                layoutManager = LinearLayoutManager(this.context)
-                adapter = dataAdapter
-                animation = null
+            if (model.customerDataModel.isNullOrEmpty()) {
+                holder.binding.recyclerView.visibility = View.GONE
+            } else {
+                val dataAdapter = OrderListParentAdapter()
+                dataAdapter.isChildView = true
+                dataAdapter.loadInitData(model.customerDataModel!! as MutableList<OrderCustomer>)
+                with(holder.binding.recyclerView) {
+                    setHasFixedSize(false)
+                    layoutManager = LinearLayoutManager(this.context)
+                    adapter = dataAdapter
+                    animation = null
+                }
+                dataAdapter.onActionClicked = { orderCustomer: OrderCustomer, actionModel, orderModel ->
+                    onActionClicked?.invoke(model, orderCustomer, actionModel, orderModel)
+                }
+                dataAdapter.onCall = { number ->
+                    onCall?.invoke(number)
+                }
+                dataAdapter.onPictureClicked = { model ->
+                    onPictureClicked?.invoke(model)
+                }
+                if (holder.binding.recyclerView.visibility == View.GONE) {
+                    holder.binding.recyclerView.visibility == View.VISIBLE
+                }
             }
-            dataAdapter.onActionClicked = { orderModel, actionModel ->
-                onActionClicked?.invoke(model,actionModel, orderModel)
-            }
-            dataAdapter.onCall = { number ->
-                onCall?.invoke(number)
-            }
-            dataAdapter.onPictureClicked = {model ->
-                onPictureClicked?.invoke(model)
-            }
-
 
         }
     }
 
-    private inner class ViewHolder(val binding: ItemViewOrderParentBinding) : RecyclerView.ViewHolder(binding.root) {
+    private inner class ViewHolder(val binding: ItemViewParcelParentBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.parent.setOnClickListener {
@@ -120,25 +124,17 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 notifyItemChanged(adapterPosition)
             }
 
-            binding.phone.setOnClickListener {
-                onCall?.invoke(dataList[adapterPosition].customerMobileNumber)
-            }
-
-            if (isChildView) {
-                binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.parent.context, R.color.childColor))
-                binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.separator.context, R.color.separator_gray))
-            }
         }
 
     }
 
-    fun loadInitData(list: MutableList<OrderCustomer>) {
+    fun loadInitData(list: MutableList<PodWiseData>) {
         dataList.clear()
         dataList.addAll(list)
         notifyDataSetChanged()
     }
 
-    fun loadMoreData(list: MutableList<OrderCustomer>) {
+    fun loadMoreData(list: MutableList<PodWiseData>) {
         val lastIndex = dataList.lastIndex
         dataList.addAll(list)
         notifyItemRangeInserted(lastIndex, list.size)

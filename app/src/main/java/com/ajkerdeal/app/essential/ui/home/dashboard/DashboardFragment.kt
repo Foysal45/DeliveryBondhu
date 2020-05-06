@@ -11,7 +11,7 @@ import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
 
-    private lateinit var binding: FragmentDashboardBinding
+    private var binding: FragmentDashboardBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_dashboard, container, false)
@@ -22,14 +22,20 @@ class DashboardFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        binding.button1.setOnClickListener {
+        binding?.lifecycleOwner = viewLifecycleOwner
+        binding?.button1?.setOnClickListener {
             findNavController().navigate(R.id.nav_action_dashboard_orderList)
         }
 
-        binding.button2.setOnClickListener {
+        binding?.button2?.setOnClickListener {
             findNavController().navigate(R.id.nav_action_dashboard_parcelList)
         }
+    }
+
+    override fun onDestroyView() {
+        binding?.unbind()
+        binding = null
+        super.onDestroyView()
     }
 
 }
