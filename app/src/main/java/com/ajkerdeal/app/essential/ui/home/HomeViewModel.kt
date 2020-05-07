@@ -1,11 +1,13 @@
 package com.ajkerdeal.app.essential.ui.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SearchType
@@ -23,10 +25,11 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val progress = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
+    val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, searchKey: String = "-1", type: SearchType = SearchType.None) {
+    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag)
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
         }
@@ -114,6 +117,35 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
             }
 
         }
+    }
+
+    fun loadFilterStatus(): LiveData<MutableList<FilterStatus>> {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.loadFilterStatus()
+            withContext(Dispatchers.Main) {
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        filterStatusList.value = response.body.data
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+
+        }
+        return filterStatusList
     }
 
 }

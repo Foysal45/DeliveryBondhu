@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">এসেনশিয়াল ডেলিভারি</string>
+    <string name="app_name">ডেলিভারি বন্ধু</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd">image</string>
@@ -11,7 +11,8 @@
     <string name="password">পাসওয়ার্ড</string>
     <string name="mobile_number">মোবাইল নম্বর</string>
     <string name="order_list">অর্ডার লিস্ট</string>
-    <string name="search_hint">লিস্ট থেকে খুঁজুন ...</string>
+    <string name="search_hint">নাম, ফোন নাম্বার</string>
+    <string name="search_hint1">পিওডি, ফোন নাম্বার</string>
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
     <string name="development">Under Development</string>
 
@@ -27,5 +28,10 @@
     <string name="action_collected">বাজার থেকে কালেক্ট করা হয়েছে</string>
     <string name="action_delivered">অর্ডার ডেলিভারি করা হয়েছে</string>
     <string name="action_canceled">কাস্টমার ডেলিভারি নিতে আগ্রহী নয়</string>
+    <string name="button_product_delivery">প্রোডাক্ট ডেলিভারি</string>
+    <string name="button_parcel_delivery">পার্সেল ডেলিভারি</string>
 
+    <string-array name="filter">
+        <item>সকল</item>
+    </string-array>
 </resources>

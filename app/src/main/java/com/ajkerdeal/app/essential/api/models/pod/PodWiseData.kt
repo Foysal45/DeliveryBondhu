@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName
 data class PodWiseData(
     @SerializedName("PodNumber")
     var podNumber: String? = "",
+    @SerializedName("CollectionAddress")
+    var collectionAddress: String? = "",
     @SerializedName("TotalPodCommission")
     var totalPodCommission: Int = 0,
     @SerializedName("TotalCustomer")

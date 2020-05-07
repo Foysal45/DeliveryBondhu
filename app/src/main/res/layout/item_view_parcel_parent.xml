@@ -37,17 +37,17 @@
                 android:maxLines="2"
                 android:textColor="@color/black_90"
                 android:textSize="14sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/countLayout"
                 tools:text="Maleka Begum" />
 
             <TextView
                 android:id="@+id/customerAddress"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginStart="8dp"
                 android:paddingStart="5dp"
                 android:ellipsize="end"
@@ -56,9 +56,66 @@
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/customerName"
+                app:layout_constraintEnd_toStartOf="@id/countLayout"
 
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
                 />
+
+            <TextView
+                android:id="@+id/income"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="8dp"
+                android:paddingStart="5dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/black_80"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/customerAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+
+                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
+                />
+
+
+            <LinearLayout
+                android:id="@+id/countLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                >
+                <TextView
+                    android:id="@+id/countTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="@color/black_80"
+                    android:textSize="18sp"
+                    tools:text="99"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="@color/black_80"
+                    android:textSize="14sp"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
+                    android:text="ডেলিভারি"
+                    />
+
+
+            </LinearLayout>
 
 
 
@@ -73,7 +130,7 @@
                 tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
                 android:textSize="14sp"
                 android:textColor="@color/black_70"
-                app:layout_constraintTop_toBottomOf="@id/customerAddress"
+                app:layout_constraintTop_toBottomOf="@id/income"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="0dp"

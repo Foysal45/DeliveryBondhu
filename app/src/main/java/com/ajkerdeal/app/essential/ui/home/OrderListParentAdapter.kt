@@ -150,5 +150,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         rotate.start()
     }
 
-
+    fun clearData() {
+        dataList.clear()
+        notifyDataSetChanged()
+    }
 }

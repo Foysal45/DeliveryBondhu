@@ -8,11 +8,13 @@ import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderResponse
+import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
 import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.Retrofit
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiInterface {
@@ -26,6 +28,9 @@ interface ApiInterface {
     @POST("api/SelfDelivery/Login")
     suspend fun login(@Body requestBody: LoginRequest): NetworkResponse<ResponseHeader<LoginResponse>, ErrorResponse>
 
+    @GET("api/SelfDelivery/LoadStatus")
+    suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
+
     @POST("api/SelfDelivery/LoadOrder")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
 
@@ -34,5 +39,6 @@ interface ApiInterface {
 
     @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>
+
 
 }

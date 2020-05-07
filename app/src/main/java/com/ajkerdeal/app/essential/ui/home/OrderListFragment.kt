@@ -8,9 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -44,7 +42,7 @@ class OrderListFragment : Fragment() {
     private var firstCall: Int = 0
 
     private var searchKey: String = "-1"
-    private var flagAccepted: Int = 0
+    private var filterStatus: String = "-1"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -141,6 +139,29 @@ class OrderListFragment : Fragment() {
             }
         })
 
+        viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
+            Timber.d("$list")
+            val filterList = list.filter { it.flag == 0 || it.flag == 1 }.map { it.statusName }
+            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, filterList)
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinner.adapter = arrayAdapter
+
+            binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    val selectedStatus = list[position].status
+                    if (selectedStatus != filterStatus) {
+                        filterStatus = selectedStatus
+                        dataAdapter.clearData()
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                }
+            }
+        })
+
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is ViewState.ShowMessage -> {
@@ -171,10 +192,7 @@ class OrderListFragment : Fragment() {
             }
         })
 
-        binding.acceptFilterSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            flagAccepted = if (isChecked) 1 else 0
-            viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
-        }
+
 
         binding.searchBtn.setOnClickListener {
             hideKeyboard()
@@ -186,20 +204,20 @@ class OrderListFragment : Fragment() {
                     searchKey = "-1"
                     binding.searchET.text.clear()
                     binding.chipsGroup.visibility = View.GONE
-                    viewModel.loadOrderOrSearch(flag = flagAccepted)
+                    viewModel.loadOrderOrSearch(statusId = filterStatus)
                 }
                 binding.searchKey.setOnCloseIconClickListener {
                     binding.searchKey.performClick()
                 }
 
-                viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
 
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
-            viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
             /*binding.searchET.text.clear()
             if (binding.chipsGroup.visibility == View.VISIBLE) {
                 binding.chipsGroup.visibility = View.GONE
@@ -216,7 +234,7 @@ class OrderListFragment : Fragment() {
                     Timber.d("onScrolled: \nItemCount: $currentItemCount  <= lastVisible: $lastVisibleItem firstCall : $firstCall  < TotalDeal : $totalCount  ${!isLoading}")
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
-                        viewModel.loadOrderOrSearch(firstCall, 20, flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
                     }
                 }
             }
@@ -254,7 +272,7 @@ class OrderListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         //Timber.d("onStart called")
-        viewModel.loadOrderOrSearch(flag = flagAccepted, searchKey = searchKey, type = SearchType.Product)
+        viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
     }
 
     private fun orderDialog(message: String, type: Int = 0, listener: ((type: Int) -> Unit)? = null) {
@@ -299,7 +317,7 @@ class OrderListFragment : Fragment() {
         title.text = model.productTitle
         Glide.with(productImage)
             .load(model.imageUrl)
-            .apply(RequestOptions().placeholder(R.drawable.ic_logo))
+            .apply(RequestOptions().placeholder(R.drawable.ic_logo_essentials))
             .into(productImage)
 
         val dialog = builder.create()

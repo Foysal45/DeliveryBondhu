@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:background="@color/black_5"
-            tools:src="@drawable/ic_logo" />
+            tools:src="@drawable/ic_logo_essentials" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"

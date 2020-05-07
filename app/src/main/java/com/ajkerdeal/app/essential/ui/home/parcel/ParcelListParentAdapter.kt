@@ -38,8 +38,10 @@ class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
             val model = dataList[position]
 
-            holder.binding.customerName.text = "পার্সেল নং: ${model.podNumber}"
-            holder.binding.customerAddress.text = "আয়: ৳ ${DigitConverter.toBanglaDigit(model.totalPodCommission)}  কাস্টমার: ${DigitConverter.toBanglaDigit(model.totalCustomer)}"
+            holder.binding.customerName.text = "পিওডি নং: ${model.podNumber}"
+            holder.binding.customerAddress.text = model.collectionAddress
+            holder.binding.income.text = "আয়: ৳ ${DigitConverter.toBanglaDigit(model.totalPodCommission)}"
+            holder.binding.countTV.text = DigitConverter.toBanglaDigit(model.totalCustomer)
 
             if (model.state) {
                 val currentRotation = holder.binding.indicator.rotation
@@ -146,5 +148,9 @@ class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         rotate.start()
     }
 
+    fun clearData() {
+        dataList.clear()
+        notifyDataSetChanged()
+    }
 
 }

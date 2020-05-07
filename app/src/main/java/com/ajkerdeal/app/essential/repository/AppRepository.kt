@@ -10,6 +10,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
 
     suspend fun authUser(requestBody: LoginRequest) = apiInterface.login(requestBody)
 
+    suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
+
     suspend fun loadOrderList(requestBody: OrderRequest) = apiInterface.loadOrderList(requestBody)
 
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterface.updateStatus(requestBody)

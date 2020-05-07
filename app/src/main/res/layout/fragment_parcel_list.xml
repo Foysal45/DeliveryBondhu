@@ -46,8 +46,8 @@
             android:id="@+id/searchCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
 
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="4dp"
@@ -66,7 +66,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="@color/white"
-                    android:hint="@string/search_hint"
+                    android:hint="@string/search_hint1"
                     android:imeOptions="actionSearch"
                     android:importantForAutofill="no"
                     android:includeFontPadding="false"
@@ -103,9 +103,9 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/acceptFilterCard"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
 
             app:cardBackgroundColor="@color/white"
             app:cardElevation="0dp"
@@ -116,29 +116,16 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="4dp">
+                >
 
-                <TextView
-                    android:id="@+id/filterName"
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/filter_name_accepted"
-                    android:textColor="@color/text_second"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-
-                    />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/acceptFilterSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="12dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/filterName"
-
+                    android:spinnerMode="dropdown"
+                    android:theme="@style/custom_spinner_style"
+                    android:entries="@array/filter"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -149,7 +136,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:singleLine="true"
-            app:layout_constraintTop_toBottomOf="@id/acceptFilterCard"
+            app:layout_constraintTop_toBottomOf="@id/searchCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="16dp"
@@ -176,6 +163,7 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chipsGroup"
+            android:layout_marginTop="4dp"
             >
 
             <androidx.recyclerview.widget.RecyclerView

@@ -20,7 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderModel> = mutableListOf()
-    private val options = RequestOptions().placeholder(R.drawable.ic_logo)
+    private val options = RequestOptions().placeholder(R.drawable.ic_logo_essentials)
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
     var onCall: ((number: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
@@ -44,7 +44,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 .apply(options)
                 .into(holder.binding.productImage)
 
-            holder.binding.productName.text = model.productTitle
+            holder.binding.productName.text = "${model.productTitle} (${model.couponId})"
 
             val total = model.productPrice * model.productQtn
             val banglaPrice = DigitConverter.toBanglaDigit(model.productPrice)
