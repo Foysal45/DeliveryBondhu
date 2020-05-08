@@ -141,8 +141,9 @@ class OrderListFragment : Fragment() {
 
         viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
             Timber.d("$list")
-            val filterList = list.filter { it.flag == 0 || it.flag == 1 }.map { it.statusName }
-            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, filterList)
+            val filterList = list.filter { it.flag == 1 }
+            val statusName = filterList.map { it.statusName }
+            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinner.adapter = arrayAdapter
 
@@ -152,11 +153,13 @@ class OrderListFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                    val selectedStatus = list[position].status
-                    if (selectedStatus != filterStatus) {
-                        filterStatus = selectedStatus
-                        dataAdapter.clearData()
-                        viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+                    if (position in 0..filterList.size) {
+                        val selectedStatus = filterList[position].status
+                        if (selectedStatus != filterStatus) {
+                            filterStatus = selectedStatus
+                            dataAdapter.clearData()
+                            viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
                     }
                 }
             }
