@@ -8,25 +8,24 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.databinding.FragmentLoginBinding
+import com.ajkerdeal.app.essential.databinding.FragmentResetPasswordBinding
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import org.koin.android.ext.android.inject
 
-class LoginFragment : Fragment() {
+class ResetPasswordFragment : Fragment() {
 
-    private var binding: FragmentLoginBinding? = null
+    private var binding: FragmentResetPasswordBinding? = null
 
     private val viewModel: AuthViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //return inflater.inflate(R.layout.fragment_login, container, false)
-        return FragmentLoginBinding.inflate(inflater, container, false).also {
+        //return inflater.inflate(R.layout.fragment_reset_password, container, false)
+        return FragmentResetPasswordBinding.inflate(inflater, container, false).also {
             binding = it
         }.root
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -43,19 +42,10 @@ class LoginFragment : Fragment() {
                     hideKeyboard()
                 }
                 is ViewState.NextState -> {
-                    (activity as LoginActivity).goToHome()
+                    findNavController().navigate(R.id.action_resetPassword_OTPVerify)
                 }
             }
         })
-
-        binding?.registration?.setOnClickListener {
-            findNavController().navigate(R.id.action_login_signUp)
-        }
-
-        binding?.forgetPassword?.setOnClickListener {
-            findNavController().navigate(R.id.action_login_resetPassword)
-        }
-
     }
 
     override fun onDestroyView() {

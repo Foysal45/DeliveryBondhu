@@ -29,7 +29,81 @@
         android:id="@+id/nav_login"
         android:name="com.ajkerdeal.app.essential.ui.auth.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_signUp"
+            app:destination="@id/nav_signUp"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+        <action
+            android:id="@+id/action_login_resetPassword"
+            app:destination="@id/nav_resetPassword"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_signUp"
+        android:name="com.ajkerdeal.app.essential.ui.auth.SignUpFragment"
+        android:label="Registration"
+        tools:layout="@layout/fragment_sign_up">
+
+        <action
+            android:id="@+id/action_signUp_OTPVerify"
+            app:destination="@id/nav_OTPVerify"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_resetPassword"
+        android:name="com.ajkerdeal.app.essential.ui.auth.ResetPasswordFragment"
+        android:label="Password Reset"
+        tools:layout="@layout/fragment_reset_password">
+
+        <action
+            android:id="@+id/action_resetPassword_OTPVerify"
+            app:destination="@id/nav_OTPVerify"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_OTPVerify"
+        android:name="com.ajkerdeal.app.essential.ui.auth.OTPVerifyFragment"
+        android:label="OTP Verify"
+        tools:layout="@layout/fragment_otp_verify">
+
+        <action
+            android:id="@+id/action_OTPVerify_login"
+            app:destination="@id/nav_login"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+
+            app:popUpTo="@id/nav_login"
+            app:popUpToInclusive="false"
+            />
+
+    </fragment>
 
 
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F15B2D</color>
-    <color name="colorPrimaryDark">#F15B2D</color>
-    <color name="colorAccent">#F15B2D</color>
+    <color name="colorPrimary">#322E7F</color>
+    <color name="colorPrimaryDark">#322E7F</color>
+    <color name="colorAccent">#E86324</color>
 
     <color name="launcher">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
@@ -15,6 +15,7 @@
     <color name="shimmer_color">#dddddd</color>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="background">#F1F1F1</color>
+    <color name="background1">#EAE9F1</color>
     <color name="black_100">#FF000000</color>
     <color name="black_90">#E6000000</color>
     <color name="black_80">#CC000000</color>

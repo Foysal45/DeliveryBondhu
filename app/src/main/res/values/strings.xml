@@ -1,14 +1,16 @@
 <resources>
-    <string name="app_name">ডেলিভারি বন্ধু</string>
+    <string name="app_name">Delivery Bondhu</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd">image</string>
     <string name="subTitle">Essentials</string>
     <string name="login">লগইন</string>
     <string name="login_action">লগইন করুন</string>
-    <string name="helpline">হেল্পলাইন</string>
-    <string name="helpline_number">01922002200</string>
+    <string name="registration_action">রেজিস্ট্রেশন</string>
+    <string name="forget_password">পাসওয়ার্ড ভুলে গেছেন?</string>
+    <string name="registration">একাউন্ট খুলুন</string>
     <string name="password">পাসওয়ার্ড</string>
+    <string name="confirm_password">পুনরায় পাসওয়ার্ড লিখুন</string>
     <string name="mobile_number">মোবাইল নম্বর</string>
     <string name="order_list">অর্ডার লিস্ট</string>
     <string name="search_hint">নাম, ফোন নাম্বার</string>
@@ -30,6 +32,7 @@
     <string name="action_canceled">কাস্টমার ডেলিভারি নিতে আগ্রহী নয়</string>
     <string name="button_product_delivery">প্রোডাক্ট ডেলিভারি</string>
     <string name="button_parcel_delivery">পার্সেল ডেলিভারি</string>
+    <string name="already_account">আপনার একাউন্ট আছে?</string>
 
     <string-array name="filter">
         <item>সকল</item>

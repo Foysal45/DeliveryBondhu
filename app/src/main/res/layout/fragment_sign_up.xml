@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.auth.LoginFragment">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.ajkerdeal.app.essential.ui.auth.AuthViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_logo_splash"
+                android:contentDescription="@string/cd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp"
+                />
+
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:textColor="@color/white"
+                android:text="রেজিস্ট্রেশন"
+                app:layout_constraintTop_toBottomOf="@id/logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="50dp"
+
+                />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/loginFormCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="36dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="2dp"
+                app:contentPadding="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/etLoginMobileNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@color/white"
+                        android:hint="@string/mobile_number"
+                        android:importantForAutofill="no"
+                        android:inputType="phone"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:textColor="@color/black_80"
+                        android:textSize="14sp"
+                        android:maxLength="11"
+                        android:text="@={viewModel.userId}"
+                        />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/separator" />
+
+                    <EditText
+                        android:id="@+id/etLoginPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@color/white"
+                        android:hint="@string/password"
+                        android:importantForAutofill="no"
+                        android:inputType="textPassword"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:textColor="@color/black_80"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/etLoginMobileNo"
+                        android:maxLength="24"
+                        tools:text=""
+                        android:text="@={viewModel.password}"
+                        />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/separator" />
+
+                    <EditText
+                        android:id="@+id/etLoginPasswordConfirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@color/white"
+                        android:hint="কনফার্ম পাসওয়ার্ড"
+                        android:importantForAutofill="no"
+                        android:inputType="textPassword"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:textColor="@color/black_80"
+                        android:textSize="14sp"
+                        android:maxLength="24"
+                        tools:text=""
+                        android:text="@={viewModel.confirmPassword}"
+                        />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:id="@+id/separator1"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/separator"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
+
+                        <TextView
+                            android:id="@+id/districtET"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@color/white"
+                            android:hint="জেলা"
+                            android:paddingStart="16dp"
+                            android:paddingTop="8dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="8dp"
+                            android:textColor="@color/black_80"
+                            android:textSize="14sp"
+                            app:layout_constraintTop_toBottomOf="@id/separator1"
+                            android:gravity="center_vertical"
+                            tools:text=""
+                            />
+
+                        <ImageView
+                            android:id="@+id/dropDown1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/cd"
+                            android:src="@drawable/ic_arrow_drop_down"
+                            android:tint="@color/black_50"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="8dp"
+                            />
+
+                        <ProgressBar
+                            android:id="@+id/districtProgress"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/dropDown1"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/thanaLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        >
+
+                        <View
+                            android:id="@+id/separator2"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/separator"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
+
+                        <TextView
+                            android:id="@+id/thanaET"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@color/white"
+                            android:hint="থানা"
+                            android:paddingStart="16dp"
+                            android:paddingTop="8dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="8dp"
+                            android:textColor="@color/black_80"
+                            android:textSize="14sp"
+                            app:layout_constraintTop_toBottomOf="@id/separator2"
+                            android:maxLength="24"
+                            tools:text=""
+                            android:gravity="center_vertical"
+
+                            />
+
+                        <ImageView
+                            android:id="@+id/dropDown"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/cd"
+                            android:src="@drawable/ic_arrow_drop_down"
+                            android:tint="@color/black_50"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="8dp"
+                            />
+
+                        <ProgressBar
+                            android:id="@+id/thanaProgress"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/dropDown"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginBtn"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginEnd="36dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/registration_action"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/colorAccent"
+                app:cornerRadius="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/loginFormCard"
+                android:onClick="@{viewModel::onRegistrationClicked}"
+
+                />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/white"
+                android:visibility="@{viewModel.progress ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/loginBtn"
+                app:layout_constraintEnd_toEndOf="@id/loginBtn"
+                app:layout_constraintHorizontal_bias="0.30"
+                app:layout_constraintStart_toStartOf="@id/loginBtn"
+                app:layout_constraintTop_toTopOf="@id/loginBtn"
+                tools:visibility="visible"
+                android:elevation="8dp"
+
+                />
+
+
+            <TextView
+                android:id="@+id/forgetPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#CCFFFFFF"
+                android:text="@string/already_account"
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toBottomOf="@id/loginBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/registration"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                />
+
+            <TextView
+                android:id="@+id/registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:text="@string/login_action"
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toBottomOf="@id/loginBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/forgetPassword"
+                android:layout_marginStart="8dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

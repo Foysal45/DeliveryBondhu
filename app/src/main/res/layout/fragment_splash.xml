@@ -7,60 +7,54 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
         android:clickable="true"
-        android:focusable="true"
-
-        >
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/cd"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/bg_splash" />
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="150dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/cd"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_logo_splash"
+
+            app:layout_constraintBottom_toTopOf="@id/slogan"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <ImageView
+            android:id="@+id/slogan"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/cd"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_logo"
 
-            app:layout_constraintBottom_toTopOf="@id/nameLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-        <LinearLayout
-            android:id="@+id/nameLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_rectangle_corner_curve"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_slogan"
+            app:layout_constraintBottom_toTopOf="@id/deliveryMan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/logo" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="8dp"
+        <ImageView
+            android:id="@+id/deliveryMan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/cd"
+            android:src="@drawable/ic_deliveryman"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-                android:text="@string/app_name"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
