@@ -91,6 +91,22 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         holder.binding.orderStatus.visibility = View.VISIBLE
                     }
 
+                    val isPay =  model.collectionSource!!.sourceMessageData?.isPay
+                    val res = if (isPay == 0) {
+                        holder.binding.paymentType.visibility = View.VISIBLE
+                        R.drawable.ic_dont_pay
+                    } else if (isPay == 1) {
+                        holder.binding.paymentType.visibility = View.VISIBLE
+                        R.drawable.ic_pay
+                    } else {
+                        holder.binding.paymentType.visibility = View.GONE
+                        0
+                    }
+                    Glide.with(holder.binding.paymentType)
+                        .load(res)
+                        .apply(options)
+                        .into(holder.binding.paymentType)
+
                 } else {
                     holder.binding.collectionPointLayout.visibility = View.GONE
                 }

@@ -29,6 +29,9 @@
     <color name="black_16">#29000000</color>
     <color name="black_15">#26000000</color>
     <color name="black_5">#0D000000</color>
+    <color name="black_87">#DE000000</color>
+
+    <color name="text_primary">#DE0F0F0F</color>
 
     <color name="hint">#00000066</color>
     <color name="hint1">#B2B2B2</color>
@@ -38,12 +41,13 @@
     <color name="action_green">#45BE59</color>
     <color name="separator_orange">#FF8C68</color>
     <color name="separator_gray">#D8D8D8</color>
+    <color name="separator_parent">@color/colorPrimary</color>
 
     <color name="button_action_accept">#45BE59</color>
     <color name="button_action_reject">#ECECEC</color>
     <color name="button_action_text_gry">#707070</color>
 
-    <color name="parentColor">#ffeabb</color>
-    <color name="childColor">#fff5dd</color>
+    <color name="parentColor">#EAE9F1</color>
+    <color name="childColor">#FDEEE4</color>
 
 </resources>

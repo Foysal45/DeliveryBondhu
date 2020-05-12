@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class OrderCustomer(
     @SerializedName("CustomerId")
-    var customerId: Int = 0,
+    var customerId: String = "0",
     @SerializedName("CustomerName")
     var customerName: String? = "",
     @SerializedName("CustomerMobileNumber")

@@ -18,6 +18,7 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentParcelListBinding
+import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -35,13 +36,13 @@ class ParcelListFragment : Fragment() {
 
     // Lazy loading
     private var isLoading = false
-    private val visibleThreshold = 5
+    private val visibleThreshold = 2
     private var totalCount: Int = 0
     private var firstCall: Int = 0
 
     private var searchKey: String = "-1"
     private var filterStatus: String = "-1"
-
+    private var dtStatus: String = "-1"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_parcel_list, container, false)
@@ -85,8 +86,8 @@ class ParcelListFragment : Fragment() {
                         comments = actionModel.statusMessage ?: ""
                         orderDate = orderModel.orderDate ?: ""
                         merchantId = orderModel.merchantId
-                        dealId = orderModel.dealId
-                        customerId = orderCustomer.customerId
+                        dealId = orderModel.dealId.toIntOrNull() ?: 0
+                        customerId = orderCustomer.customerId.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
@@ -117,8 +118,8 @@ class ParcelListFragment : Fragment() {
                     comments = actionModel.statusMessage ?: ""
                     orderDate = orderModel.orderDate ?: ""
                     merchantId = orderModel.merchantId
-                    dealId = orderModel.dealId
-                    customerId = orderCustomer.customerId
+                    dealId = orderModel.dealId.toIntOrNull() ?: 0
+                    customerId = orderCustomer.customerId.toIntOrNull() ?: 0
                     deliveryDate = orderModel.deliveryDate ?: ""
                     commentedBy = SessionManager.userId
                     pODNumber = orderModel.pODNumber ?: ""
@@ -135,8 +136,8 @@ class ParcelListFragment : Fragment() {
                         comments = actionModel.statusMessage ?: ""
                         orderDate = orderModel.orderDate ?: ""
                         merchantId = orderModel.merchantId
-                        dealId = orderModel.dealId
-                        customerId = orderCustomer.customerId
+                        dealId = orderModel.dealId.toIntOrNull() ?: 0
+                        customerId = orderCustomer.customerId.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
@@ -156,17 +157,20 @@ class ParcelListFragment : Fragment() {
 
         }
 
-        viewModel.loadOrderOrSearch()
+        //viewModel.loadOrderOrSearch()
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
             if (it.isInitLoad) {
                 Timber.d("initData: ${it.dataList}")
                 dataAdapter.loadInitData(it.dataList)
+                firstCall = 20
             } else {
                 isLoading = false
                 firstCall += 20
                 Timber.d("loadMoreData: ${it.dataList}")
                 dataAdapter.loadMoreData(it.dataList)
             }
+            totalCount = it.totalCount
+            binding.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
         viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
@@ -175,9 +179,9 @@ class ParcelListFragment : Fragment() {
             val statusName = filterList.map { it.statusName }
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spinner.adapter = arrayAdapter
+            binding.appBarLayout.spinner.adapter = arrayAdapter
 
-            binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            binding.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
@@ -185,11 +189,13 @@ class ParcelListFragment : Fragment() {
 
                     if (position in 0..filterList.size) {
                         val selectedStatus = filterList[position].status
-                        if (selectedStatus != filterStatus) {
+                        val selectedDTStatus = filterList[position].dtStatus
+                        //if (selectedStatus != filterStatus) {
                             filterStatus = selectedStatus
+                            dtStatus = selectedDTStatus
                             dataAdapter.clearData()
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
-                        }
+                            viewModel.loadOrderOrSearch(statusId = filterStatus,dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        //}
                     }
                 }
             }
@@ -225,30 +231,30 @@ class ParcelListFragment : Fragment() {
             }
         })
 
-        binding.searchBtn.setOnClickListener {
+        binding.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
-            searchKey = binding.searchET.text.toString()
+            searchKey = binding.appBarLayout.searchET.text.toString()
             if (searchKey.isNotEmpty()) {
-                binding.chipsGroup.visibility = View.VISIBLE
-                binding.searchKey.text = searchKey
-                binding.searchKey.setOnClickListener {
+                binding.appBarLayout.chipsGroup.visibility = View.VISIBLE
+                binding.appBarLayout.searchKey.text = searchKey
+                binding.appBarLayout.searchKey.setOnClickListener {
                     searchKey = "-1"
-                    binding.searchET.text.clear()
-                    binding.chipsGroup.visibility = View.GONE
-                    viewModel.loadOrderOrSearch(statusId = filterStatus)
+                    binding.appBarLayout.searchET.text.clear()
+                    binding.appBarLayout.chipsGroup.visibility = View.GONE
+                    viewModel.loadOrderOrSearch(statusId = filterStatus,dtStatusId = dtStatus)
                 }
-                binding.searchKey.setOnCloseIconClickListener {
-                    binding.searchKey.performClick()
+                binding.appBarLayout.searchKey.setOnCloseIconClickListener {
+                    binding.appBarLayout.searchKey.performClick()
                 }
 
-                viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
 
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
-            viewModel.loadOrderOrSearch(statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             /*binding.searchET.text.clear()
             if (binding.chipsGroup.visibility == View.VISIBLE) {
                 binding.chipsGroup.visibility = View.GONE
@@ -265,13 +271,14 @@ class ParcelListFragment : Fragment() {
                     Timber.d("onScrolled: \nItemCount: $currentItemCount  <= lastVisible: $lastVisibleItem firstCall : $firstCall  < TotalDeal : $totalCount  ${!isLoading}")
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
-                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                     }
                 }
             }
         })
 
-        binding.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        binding.appBarLayout.searchET.hint = getString(R.string.search_hint1)
+        binding.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
 
             val imeAction = when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_ACTION_SEND, EditorInfo.IME_ACTION_GO, EditorInfo.IME_ACTION_SEARCH -> true
@@ -279,10 +286,28 @@ class ParcelListFragment : Fragment() {
             }
             //val eventType = event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             return@OnEditorActionListener if (imeAction) {
-                binding.searchBtn.performClick()
+                binding.appBarLayout.searchBtn.performClick()
                 true
             } else false
         })
+
+        binding.appBarLayout.backBtn.setOnClickListener {
+            activity?.onBackPressed()
+        }
+
+        binding.appBarLayout.logoutBtn.setOnClickListener {
+            (activity as HomeActivity).logout()
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //Timber.d("onStart called")
+        if (filterStatus != "-1") {
+            Timber.d("loadOrderOrSearch called from onStart")
+            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+        }
     }
 
     private fun pictureDialog(model: OrderModel, listener: ((type: Int) -> Unit)? = null) {

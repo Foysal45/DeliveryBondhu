@@ -4,6 +4,7 @@ import com.ajkerdeal.app.essential.api.models.ErrorResponse
 import com.ajkerdeal.app.essential.api.models.ResponseHeader
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
+import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
@@ -41,6 +42,9 @@ interface ApiInterface {
 
     @GET("Recover/CheckOTP/{customerId}/{OTPCode}")
     suspend fun verifyOTP(@Path("customerId") customerId: String, @Path("OTPCode") OTPCode: String): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
+
+    @POST("api/SelfDelivery/UpdateFirebaseToken")
+    suspend fun updateFirebaseToken(@Body requestBody: UpdateTokenRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
     @GET("api/SelfDelivery/LoadStatus")
     suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>

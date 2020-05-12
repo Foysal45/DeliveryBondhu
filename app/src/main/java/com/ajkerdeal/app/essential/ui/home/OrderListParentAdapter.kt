@@ -93,6 +93,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
             with(holder.binding.recyclerView) {
                 setHasFixedSize(false)
+                isNestedScrollingEnabled = false
                 layoutManager = LinearLayoutManager(this.context)
                 adapter = dataAdapter
                 animation = null

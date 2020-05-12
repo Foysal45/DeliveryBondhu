@@ -13,34 +13,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/parentColor"
-            android:minHeight="40dp">
+            android:minHeight="40dp"
+            android:padding="8dp">
 
             <ImageView
                 android:id="@+id/indicator"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_margin="8dp"
+
                 android:contentDescription="@string/cd"
+                android:rotation="0"
                 android:src="@drawable/ic_expand"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:rotation="0"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/customerName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="4dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="@color/black_90"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:layout_marginEnd="4dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/countLayout"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/countLayout"
                 tools:text="Maleka Begum" />
 
             <TextView
@@ -48,131 +49,107 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:layout_marginStart="8dp"
-                android:paddingStart="5dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:textColor="@color/black_80"
+                android:paddingStart="5dp"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/income"
+                app:layout_constraintEnd_toStartOf="@id/countLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/customerName"
-                app:layout_constraintEnd_toStartOf="@id/countLayout"
-
-                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
-                />
+                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
 
             <TextView
                 android:id="@+id/income"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:layout_marginStart="8dp"
-                android:paddingStart="5dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:textColor="@color/black_80"
+                android:paddingStart="5dp"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/collectionMsg"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/customerAddress"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="8dp"
-
-                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230"
-                />
+                tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
 
 
             <LinearLayout
                 android:id="@+id/countLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/bg_pod_count"
                 android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                >
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
                 <TextView
                     android:id="@+id/countTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:ellipsize="end"
-                    android:maxLines="3"
-                    android:textColor="@color/black_80"
-                    android:textSize="18sp"
-                    tools:text="99"
-                    />
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    tools:text="২" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:textColor="@color/black_80"
-                    android:textSize="14sp"
-                    android:paddingStart="2dp"
-                    android:paddingEnd="2dp"
                     android:text="ডেলিভারি"
-                    />
+                    android:textColor="#707070"
+                    android:textSize="12sp" />
 
 
             </LinearLayout>
-
-
 
             <TextView
                 android:id="@+id/collectionMsg"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:paddingStart="6dp"
                 android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
+                android:paddingBottom="4dp"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:textColor="@color/black_70"
-                app:layout_constraintTop_toBottomOf="@id/income"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:visibility="gone"
-                tools:visibility="visible"
-                />
+                app:layout_constraintBottom_toTopOf="@id/recyclerViewAction"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/income"
+                tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAction"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/collectionMsg"
-                app:layout_constraintBottom_toTopOf="@id/separator"
-                android:layout_marginBottom="8dp"
-                android:overScrollMode="never"
-                android:visibility="gone"
 
-                tools:visibility="visible"
-                tools:listitem="@layout/item_view_action_btn_positive"
                 tools:itemCount="2"
-                tools:orientation="horizontal"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+                tools:listitem="@layout/item_view_action_btn_positive"
+                tools:orientation="horizontal"
+                tools:visibility="visible" />
 
-            <View
-                android:id="@+id/separator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/separator_orange"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/customerAddress"
-                app:layout_constraintVertical_bias="1"
-                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -182,10 +159,16 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
 
-            tools:visibility="visible"
             tools:itemCount="2"
             tools:listitem="@layout/item_view_order_child"
-            tools:orientation="vertical" />
+            tools:orientation="vertical"
+            tools:visibility="visible" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separator_parent" />
 
     </LinearLayout>
 

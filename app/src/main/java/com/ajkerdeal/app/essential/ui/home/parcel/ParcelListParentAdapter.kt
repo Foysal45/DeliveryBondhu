@@ -38,8 +38,8 @@ class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
             val model = dataList[position]
 
-            holder.binding.customerName.text = "পিওডি নং: ${model.podNumber}"
-            holder.binding.customerAddress.text = model.collectionAddress
+            holder.binding.customerName.text = "${model.podNumber}"
+            holder.binding.customerAddress.text = HtmlCompat.fromHtml(model.collectionAddress ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
             holder.binding.income.text = "আয়: ৳ ${DigitConverter.toBanglaDigit(model.totalPodCommission)}"
             holder.binding.countTV.text = DigitConverter.toBanglaDigit(model.totalCustomer)
 
@@ -96,6 +96,7 @@ class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 dataAdapter.loadInitData(model.customerDataModel!! as MutableList<OrderCustomer>)
                 with(holder.binding.recyclerView) {
                     setHasFixedSize(false)
+                    isNestedScrollingEnabled = false
                     layoutManager = LinearLayoutManager(this.context)
                     adapter = dataAdapter
                     animation = null

@@ -9,5 +9,7 @@ data class SourceMessageData(
     @SerializedName("Instructions")
     var instructions: String? = "",
     @SerializedName("Status")
-    var status: String? = ""
+    var status: String? = "",
+    @SerializedName("IsPay")
+    var isPay: Int = 0
 )

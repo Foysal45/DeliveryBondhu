@@ -15,5 +15,7 @@ data class OrderRequest(
     @SerializedName("Flag")
     var flag: Int = 0,
     @SerializedName("StatusId")
-    var statusId: String = "-1"
+    var statusId: String = "-1",
+    @SerializedName("DtStatusId")
+    var dtStatusId: String = "-1"
 )

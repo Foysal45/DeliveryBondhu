@@ -27,9 +27,9 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
     val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
+    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId)
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
         }
@@ -48,9 +48,9 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                                 } else {
                                     if (index == 0) {
                                         Timber.d("Init data loaded")
-                                        pagingState.value = PagingModel(true, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(true, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
                                     } else {
-                                        pagingState.value = PagingModel(false, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(false, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
                                     }
                                 }
                             } else {

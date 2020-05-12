@@ -7,5 +7,7 @@ data class LoginRequest(
     @SerializedName("MobileNumber")
     var mobileNumber: String? = "",
     @SerializedName("Password")
-    var password: String? = ""
+    var password: String? = "",
+    @SerializedName("FirebaseToken")
+    var firebaseToken: String? = ""
 )

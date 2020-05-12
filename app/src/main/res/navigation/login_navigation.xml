@@ -86,6 +86,26 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_resetPasswordForm"
+        android:name="com.ajkerdeal.app.essential.ui.auth.ResetPasswordFormFragment"
+        android:label="Password Reset Form"
+        tools:layout="@layout/fragment_reset_password_form">
+
+        <action
+            android:id="@+id/action_resetPasswordForm_login"
+            app:destination="@id/nav_login"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+
+            app:popUpTo="@id/nav_login"
+            app:popUpToInclusive="false"
+            />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_OTPVerify"
         android:name="com.ajkerdeal.app.essential.ui.auth.OTPVerifyFragment"
         android:label="OTP Verify"
@@ -101,6 +121,16 @@
 
             app:popUpTo="@id/nav_login"
             app:popUpToInclusive="false"
+            />
+
+        <action
+            android:id="@+id/action_OTPVerify_resetPasswordForm"
+            app:destination="@id/nav_resetPasswordForm"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+
             />
 
     </fragment>

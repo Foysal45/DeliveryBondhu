@@ -12,9 +12,10 @@ data class PodOrderRequest(
     var count: Int = 20,
     @SerializedName("StatusId")
     var statusId: String = "-1",
+    @SerializedName("DtStatusId")
+    var dtStatusId: String = "-1",
     @SerializedName("PodNumber")
     var podNumber: String = "-1",
     @SerializedName("Flag")
     var flag: Int = 0
-
 )

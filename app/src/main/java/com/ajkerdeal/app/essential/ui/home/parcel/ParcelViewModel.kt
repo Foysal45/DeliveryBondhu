@@ -27,9 +27,9 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
     val pagingState = MutableLiveData<PagingModel<MutableList<PodWiseData>>>()
     val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, statusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
+    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
 
-        val requestBody = PodOrderRequest(SessionManager.userId.toString(), index, count, statusId = statusId)
+        val requestBody = PodOrderRequest(SessionManager.userId.toString(), index, count, statusId = statusId, dtStatusId = dtStatusId)
         when (type) {
             is SearchType.Product -> requestBody.podNumber = searchKey
         }
@@ -48,9 +48,9 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
                                 } else {
                                     if (index == 0) {
                                         Timber.d("Init data loaded")
-                                        pagingState.value = PagingModel(true, response.body.data!!.podWiseDataModel!!.toMutableList())
+                                        pagingState.value = PagingModel(true, response.body.data!!.totalCount, response.body.data!!.podWiseDataModel!!.toMutableList())
                                     } else {
-                                        pagingState.value = PagingModel(false, response.body.data!!.podWiseDataModel!!.toMutableList())
+                                        pagingState.value = PagingModel(false, response.body.data!!.totalCount, response.body.data!!.podWiseDataModel!!.toMutableList())
                                     }
                                 }
                             } else {

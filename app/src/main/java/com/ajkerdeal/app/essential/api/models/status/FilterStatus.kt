@@ -8,6 +8,8 @@ data class FilterStatus(
     var statusName: String? = "",
     @SerializedName("Status")
     var status: String = "-1",
+    @SerializedName("DtStatus")
+    var dtStatus: String = "-1",
     @SerializedName("Flag")
     var flag: Int = 0
 )

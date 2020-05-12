@@ -14,6 +14,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
+import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.bumptech.glide.Glide
@@ -21,9 +23,15 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class FCMService : FirebaseMessagingService() {
+
+    private val repository: AppRepository by inject()
 
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
@@ -129,6 +137,10 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
+
         SessionManager.firebaseToken = p0
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.updateFirebaseToken(UpdateTokenRequest(SessionManager.userId, p0))
+        }
     }
 }

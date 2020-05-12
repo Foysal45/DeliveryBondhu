@@ -29,6 +29,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     val districtId = MutableLiveData<Int>(0)
     val thanaId = MutableLiveData<Int>(0)
     val otpCode = MutableLiveData<String>("")
+    val firebaseToken = MutableLiveData<String>("")
 
     val progress = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
@@ -46,6 +47,10 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         sendOTP(userId.value ?: "")
     }
 
+    fun onResetPasswordForm(view: View) {
+        //sendOTP(userId.value ?: "")
+    }
+
     fun onOTPSubmit(view: View) {
         verifyOTP(userId.value ?: "", otpCode.value ?: "")
     }
@@ -60,7 +65,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
 
-            val response = repository.authUser(LoginRequest(userId.value, password.value))
+            val response = repository.authUser(LoginRequest(userId.value, password.value, firebaseToken.value))
             progress.postValue(false)
             when (response) {
                 is NetworkResponse.Success -> {

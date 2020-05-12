@@ -32,6 +32,18 @@
 
             />
 
+        <ImageView
+            android:id="@+id/paymentType"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/cd"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ic_pay"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
         <TextView
             android:id="@+id/productName"
             android:layout_width="0dp"
@@ -39,9 +51,9 @@
             android:layout_marginStart="@dimen/margin_from_product_image"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/black_90"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/paymentType"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)" />
@@ -54,7 +66,7 @@
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/black_80"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@id/orderStatus"
             app:layout_constraintStart_toEndOf="@id/barrier"
@@ -73,7 +85,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
-            android:textColor="@color/black_70"
+            android:textColor="@color/text_primary"
             android:textSize="12sp"
             android:visibility="gone"
             android:maxLines="1"
@@ -105,7 +117,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
-                android:textColor="@color/button_action_text_gry"
+                android:textColor="@color/text_primary"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/phoneShop"

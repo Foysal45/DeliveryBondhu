@@ -25,7 +25,7 @@ data class OrderModel(
     @SerializedName("MerchantId")
     var merchantId: Int = 0,
     @SerializedName("DealId")
-    var dealId: Int = 0,
+    var dealId: String = "0",
     @SerializedName("DeliveryDate")
     var deliveryDate: String? = "",
     @SerializedName("CommentedBy")

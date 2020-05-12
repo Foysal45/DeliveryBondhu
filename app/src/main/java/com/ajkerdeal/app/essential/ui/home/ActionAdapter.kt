@@ -41,22 +41,22 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.actionBtn.text = model.actionMessage
                 holder.binding.actionBtn.backgroundTintList = ColorStateList.valueOf(Color.parseColor(model.colorCode))
 
+                //val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.white))
                 if (model.actionType == 1) {
 
-                    val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.white))
                     with(holder.binding.actionBtn) {
-                        setTextColor(colorText)
+                        //setTextColor(colorText)
                         icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_done)
-                        iconTint = colorText
+                        //iconTint = colorText
                     }
 
                 } else if (model.actionType == 2) {
 
-                    val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.button_action_text_gry))
+                    //val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.button_action_text_gry))
                     with(holder.binding.actionBtn) {
-                        setTextColor(colorText)
+                        //setTextColor(colorText)
                         icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_close)
-                        iconTint = colorText
+                        //iconTint = colorText
                     }
 
                 }

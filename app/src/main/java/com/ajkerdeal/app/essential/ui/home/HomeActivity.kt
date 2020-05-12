@@ -16,12 +16,15 @@ import com.ajkerdeal.app.essential.utils.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private var doubleBackToExitPressedOnce = false
+
+    private val viewModel: HomeActivityViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,5 +83,14 @@ class HomeActivity : AppCompatActivity() {
 
         // point is inside view bounds
         return ((x > viewX && x < (viewX + view.width)) && (y > viewY && y < (viewY + view.height)))
+    }
+
+    fun logout() {
+
+        viewModel.clearFirebaseToken(SessionManager.userId)
+        SessionManager.clearSession()
+        val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
