@@ -15,9 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
+import com.ajkerdeal.app.essential.ui.dialog.CollectionAdapter
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -75,6 +77,7 @@ class OrderListFragment : Fragment() {
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
+            var collectionPointAvailable = 0
 
             if (orderModel != null) {
 
@@ -92,6 +95,7 @@ class OrderListFragment : Fragment() {
                 }
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
+                collectionPointAvailable = actionModel.collectionPointAvailable
 
             } else {
 
@@ -113,12 +117,36 @@ class OrderListFragment : Fragment() {
                 instructions = model.collectionSource?.sourceMessageData?.instructions
             }
 
-            if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody)
+            /*if (instructions.isNullOrEmpty()) {
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                })
             } else {
                 orderDialog(instructions) {
-                    viewModel.updateOrderStatus(requestBody)
+                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
+                    })
                 }
+            }*/
+
+            if (collectionPointAvailable == 1) {
+                collectionDialog(orderModel?.couponId?.toIntOrNull() ?: 0, orderModel?.collectionPointId ?: 0) {
+                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
+                    })
+                }
+            } else {
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                })
             }
 
         }
@@ -166,7 +194,9 @@ class OrderListFragment : Fragment() {
                             dtStatus = selectedDTStatus
                             dataAdapter.clearData()
                             Timber.d("loadOrderOrSearch called from filter spinner")
+                        binding.appBarLayout.countTV.text = "০টি"
                             viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+
                         //}
                     }
                 }
@@ -198,7 +228,10 @@ class OrderListFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                         }
                     }
-
+                }
+                is ViewState.EmptyViewState -> {
+                    dataAdapter.clearData()
+                    binding.appBarLayout.countTV.text = "০টি"
                 }
             }
         })
@@ -215,12 +248,13 @@ class OrderListFragment : Fragment() {
                     searchKey = "-1"
                     binding.appBarLayout.searchET.text.clear()
                     binding.appBarLayout.chipsGroup.visibility = View.GONE
+                    binding.appBarLayout.countTV.text = "০টি"
                     viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus)
                 }
                 binding.appBarLayout.searchKey.setOnCloseIconClickListener {
                     binding.appBarLayout.searchKey.performClick()
                 }
-
+                binding.appBarLayout.countTV.text = "০টি"
                 viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
@@ -321,6 +355,39 @@ class OrderListFragment : Fragment() {
         negativeBtn.setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun collectionDialog( couponId: Int, collectionPoint: Int = 0, listener: ((type: Int) -> Unit)? = null) {
+
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_collection, null)
+        builder.setView(view)
+        val body: TextView = view.findViewById(R.id.body)
+        val positiveBtn: TextView = view.findViewById(R.id.positiveBtn)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+
+        val collectionAdapter = CollectionAdapter()
+        with(recyclerView) {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = collectionAdapter
+        }
+        val dialog = builder.create()
+        //dialog.show()
+        positiveBtn.setOnClickListener {
+            dialog.dismiss()
+            listener?.invoke(0)
+        }
+
+        viewModel.loadCollectionList(couponId, collectionPoint).observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                collectionAdapter.loadData(it as MutableList<CollectionData>)
+                dialog.show()
+            } else {
+                listener?.invoke(0)
+            }
+        })
+
     }
 
     private fun pictureDialog(model: OrderModel, listener: ((type: Int) -> Unit)? = null) {

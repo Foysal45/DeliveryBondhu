@@ -13,5 +13,7 @@ data class Action(
     @SerializedName("StatusMessage")
     var statusMessage: String? = "",
     @SerializedName("ColorCode")
-    var colorCode: String = "#FFFFFF"
+    var colorCode: String = "#FFFFFF",
+    @SerializedName("CollectionPointAvailable")
+    var collectionPointAvailable: Int = 0
 )

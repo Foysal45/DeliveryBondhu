@@ -5,6 +5,7 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
+import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
@@ -28,6 +29,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterface.updateStatus(requestBody)
 
     suspend fun loadOrderPodWiseList(requestBody: PodOrderRequest) = apiInterface.loadOrderPodWiseList(requestBody)
+
+    suspend fun loadCollectionList(requestBody: CollectionRequest) = apiInterface.loadCollectionList(requestBody)
 
     suspend fun getDistrictList(id: Int) = apiInterface.getDistrictList(id)
 }

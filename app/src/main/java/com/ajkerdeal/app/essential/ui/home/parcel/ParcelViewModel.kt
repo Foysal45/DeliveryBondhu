@@ -79,11 +79,12 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
         }
     }
 
-    fun updateOrderStatus(requestBody: MutableList<StatusUpdateModel>) {
+    fun updateOrderStatus(requestBody: MutableList<StatusUpdateModel>): LiveData<Boolean> {
 
         //val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
         //val model = StatusUpdateModel()
         //requestBody.add(model)
+        val responseLive = MutableLiveData<Boolean>()
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.orderStatusUpdate(requestBody)
@@ -95,7 +96,8 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
                             //val message = "স্টেটাস আপডেট হয়েছে"
                             val message = response.body.message
                             viewState.value = ViewState.ShowMessage(message)
-                            loadOrderOrSearch()
+                            //loadOrderOrSearch()
+                            responseLive.value = true
                         } else {
                             viewState.value = ViewState.ShowMessage(response.body.message)
                         }
@@ -117,6 +119,7 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
             }
 
         }
+        return responseLive
     }
 
     fun loadFilterStatus(): LiveData<MutableList<FilterStatus>> {

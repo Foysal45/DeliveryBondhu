@@ -8,6 +8,8 @@ import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
+import com.ajkerdeal.app.essential.api.models.collection.CollectionData
+import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
@@ -54,6 +56,9 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/LoadOrderPodWise")
     suspend fun loadOrderPodWiseList(@Body requestBody: PodOrderRequest): NetworkResponse<ResponseHeader<PodOrderResponse>, ErrorResponse>
+
+    @POST("api/SelfDelivery/LoadCollectionProduct")
+    suspend fun loadCollectionList(@Body requestBody: CollectionRequest): NetworkResponse<ResponseHeader<List<CollectionData>>, ErrorResponse>
 
     @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>

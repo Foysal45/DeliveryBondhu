@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
+import com.ajkerdeal.app.essential.api.models.collection.CollectionData
+import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
@@ -59,10 +61,12 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                         } else {
                             viewState.value = ViewState.EmptyViewState()
                         }
+
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
                         viewState.value = ViewState.ShowMessage(message)
+
                     }
                     is NetworkResponse.NetworkError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
@@ -79,11 +83,13 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun updateOrderStatus(requestBody: MutableList<StatusUpdateModel>) {
+    fun updateOrderStatus(requestBody: MutableList<StatusUpdateModel>): LiveData<Boolean> {
 
         //val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
         //val model = StatusUpdateModel()
         //requestBody.add(model)
+        val responseLive = MutableLiveData<Boolean>()
+
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.orderStatusUpdate(requestBody)
@@ -95,7 +101,8 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                             //val message = "স্টেটাস আপডেট হয়েছে"
                             val message = response.body.message
                             viewState.value = ViewState.ShowMessage(message)
-                            loadOrderOrSearch()
+                            //loadOrderOrSearch()
+                            responseLive.value = true
                         } else {
                             viewState.value = ViewState.ShowMessage(response.body.message)
                         }
@@ -117,6 +124,7 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
             }
 
         }
+        return responseLive
     }
 
     fun loadFilterStatus(): LiveData<MutableList<FilterStatus>> {
@@ -146,6 +154,42 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
 
         }
         return filterStatusList
+    }
+
+    fun loadCollectionList(couponId: Int, collectionPointId: Int): LiveData<List<CollectionData>> {
+
+        val responseLive = MutableLiveData<List<CollectionData>>()
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.loadCollectionList(CollectionRequest(couponId, SessionManager.userId, collectionPointId))
+            withContext(Dispatchers.Main) {
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        viewState.value = ViewState.ProgressState(false)
+                        if (response.body.data != null) {
+                            responseLive.value = response.body.data!!
+                        } else {
+                            responseLive.value = listOf()
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+
+        }
+        return responseLive
     }
 
 }

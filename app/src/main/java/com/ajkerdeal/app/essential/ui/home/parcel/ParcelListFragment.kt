@@ -98,10 +98,18 @@ class ParcelListFragment : Fragment() {
 
             instructions = model.customerMessageData?.instructions
             if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody)
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                })
             } else {
                 orderDialog(instructions) {
-                    viewModel.updateOrderStatus(requestBody)
+                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
+                    })
                 }
             }
         }
@@ -148,10 +156,18 @@ class ParcelListFragment : Fragment() {
             }
 
             if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody)
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                })
             } else {
                 orderDialog(instructions!!) {
-                    viewModel.updateOrderStatus(requestBody)
+                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
+                    })
                 }
             }
 
@@ -226,7 +242,10 @@ class ParcelListFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                         }
                     }
-
+                }
+                is ViewState.EmptyViewState -> {
+                    dataAdapter.clearData()
+                    binding.appBarLayout.countTV.text = "০টি"
                 }
             }
         })

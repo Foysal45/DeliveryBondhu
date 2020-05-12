@@ -32,6 +32,8 @@ data class OrderModel(
     var commentedBy: Int = 0,
     @SerializedName("PODNumber")
     var pODNumber: String? = "",
+    @SerializedName("CollectionPointId")
+    var collectionPointId: Int = 0,
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),
 
