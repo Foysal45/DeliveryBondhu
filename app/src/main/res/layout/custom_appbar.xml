@@ -190,25 +190,28 @@
                         tools:text="search key" />
                 </com.google.android.material.chip.ChipGroup>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/countLayout"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:background="@color/white"
-                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chipsGroup">
 
                     <TextView
+                        android:id="@+id/total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="মোট অর্ডারঃ"
+                        android:text="মোটঃ"
                         android:textColor="@color/black_90"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        />
 
                     <TextView
                         android:id="@+id/countTV"
@@ -216,9 +219,32 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorAccent"
                         android:textSize="14sp"
-                        android:text="০টি" />
+                        android:text="০টি"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/total"
+                        android:layout_marginStart="8dp"
+                        />
 
-                </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/collectionPointSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="কালেকশন পয়েন্ট"
+                        android:textColor="@color/black_90"
+                        android:textSize="14sp"
+                        app:switchPadding="8dp"
+
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>

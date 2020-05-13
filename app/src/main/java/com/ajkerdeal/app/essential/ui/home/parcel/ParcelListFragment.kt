@@ -87,7 +87,7 @@ class ParcelListFragment : Fragment() {
                         orderDate = orderModel.orderDate ?: ""
                         merchantId = orderModel.merchantId
                         dealId = orderModel.dealId.toIntOrNull() ?: 0
-                        customerId = orderCustomer.customerId.toIntOrNull() ?: 0
+                        customerId = orderModel.customerId?.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
@@ -127,7 +127,7 @@ class ParcelListFragment : Fragment() {
                     orderDate = orderModel.orderDate ?: ""
                     merchantId = orderModel.merchantId
                     dealId = orderModel.dealId.toIntOrNull() ?: 0
-                    customerId = orderCustomer.customerId.toIntOrNull() ?: 0
+                    customerId = orderModel.customerId?.toIntOrNull() ?: 0
                     deliveryDate = orderModel.deliveryDate ?: ""
                     commentedBy = SessionManager.userId
                     pODNumber = orderModel.pODNumber ?: ""
@@ -145,7 +145,7 @@ class ParcelListFragment : Fragment() {
                         orderDate = orderModel.orderDate ?: ""
                         merchantId = orderModel.merchantId
                         dealId = orderModel.dealId.toIntOrNull() ?: 0
-                        customerId = orderCustomer.customerId.toIntOrNull() ?: 0
+                        customerId = orderModel.customerId?.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""

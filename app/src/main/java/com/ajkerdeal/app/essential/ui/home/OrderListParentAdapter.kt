@@ -36,8 +36,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             val model = dataList[position]
 
-            holder.binding.customerName.text = model.customerName
-            holder.binding.customerAddress.text = model.customerAddress
+            holder.binding.customerName.text = model.name
+            holder.binding.customerAddress.text = model.address
 
             if (model.state) {
                 val currentRotation = holder.binding.indicator.rotation
@@ -122,7 +122,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.phone.setOnClickListener {
-                onCall?.invoke(dataList[adapterPosition].customerMobileNumber)
+                onCall?.invoke(dataList[adapterPosition].mobileNumber)
             }
 
             if (isChildView) {

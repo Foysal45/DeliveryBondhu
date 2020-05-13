@@ -4,14 +4,14 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class OrderCustomer(
-    @SerializedName("CustomerId")
-    var customerId: String = "0",
-    @SerializedName("CustomerName")
-    var customerName: String? = "",
-    @SerializedName("CustomerMobileNumber")
-    var customerMobileNumber: String? = "",
-    @SerializedName("CustomerAddress")
-    var customerAddress: String? = "",
+    @SerializedName("Id")
+    var id: String = "0",
+    @SerializedName("Name")
+    var name: String? = "",
+    @SerializedName("MobileNumber")
+    var mobileNumber: String? = "",
+    @SerializedName("Address")
+    var address: String? = "",
     @SerializedName("DeliveryCommission")
     var deliveryCommission: Int = 0,
     @SerializedName("TotalOrder")

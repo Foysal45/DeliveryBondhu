@@ -45,6 +45,7 @@ class OrderListFragment : Fragment() {
     private var searchKey: String = "-1"
     private var filterStatus: String = "-1"
     private var dtStatus: String = "-1"
+    private var collectionFlag: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -88,7 +89,7 @@ class OrderListFragment : Fragment() {
                     orderDate = orderModel.orderDate ?: ""
                     merchantId = orderModel.merchantId
                     dealId = orderModel.dealId.toIntOrNull() ?: 0
-                    customerId = model.customerId.toIntOrNull() ?: 0
+                    customerId = orderModel.customerId?.toIntOrNull() ?: 0
                     deliveryDate = orderModel.deliveryDate ?: ""
                     commentedBy = SessionManager.userId
                     pODNumber = orderModel.pODNumber ?: ""
@@ -107,7 +108,7 @@ class OrderListFragment : Fragment() {
                         orderDate = orderModel.orderDate ?: ""
                         merchantId = orderModel.merchantId
                         dealId = orderModel.dealId.toIntOrNull() ?: 0
-                        customerId = model.customerId.toIntOrNull() ?: 0
+                        customerId = orderModel.customerId?.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
@@ -117,37 +118,39 @@ class OrderListFragment : Fragment() {
                 instructions = model.collectionSource?.sourceMessageData?.instructions
             }
 
+            viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                if (it) {
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                }
+            })
+
             /*if (instructions.isNullOrEmpty()) {
                 viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
                     if (it) {
-                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                     }
                 })
             } else {
                 orderDialog(instructions) {
                     viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
                         if (it) {
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                         }
                     })
                 }
             }*/
 
-            if (collectionPointAvailable == 1) {
+            /*if (collectionPointAvailable == 1) {
                 collectionDialog(orderModel?.couponId?.toIntOrNull() ?: 0, orderModel?.collectionPointId ?: 0) {
                     viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
                         if (it) {
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                         }
                     })
                 }
             } else {
-                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                    }
-                })
-            }
+
+            }*/
 
         }
         dataAdapter.onPictureClicked = {orderModel ->
@@ -186,6 +189,12 @@ class OrderListFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
+                    if (position == 0) {
+                        binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
+                    } else {
+                        binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
+                    }
+
                     if (position in 0..filterList.size) {
                         val selectedStatus = filterList[position].status
                         val selectedDTStatus = filterList[position].dtStatus
@@ -195,7 +204,7 @@ class OrderListFragment : Fragment() {
                             dataAdapter.clearData()
                             Timber.d("loadOrderOrSearch called from filter spinner")
                         binding.appBarLayout.countTV.text = "০টি"
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
 
                         //}
                     }
@@ -249,13 +258,13 @@ class OrderListFragment : Fragment() {
                     binding.appBarLayout.searchET.text.clear()
                     binding.appBarLayout.chipsGroup.visibility = View.GONE
                     binding.appBarLayout.countTV.text = "০টি"
-                    viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus)
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus)
                 }
                 binding.appBarLayout.searchKey.setOnCloseIconClickListener {
                     binding.appBarLayout.searchKey.performClick()
                 }
                 binding.appBarLayout.countTV.text = "০টি"
-                viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
@@ -263,7 +272,7 @@ class OrderListFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
             Timber.d("loadOrderOrSearch called from swipe refresh")
-            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             /*binding.searchET.text.clear()
             if (binding.chipsGroup.visibility == View.VISIBLE) {
                 binding.chipsGroup.visibility = View.GONE
@@ -281,7 +290,7 @@ class OrderListFragment : Fragment() {
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
-                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, flag = collectionFlag, searchKey = searchKey, type = SearchType.Product)
                     }
                 }
             }
@@ -305,11 +314,10 @@ class OrderListFragment : Fragment() {
             (activity as HomeActivity).logout()
         }
 
-        /*binding.title.setOnClickListener {
-            orderDialog("Message Body", 1) { type ->
-                requireContext().toast(getString(R.string.development))
-            }
-        }*/
+        binding.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            collectionFlag = if (isChecked) 1 else 0
+            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+        }
 
         binding.appBarLayout.backBtn.setOnClickListener {
             activity?.onBackPressed()
@@ -322,7 +330,7 @@ class OrderListFragment : Fragment() {
         //Timber.d("onStart called")
         if (filterStatus != "-1") {
             Timber.d("loadOrderOrSearch called from onStart")
-            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
         }
     }
 

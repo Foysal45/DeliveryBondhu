@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#322E7F</color>
     <color name="colorAccent">#E86324</color>
 
-    <color name="launcher">#FFFFFF</color>
+    <color name="launcher">@color/colorPrimary</color>
     <color name="white">#FFFFFF</color>
     <color name="separator">#EFEFEF</color>
     <color name="separator1">#ECECEC</color>
