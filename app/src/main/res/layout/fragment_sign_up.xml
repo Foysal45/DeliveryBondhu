@@ -155,7 +155,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:background="@color/white"
-                            android:hint="বর্তমান কর্ম স্থান"
+                            android:hint="বর্তমান কর্মস্থান"
                             android:paddingStart="16dp"
                             android:paddingTop="8dp"
                             android:paddingEnd="16dp"

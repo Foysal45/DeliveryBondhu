@@ -189,12 +189,6 @@ class OrderListFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                    if (position == 0) {
-                        binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
-                    } else {
-                        binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
-                    }
-
                     if (position in 0..filterList.size) {
                         val selectedStatus = filterList[position].status
                         val selectedDTStatus = filterList[position].dtStatus
@@ -203,10 +197,22 @@ class OrderListFragment : Fragment() {
                             dtStatus = selectedDTStatus
                             dataAdapter.clearData()
                             Timber.d("loadOrderOrSearch called from filter spinner")
+
+
+                        val collectionSwitchFlag = filterList[position].collectionFilter
+                        if (collectionSwitchFlag == 1) {
+                            binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
+                        } else {
+                            binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
+                            collectionFlag = 0
+                            binding.appBarLayout.collectionPointSwitch.isChecked = false
+                        }
+
                         binding.appBarLayout.countTV.text = "০টি"
                             viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
 
                         //}
+
                     }
                 }
             }
@@ -315,8 +321,11 @@ class OrderListFragment : Fragment() {
         }
 
         binding.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            val previousFlag = collectionFlag
             collectionFlag = if (isChecked) 1 else 0
-            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            if (previousFlag != collectionFlag) {
+                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            }
         }
 
         binding.appBarLayout.backBtn.setOnClickListener {

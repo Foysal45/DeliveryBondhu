@@ -11,5 +11,7 @@ data class FilterStatus(
     @SerializedName("DtStatus")
     var dtStatus: String = "-1",
     @SerializedName("Flag")
-    var flag: Int = 0
+    var flag: Int = 0,
+    @SerializedName("CollectionFilter")
+    var collectionFilter: Int = 0
 )
