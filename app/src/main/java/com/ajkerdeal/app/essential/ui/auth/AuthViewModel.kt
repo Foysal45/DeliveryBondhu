@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
 import com.ajkerdeal.app.essential.repository.AppRepository
@@ -30,6 +31,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     val thanaId = MutableLiveData<Int>(0)
     val otpCode = MutableLiveData<String>("")
     val firebaseToken = MutableLiveData<String>("")
+    var deliveryUserId: Int = 0
 
     val progress = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
@@ -44,7 +46,8 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     }
 
     fun onResetPassword(view: View) {
-        sendOTP(userId.value ?: "")
+        //sendOTP(userId.value ?: "")
+        checkMobile(userId.value ?: "")
     }
 
     fun onResetPasswordForm(view: View) {
@@ -222,6 +225,51 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
             }
         }
         return locationModel
+    }
+
+    fun checkMobile(mobile: String?) {
+
+        viewState.value = ViewState.KeyboardState()
+
+        if (mobile.isNullOrEmpty() || mobile?.length != 11) {
+            val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.checkMobileNumber(CheckMobileRequest(mobile))
+            withContext(Dispatchers.Main) {
+                when (response) {
+                    is NetworkResponse.Success -> {
+
+                            if (response.body.data?.deliveryUserId == 0) {
+                                deliveryUserId = 0
+                            } else {
+                                deliveryUserId = response.body.data?.deliveryUserId ?: 0
+                                val message = response.body.data?.message
+                                viewState.value = ViewState.ShowMessage(message)
+                                //viewState.value = ViewState.NextState()
+                                sendOTP(userId.value ?: "")
+                            }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+        }
+
     }
 
     fun sendOTP(mobile: String?) {

@@ -69,4 +69,9 @@
         <item name="android:scrollbarAlwaysDrawVerticalTrack">false</item>
     </style>
 
+    <style name="TabLayoutTextStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

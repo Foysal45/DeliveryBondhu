@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.tabs.TabLayout
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -45,7 +46,7 @@ class OrderListFragment : Fragment() {
     private var searchKey: String = "-1"
     private var filterStatus: String = "-1"
     private var dtStatus: String = "-1"
-    private var collectionFlag: Int = 0
+    private var collectionFlag: Int = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -201,14 +202,19 @@ class OrderListFragment : Fragment() {
 
                         val collectionSwitchFlag = filterList[position].collectionFilter
                         if (collectionSwitchFlag == 1) {
-                            binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
+                            //binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
+                            binding.appBarLayout.tabLayout.visibility = View.VISIBLE
+                            collectionFlag = 1
                         } else {
-                            binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
+                            //binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
+                            binding.appBarLayout.tabLayout.visibility = View.GONE
                             collectionFlag = 0
-                            binding.appBarLayout.collectionPointSwitch.isChecked = false
+                            //binding.appBarLayout.collectionPointSwitch.isChecked = false
+                            binding.appBarLayout.tabLayout.getTabAt(0)?.select()
                         }
 
-                        binding.appBarLayout.countTV.text = "০টি"
+                        dataAdapter.isCollectionPoint = collectionFlag
+                        //binding.appBarLayout.countTV.text = "০টি"
                             viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
 
                         //}
@@ -320,17 +326,43 @@ class OrderListFragment : Fragment() {
             (activity as HomeActivity).logout()
         }
 
-        binding.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        /*binding.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             val previousFlag = collectionFlag
             collectionFlag = if (isChecked) 1 else 0
             if (previousFlag != collectionFlag) {
                 viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             }
-        }
+        }*/
 
         binding.appBarLayout.backBtn.setOnClickListener {
             activity?.onBackPressed()
         }
+
+        binding.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+
+                val previousFlag = collectionFlag
+                collectionFlag = when(tab?.position) {
+                    0 -> {
+                        dataAdapter.isCollectionPoint = 1
+                        1
+                    }
+                    1 -> {
+                        dataAdapter.isCollectionPoint = 0
+                        0
+                    }
+                    else -> 0
+                }
+
+                if (previousFlag != collectionFlag) {
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                }
+            }
+        })
 
     }
 

@@ -6,6 +6,8 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.collection.CollectionData
@@ -39,11 +41,17 @@ interface ApiInterface {
     @POST("api/SelfDelivery/SignUp")
     suspend fun signUp(@Body requestBody: SignUpRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
+    @POST("api/SelfDelivery/SearchByMobileNo")
+    suspend fun checkMobileNumber(@Body requestBody: CheckMobileRequest): NetworkResponse<ResponseHeader<LoginResponse>, ErrorResponse>
+
     @POST("Recover/RetrivePassword/deliverybondhu")
     suspend fun sendOTP(@Body requestBody: OTPSendRequest): NetworkResponse<ResponseHeader<String>, ErrorResponse>
 
     @GET("Recover/CheckOTP/{customerId}/{OTPCode}")
     suspend fun verifyOTP(@Path("customerId") customerId: String, @Path("OTPCode") OTPCode: String): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
+
+    @POST("api/SelfDelivery/UpdatePassword")
+    suspend fun updatePassword(@Body requestBody: UpdatePasswordRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
     @POST("api/SelfDelivery/UpdateFirebaseToken")
     suspend fun updateFirebaseToken(@Body requestBody: UpdateTokenRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>

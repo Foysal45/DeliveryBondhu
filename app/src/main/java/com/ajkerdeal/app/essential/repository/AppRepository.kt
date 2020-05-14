@@ -4,6 +4,8 @@ import com.ajkerdeal.app.essential.api.ApiInterface
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
@@ -16,9 +18,13 @@ class AppRepository(private val apiInterface: ApiInterface) {
 
     suspend fun signUpUser(requestBody: SignUpRequest) = apiInterface.signUp(requestBody)
 
+    suspend fun checkMobileNumber(requestBody: CheckMobileRequest) = apiInterface.checkMobileNumber(requestBody)
+
     suspend fun sendOTP(requestBody: OTPSendRequest) = apiInterface.sendOTP(requestBody)
 
     suspend fun verifyOTP(customerId: String, OTPCode: String) = apiInterface.verifyOTP(customerId, OTPCode)
+
+    suspend fun updatePassword(requestBody: UpdatePasswordRequest) = apiInterface.updatePassword(requestBody)
 
     suspend fun updateFirebaseToken(requestBody: UpdateTokenRequest) = apiInterface.updateFirebaseToken(requestBody)
 

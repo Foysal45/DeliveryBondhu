@@ -22,6 +22,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var isChildView: Boolean = false
+    var isCollectionPoint: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -108,7 +109,11 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 onPictureClicked?.invoke(model)
             }
 
-
+            if (isCollectionPoint == 1) {
+                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call_2))
+            }else {
+                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call))
+            }
         }
     }
 
@@ -129,6 +134,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.parent.context, R.color.childColor))
                 binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.separator.context, R.color.separator_gray))
             }
+
+            /*if (isCollectionPoint == 1) {
+                binding.phone.setImageDrawable(ContextCompat.getDrawable(binding.phone.context, R.drawable.ic_call_1))
+            }else {
+                binding.phone.setImageDrawable(ContextCompat.getDrawable(binding.phone.context, R.drawable.ic_call))
+            }*/
         }
 
     }
