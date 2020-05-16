@@ -8,6 +8,8 @@ data class OrderCustomer(
     var id: String = "0",
     @SerializedName("Name")
     var name: String? = "",
+    @SerializedName("District")
+    var district: String? = "",
     @SerializedName("MobileNumber")
     var mobileNumber: String? = "",
     @SerializedName("Address")

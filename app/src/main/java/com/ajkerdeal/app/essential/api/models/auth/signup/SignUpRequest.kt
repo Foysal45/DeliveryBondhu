@@ -15,5 +15,9 @@ data class SignUpRequest(
     @SerializedName("DistrictId")
     var districtId: Int = 0,
     @SerializedName("ThanaId")
-    var thanaId: Int = 0
+    var thanaId: Int = 0,
+    @SerializedName("PostCode")
+    var postCode: Int = 0,
+    @SerializedName("IsActive")
+    var isActive: Int = 0
 )

@@ -43,13 +43,14 @@ class ResetPasswordFormFragment : Fragment() {
                     hideKeyboard()
                 }
                 is ViewState.NextState -> {
-                    findNavController().navigate(R.id.action_resetPassword_OTPVerify)
+                    findNavController().navigate(R.id.action_resetPasswordForm_login)
                 }
             }
         })
     }
 
     override fun onDestroyView() {
+        viewModel.clearResetPasswordForm()
         super.onDestroyView()
         binding?.unbind()
         binding = null

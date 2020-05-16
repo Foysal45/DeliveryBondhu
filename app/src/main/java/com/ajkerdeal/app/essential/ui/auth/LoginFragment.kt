@@ -69,6 +69,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        viewModel.clearLogin()
         super.onDestroyView()
         binding?.unbind()
         binding = null

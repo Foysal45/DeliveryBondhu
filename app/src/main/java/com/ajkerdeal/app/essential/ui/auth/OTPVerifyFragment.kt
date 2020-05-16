@@ -42,7 +42,11 @@ class OTPVerifyFragment : Fragment() {
                     hideKeyboard()
                 }
                 is ViewState.NextState -> {
-                    findNavController().navigate(R.id.action_OTPVerify_login)
+                    if (state.type == 1) {
+                        findNavController().navigate(R.id.action_OTPVerify_resetPasswordForm)
+                    } else if (state.type == 2) {
+                        findNavController().navigate(R.id.action_OTPVerify_login)
+                    }
                 }
             }
         })

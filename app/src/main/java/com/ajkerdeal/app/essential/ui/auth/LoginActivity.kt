@@ -15,6 +15,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private var doubleBackToExitPressedOnce = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

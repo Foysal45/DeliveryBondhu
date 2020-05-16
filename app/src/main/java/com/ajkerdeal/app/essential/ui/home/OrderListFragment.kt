@@ -121,25 +121,12 @@ class OrderListFragment : Fragment() {
 
             viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
                 if (it) {
+                    if (!instructions.isNullOrEmpty()) {
+                        orderDialog(instructions!!)
+                    }
                     viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                 }
             })
-
-            /*if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                    }
-                })
-            } else {
-                orderDialog(instructions) {
-                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                        }
-                    })
-                }
-            }*/
 
             /*if (collectionPointAvailable == 1) {
                 collectionDialog(orderModel?.couponId?.toIntOrNull() ?: 0, orderModel?.collectionPointId ?: 0) {
@@ -149,8 +136,6 @@ class OrderListFragment : Fragment() {
                         }
                     })
                 }
-            } else {
-
             }*/
 
         }

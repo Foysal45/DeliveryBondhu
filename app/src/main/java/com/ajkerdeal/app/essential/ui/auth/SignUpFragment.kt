@@ -17,7 +17,7 @@ import org.koin.android.ext.android.inject
 
 class SignUpFragment : Fragment() {
 
-    private lateinit var binding: FragmentSignUpBinding
+    private var binding: FragmentSignUpBinding? = null
 
     private val viewModel: AuthViewModel by inject()
 
@@ -37,8 +37,8 @@ class SignUpFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
+        binding?.lifecycleOwner = viewLifecycleOwner
+        binding?.viewModel = viewModel
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -55,70 +55,72 @@ class SignUpFragment : Fragment() {
             }
         })
 
-        binding.registration.setOnClickListener {
+        binding?.registration?.setOnClickListener {
             activity?.onBackPressed()
         }
 
+        binding?.districtET?.setOnClickListener {
 
-
-        binding.districtET.setOnClickListener {
-
-            binding.districtET.isEnabled = false
-            binding.thanaProgress.visibility = View.VISIBLE
+            binding?.districtET?.isEnabled = false
+            binding?.thanaProgress?.visibility = View.VISIBLE
             viewModel.loadLocationList().observe(viewLifecycleOwner, Observer { response ->
 
                 val districtModelList = response.districtInfo
                 val districtNameList = districtModelList.map { it.districtBng }
-                binding.thanaProgress.visibility = View.GONE
+                binding?.thanaProgress?.visibility = View.GONE
 
                 val dialog = LocationSelectionDialog.newInstance(districtNameList as MutableList<String>)
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
                 dialog.onLocationPicked = { position, value ->
                     //context?.toast(value)
                     districtName = value
-                    binding.districtET.text = value
+                    binding?.districtET?.text = value
                     if (position in 0..districtModelList.size) {
                         districtId = districtModelList[position].districtId
                         viewModel.districtId.value = districtId
                         viewModel.address.value = districtName
-                        binding.thanaLayout.visibility = View.VISIBLE
+                        binding?.thanaLayout?.visibility = View.VISIBLE
                     }
                 }
 
-                binding.districtET.isEnabled = true
+                binding?.districtET?.isEnabled = true
             })
         }
 
-        binding.thanaET.setOnClickListener {
+        binding?.thanaET?.setOnClickListener {
 
-            binding.thanaET.isEnabled = false
-            binding.thanaProgress.visibility = View.VISIBLE
+            binding?.thanaET?.isEnabled = false
+            binding?.thanaProgress?.visibility = View.VISIBLE
             viewModel.loadLocationList(districtId).observe(viewLifecycleOwner, Observer { response ->
 
                 val thanaModelList = response.districtInfo[0].thanaHome
                 val thanaNameList = thanaModelList.map { it.thanaBng }
-                binding.thanaProgress.visibility = View.GONE
+                binding?.thanaProgress?.visibility = View.GONE
 
                 val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
                 dialog.onLocationPicked = { position, value ->
                     //context?.toast(value)
                     thanaName = value
-                    binding.thanaET.text = value
+                    binding?.thanaET?.text = value
                     if (position in 0..thanaModelList.size) {
-                        thanaId = thanaModelList[position].thanaId
+                        val model = thanaModelList[position]
+                        thanaId = model.thanaId
                         viewModel.thanaId.value = thanaId
+                        viewModel.postCode.value = model.postalCode.toIntOrNull() ?: 0
                         viewModel.address.value = "$thanaName, $districtName"
                     }
                 }
 
-                binding.thanaET.isEnabled = true
+                binding?.thanaET?.isEnabled = true
             })
         }
     }
 
     override fun onDestroyView() {
+        viewModel.clearSignUp()
         super.onDestroyView()
-        binding.unbind()
+        binding?.unbind()
+        binding = null
     }
 }

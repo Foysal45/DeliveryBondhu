@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
 import com.ajkerdeal.app.essential.repository.AppRepository
@@ -22,20 +23,35 @@ import timber.log.Timber
 
 class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
-
-    val userId = MutableLiveData<String>("01722335535")
-    val password = MutableLiveData<String>("123")
-    val confirmPassword = MutableLiveData<String>()
+    // Login
+    val userId = MutableLiveData<String>("")
+    val password = MutableLiveData<String>("")
+    // SignUp
+    val userId1 = MutableLiveData<String>("")
+    val password1 = MutableLiveData<String>("")
+    val confirmPassword = MutableLiveData<String>("")
     val address = MutableLiveData<String>("")
     val districtId = MutableLiveData<Int>(0)
     val thanaId = MutableLiveData<Int>(0)
+    val postCode = MutableLiveData<Int>(0)
+
+    var otpMobile: String? = ""
+    var otpType: Int = 0
+
+    // Password Reset
+    val resetMobile = MutableLiveData<String>("")
     val otpCode = MutableLiveData<String>("")
     val firebaseToken = MutableLiveData<String>("")
     var deliveryUserId: Int = 0
 
+    // Reset Password Form
+    val newPassword = MutableLiveData<String>("")
+    val newConfirmPassword = MutableLiveData<String>("")
+
     val progress = MutableLiveData<Boolean>()
+    val enableBtn = MutableLiveData<Boolean>()
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
-    private val _locationModel = MutableLiveData<LocationResponse>()
+
 
     fun onLoginClicked(view: View) {
         authUser()
@@ -46,16 +62,15 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     }
 
     fun onResetPassword(view: View) {
-        //sendOTP(userId.value ?: "")
-        checkMobile(userId.value ?: "")
+        checkMobile(resetMobile.value ?: "")
     }
 
     fun onResetPasswordForm(view: View) {
-        //sendOTP(userId.value ?: "")
+        updatePassword()
     }
 
     fun onOTPSubmit(view: View) {
-        verifyOTP(userId.value ?: "", otpCode.value ?: "")
+        verifyOTP(otpMobile ?: "", otpCode.value ?: "")
     }
 
     private fun authUser() {
@@ -69,34 +84,41 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 
             val response = repository.authUser(LoginRequest(userId.value, password.value, firebaseToken.value))
-            progress.postValue(false)
-            when (response) {
-                is NetworkResponse.Success -> {
+            withContext(Dispatchers.Main) {
+                progress.value = false
+                when (response) {
+                    is NetworkResponse.Success -> {
 
-                    val data = response.body.data
-                    if (data != null && data.deliveryUserId != 0) {
+                        val data = response.body.data
+                        if (data != null && data.deliveryUserId != 0) {
 
-                        SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,"")
-                        viewState.postValue(ViewState.NextState())
-                    } else {
-                        viewState.postValue(ViewState.ShowMessage(data?.message))
+                            SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,"")
+                            userId.value = ""
+                            password.value = ""
+                            viewState.value = ViewState.NextState()
+                        } else {
+                            viewState.setValue(ViewState.ShowMessage(data?.message))
+                        }
                     }
-                }
-                is NetworkResponse.ServerError -> {
-                    val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
-                    viewState.postValue(ViewState.ShowMessage(message))
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.setValue(ViewState.ShowMessage(message))
 
-                }
-                is NetworkResponse.NetworkError -> {
-                    val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
-                    viewState.postValue(ViewState.ShowMessage(message))
-                }
-                is NetworkResponse.UnknownError -> {
-                    val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                    viewState.postValue(ViewState.ShowMessage(message))
-                    Timber.d(response.error)
-                }
-            }.exhaustive
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.setValue(ViewState.ShowMessage(message))
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+
+                viewState.value = ViewState.NONE
+
+            }
         }
 
     }
@@ -106,14 +128,17 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         if (userId.value.isNullOrEmpty() || userId.value?.length != 11) {
             val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
         if (password.value.isNullOrEmpty()) {
             val message = "আপনার পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
+
 
         return true
     }
@@ -127,17 +152,23 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.signUpUser(SignUpRequest("", userId.value, password.value, address.value, districtId.value ?: 0, thanaId.value ?: 0))
+            val response = repository.signUpUser(SignUpRequest("", userId1.value, password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
 
                         val data = response.body.data
+
                         if (data != null && data.customerId != 0) {
                             viewState.value = ViewState.ShowMessage(data.message)
 
-                            sendOTP(userId.value ?: "")
+                            otpMobile = userId1.value ?: ""
+                            otpType = 2
+                            sendOTP(otpMobile)
+                            password1.value = ""
+                            confirmPassword.value = ""
+                            //viewState.value = ViewState.NextState()
                         } else {
                             viewState.value = ViewState.ShowMessage(data?.message)
                         }
@@ -157,6 +188,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+                viewState.value = ViewState.NONE
             }
 
         }
@@ -165,33 +197,38 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
     private fun validateSignUp(): Boolean {
 
-        if (userId.value.isNullOrEmpty() || userId.value?.length != 11) {
+        if (userId1.value.isNullOrEmpty() || userId1.value?.length != 11) {
             val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
-        if (password.value.isNullOrEmpty()) {
+        if (password1.value.isNullOrEmpty()) {
             val message = "আপনার পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
-        if (confirmPassword.value.isNullOrEmpty() || password.value != confirmPassword.value) {
+        if (confirmPassword.value.isNullOrEmpty() || password1.value != confirmPassword.value) {
             val message = "আপনার কনফার্ম পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
         if (districtId.value == 0) {
-            val message = "জেলা নির্বাচন করুন"
+            val message = "বর্তমান কর্মস্থান নির্বাচন করুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
         if (thanaId.value == 0) {
             val message = "থানা নির্বাচন করুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return false
         }
 
@@ -222,40 +259,51 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+                viewState.value = ViewState.NONE
             }
         }
         return locationModel
     }
 
-    fun checkMobile(mobile: String?) {
+    private fun checkMobile(mobile: String?) {
 
         viewState.value = ViewState.KeyboardState()
 
         if (mobile.isNullOrEmpty() || mobile?.length != 11) {
             val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+
+            viewState.value = ViewState.NONE
             return
         }
-
+        progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.checkMobileNumber(CheckMobileRequest(mobile))
             withContext(Dispatchers.Main) {
+                progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
 
                             if (response.body.data?.deliveryUserId == 0) {
                                 deliveryUserId = 0
+                                val message = response.body.data?.message
+                                viewState.value = ViewState.ShowMessage(message)
                             } else {
                                 deliveryUserId = response.body.data?.deliveryUserId ?: 0
                                 val message = response.body.data?.message
                                 viewState.value = ViewState.ShowMessage(message)
                                 //viewState.value = ViewState.NextState()
-                                sendOTP(userId.value ?: "")
+                                otpMobile = mobile
+                                otpType = 1
+                                sendOTP(mobile)
                             }
+                        //Timber.d("checkMobile $response")
+
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
                         viewState.value = ViewState.ShowMessage(message)
+
                     }
                     is NetworkResponse.NetworkError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
@@ -267,24 +315,29 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+
+                viewState.value = ViewState.NONE
             }
         }
 
     }
 
-    fun sendOTP(mobile: String?) {
+    private fun sendOTP(mobile: String?) {
 
         viewState.value = ViewState.KeyboardState()
 
         if (mobile.isNullOrEmpty() || mobile?.length != 11) {
             val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+
+            viewState.value = ViewState.NONE
             return
         }
-
+        progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.sendOTP(OTPSendRequest(mobile, mobile))
             withContext(Dispatchers.Main) {
+                progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
                         val message = response.body.data
@@ -305,10 +358,10 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+                viewState.value = ViewState.NONE
             }
         }
     }
-
 
     private fun verifyOTP(mobile: String, code: String) {
 
@@ -316,19 +369,23 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         if (otpCode.value.isNullOrEmpty()) {
             val message = "সঠিক OTP কোড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
             return
         }
-
+        progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.verifyOTP(mobile, code)
             withContext(Dispatchers.Main) {
+                progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
+
                         val flag = response.body.data
                         if (flag == 1) {
                             val message = "OTP কোড ভেরিফাইড"
                             viewState.value = ViewState.ShowMessage(message)
-                            viewState.value = ViewState.NextState()
+                            viewState.value = ViewState.NextState(otpType)
+                            otpCode.value = ""
                         } else {
                             val message = "OTP কোড সঠিক নয়"
                             viewState.value = ViewState.ShowMessage(message)
@@ -348,8 +405,83 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+                viewState.value = ViewState.NONE
             }
         }
+    }
+
+    private fun updatePassword() {
+
+        viewState.value = ViewState.KeyboardState()
+        if (newPassword.value.isNullOrEmpty()) {
+            val message = "আপনার পাসওয়ার্ড লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+            return
+        }
+
+        if (newConfirmPassword.value.isNullOrEmpty() || newPassword.value != newConfirmPassword.value) {
+            val message = "আপনার কনফার্ম পাসওয়ার্ড লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+            return
+        }
+        progress.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId))
+            withContext(Dispatchers.Main) {
+                progress.value = false
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        val data = response.body.data
+                        if (data != null && data.customerId != 0) {
+                            viewState.value = ViewState.ShowMessage(data.message)
+
+                            newPassword.value = ""
+                            newConfirmPassword.value = ""
+                            viewState.value = ViewState.NextState()
+                        } else {
+                            viewState.value = ViewState.ShowMessage(data?.message)
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+                viewState.value = ViewState.NONE
+            }
+        }
+
+    }
+
+    fun clearLogin() {
+        userId.value = ""
+        password.value = ""
+    }
+
+    fun clearSignUp() {
+        userId1.value = ""
+        password1.value = ""
+        confirmPassword.value = ""
+        districtId.value = 0
+        thanaId.value = 0
+        postCode.value = 0
+        address.value = ""
+    }
+
+    fun clearResetPasswordForm() {
+        newPassword.value = ""
+        newConfirmPassword.value = ""
     }
 
 }

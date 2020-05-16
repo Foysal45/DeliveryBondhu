@@ -97,21 +97,14 @@ class ParcelListFragment : Fragment() {
             }
 
             instructions = model.customerMessageData?.instructions
-            if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                if (it) {
+                    if (!instructions.isNullOrEmpty()) {
+                        orderDialog(instructions!!)
                     }
-                })
-            } else {
-                orderDialog(instructions) {
-                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                        }
-                    })
+                    viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                 }
-            }
+            })
         }
         dataAdapter.onActionClicked = { model, orderCustomer, actionModel, orderModel  ->
 
@@ -155,22 +148,14 @@ class ParcelListFragment : Fragment() {
                 instructions = orderCustomer.collectionSource?.sourceMessageData?.instructions
             }
 
-            if (instructions.isNullOrEmpty()) {
-                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                if (it) {
+                    if (!instructions.isNullOrEmpty()) {
+                        orderDialog(instructions!!)
                     }
-                })
-            } else {
-                orderDialog(instructions!!) {
-                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                        }
-                    })
+                    viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                 }
-            }
-
+            })
         }
 
         //viewModel.loadOrderOrSearch()

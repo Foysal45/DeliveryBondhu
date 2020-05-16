@@ -37,7 +37,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             val model = dataList[position]
 
-            holder.binding.customerName.text = model.name
+            val nameWithDistrict = "${model.name} (<font color='#E86324'>${model.district}</font>)"
+            holder.binding.customerName.text = HtmlCompat.fromHtml(nameWithDistrict, HtmlCompat.FROM_HTML_MODE_LEGACY)
             holder.binding.customerAddress.text = model.address
 
             if (model.state) {
@@ -110,7 +111,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (isCollectionPoint == 1) {
-                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call_2))
+                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call_1))
             }else {
                 holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call))
             }
