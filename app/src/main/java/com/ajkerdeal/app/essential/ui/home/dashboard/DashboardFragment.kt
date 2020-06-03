@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
+import com.ajkerdeal.app.essential.ui.webview.ChromeCustomTabBrowser
 
 class DashboardFragment : Fragment() {
 
@@ -29,6 +31,7 @@ class DashboardFragment : Fragment() {
 
         binding?.button2?.setOnClickListener {
             findNavController().navigate(R.id.nav_action_dashboard_parcelList)
+            //test()
         }
     }
 
@@ -36,6 +39,15 @@ class DashboardFragment : Fragment() {
         binding?.unbind()
         binding = null
         super.onDestroyView()
+    }
+
+    private fun test() {
+        val url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
+        ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
+            findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to fallbackUrl))
+        }
+        // or
+        //findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
     }
 
 }
