@@ -42,13 +42,33 @@
         android:id="@+id/nav_orderList"
         android:name="com.ajkerdeal.app.essential.ui.home.OrderListFragment"
         android:label="অর্ডার লিস্ট"
-        tools:layout="@layout/fragment_order_list"/>
+        tools:layout="@layout/fragment_order_list">
+
+        <action android:id="@+id/nav_action_orderList_webView"
+            app:destination="@id/nav_webView"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_parcelList"
         android:name="com.ajkerdeal.app.essential.ui.home.parcel.ParcelListFragment"
         android:label="পার্সেল লিস্ট"
-        tools:layout="@layout/fragment_parcel_list"/>
+        tools:layout="@layout/fragment_parcel_list">
+
+        <action android:id="@+id/nav_action_parcelList_webView"
+            app:destination="@id/nav_webView"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
+    </fragment>
 
     <fragment
         android:id="@+id/nav_webView"

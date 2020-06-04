@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
@@ -99,6 +101,20 @@ class OrderListFragment : Fragment() {
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
                 collectionPointAvailable = actionModel.collectionPointAvailable
 
+                if (actionModel.isPaymentType == 1) {
+                    val url = "https://m.ajkerdeal.com/MSingleOrder/bkashpaymentofdeliverybondhuforapp.aspx?CID=${orderModel.couponId}"
+                    findNavController().navigate(R.id.nav_action_orderList_webView, bundleOf("url" to url))
+                } else {
+                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            if (!instructions.isNullOrEmpty()) {
+                                orderDialog(instructions!!)
+                            }
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        }
+                    })
+                }
+
             } else {
 
                 model.orderList?.forEach { orderModel ->
@@ -117,16 +133,18 @@ class OrderListFragment : Fragment() {
                     requestBody.add(statusModel)
                 }
                 instructions = model.collectionSource?.sourceMessageData?.instructions
+
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        if (!instructions.isNullOrEmpty()) {
+                            orderDialog(instructions!!)
+                        }
+                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    }
+                })
             }
 
-            viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                if (it) {
-                    if (!instructions.isNullOrEmpty()) {
-                        orderDialog(instructions!!)
-                    }
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                }
-            })
+
 
             /*if (collectionPointAvailable == 1) {
                 collectionDialog(orderModel?.couponId?.toIntOrNull() ?: 0, orderModel?.collectionPointId ?: 0) {

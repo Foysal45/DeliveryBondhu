@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
-import com.ajkerdeal.app.essential.ui.webview.ChromeCustomTabBrowser
 
 class DashboardFragment : Fragment() {
 
@@ -42,12 +41,13 @@ class DashboardFragment : Fragment() {
     }
 
     private fun test() {
-        val url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
-        ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
+        //val url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
+        val url = "http://157.245.254.139/"
+        /*ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
             findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to fallbackUrl))
-        }
+        }*/
         // or
-        //findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
+        findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
     }
 
 }

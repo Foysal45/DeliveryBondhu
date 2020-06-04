@@ -10,6 +10,7 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.databinding.ItemViewActionBtnPositiveBinding
 import com.ajkerdeal.app.essential.databinding.ItemViewActionMessageBinding
+import com.bumptech.glide.Glide
 
 class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,26 +39,48 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val model = dataList[position]
         when (holder) {
             is ViewHolder -> {
-                holder.binding.actionBtn.text = model.actionMessage
-                holder.binding.actionBtn.backgroundTintList = ColorStateList.valueOf(Color.parseColor(model.colorCode))
+                holder.binding.title.text = model.actionMessage
+                holder.binding.parent.backgroundTintList = ColorStateList.valueOf(Color.parseColor(model.colorCode))
 
                 //val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.white))
                 if (model.actionType == 1) {
 
-                    with(holder.binding.actionBtn) {
-                        //setTextColor(colorText)
-                        icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_done)
-                        //iconTint = colorText
+                    if (model.icon.isNullOrEmpty()) {
+                        Glide.with(holder.binding.icon)
+                            .load(R.drawable.ic_done)
+                            .into(holder.binding.icon)
+                    } else {
+                        Glide.with(holder.binding.icon)
+                            .load(model.icon)
+                            .into(holder.binding.icon)
                     }
+
+
+                    /*with(holder.binding.actionBtn) {
+                        //setTextColor(colorText)
+                        h = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_done)
+                        //iconTint = colorText
+
+                    }*/
 
                 } else if (model.actionType == 2) {
 
+                    if (model.icon.isNullOrEmpty()) {
+                        Glide.with(holder.binding.icon)
+                            .load(R.drawable.ic_close)
+                            .into(holder.binding.icon)
+                    } else {
+                        Glide.with(holder.binding.icon)
+                            .load(model.icon)
+                            .into(holder.binding.icon)
+                    }
+
                     //val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionBtn.context, R.color.button_action_text_gry))
-                    with(holder.binding.actionBtn) {
+                    /*with(holder.binding.actionBtn) {
                         //setTextColor(colorText)
                         icon = ContextCompat.getDrawable(holder.binding.actionBtn.context, R.drawable.ic_close)
                         //iconTint = colorText
-                    }
+                    }*/
 
                 }
             }
@@ -78,7 +101,7 @@ class ActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class ViewHolder(val binding: ItemViewActionBtnPositiveBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.actionBtn.setOnClickListener {
+            binding.parent.setOnClickListener {
                 onActionClicked?.invoke(dataList[adapterPosition])
             }
         }

@@ -15,5 +15,9 @@ data class Action(
     @SerializedName("ColorCode")
     var colorCode: String = "#FFFFFF",
     @SerializedName("CollectionPointAvailable")
-    var collectionPointAvailable: Int = 0
+    var collectionPointAvailable: Int = 0,
+    @SerializedName("Icon")
+    var icon: String? = "",
+    @SerializedName("IsPaymentType")
+    var isPaymentType: Int = 0
 )
