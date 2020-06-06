@@ -1,8 +1,11 @@
 package com.ajkerdeal.app.essential.api.models.status
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class StatusUpdateModel(
     @SerializedName("CouponId")
     var couponId: String = "",
@@ -26,4 +29,4 @@ data class StatusUpdateModel(
     var pODNumber: String = "",
     @SerializedName("HubName")
     var hubName: String = ""
-)
+) : Parcelable

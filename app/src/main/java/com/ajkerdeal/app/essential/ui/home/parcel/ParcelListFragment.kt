@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
@@ -110,6 +112,8 @@ class ParcelListFragment : Fragment() {
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
+            var couponIdList: String = ""
+            var totalPrice: Int = 0
 
             if (orderModel != null) {
 
@@ -127,10 +131,12 @@ class ParcelListFragment : Fragment() {
                 }
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
+                couponIdList = orderModel.couponId
+                totalPrice = orderCustomer.totalPayment
 
             } else {
 
-                orderCustomer.orderList?.forEach { orderModel ->
+                orderCustomer.orderList?.forEachIndexed { index,  orderModel ->
                     val statusModel = StatusUpdateModel().apply {
                         couponId = orderModel.couponId
                         isDone = actionModel.updateStatus
@@ -144,18 +150,34 @@ class ParcelListFragment : Fragment() {
                         pODNumber = orderModel.pODNumber ?: ""
                     }
                     requestBody.add(statusModel)
+                    if (index == (orderCustomer.orderList?.size!! - 1)) {
+                        couponIdList += orderModel.couponId
+                    } else {
+                        couponIdList += orderModel.couponId + ","
+                    }
                 }
+                totalPrice = orderCustomer.totalPayment
                 instructions = orderCustomer.collectionSource?.sourceMessageData?.instructions
             }
 
-            viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                if (it) {
-                    if (!instructions.isNullOrEmpty()) {
-                        orderDialog(instructions!!)
+            if (actionModel.isPaymentType == 1) {
+                val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList&TOTAL=$totalPrice"
+                val bundle = bundleOf(
+                    "url" to url,
+                    "updateModel" to requestBody
+                )
+                findNavController().navigate(R.id.nav_action_parcelList_webView, bundle)
+            } else {
+                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        if (!instructions.isNullOrEmpty()) {
+                            orderDialog(instructions!!)
+                        }
+                        viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
                     }
-                    viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-                }
-            })
+                })
+            }
+
         }
 
         //viewModel.loadOrderOrSearch()

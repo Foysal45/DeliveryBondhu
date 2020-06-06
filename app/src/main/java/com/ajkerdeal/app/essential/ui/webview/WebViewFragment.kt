@@ -2,7 +2,6 @@ package com.ajkerdeal.app.essential.ui.webview
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Bundle
@@ -11,9 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
+import com.ajkerdeal.app.essential.repository.AppRepository
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class WebViewFragment: Fragment() {
@@ -21,6 +22,8 @@ class WebViewFragment: Fragment() {
     private var url: String = ""
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
+
+    private val repository: AppRepository by inject()
 
     companion object {
         fun newInstance(url: String): WebViewFragment = WebViewFragment().apply {
@@ -45,6 +48,9 @@ class WebViewFragment: Fragment() {
 
         if (url.isEmpty()) {
             url = arguments?.getString("url", "") ?: ""
+            val requestBody: MutableList<StatusUpdateModel> = arguments?.getParcelableArrayList("updateModel") ?: mutableListOf()
+            Timber.d("URL: $url")
+            Timber.d("requestBody: $requestBody")
         }
 
         //url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
@@ -64,24 +70,12 @@ class WebViewFragment: Fragment() {
             setLayerType(View.LAYER_TYPE_HARDWARE, null)
             clearHistory()
             isHorizontalScrollBarEnabled = false
-            //clearCache(true)
-            addJavascriptInterface(WebAppInterface(requireContext()), "Android")
+            clearCache(true)
+            addJavascriptInterface(WebAppInterface(requireContext(), repository, arguments), "Android")
             webViewClient = Callback()
         }
 
         webView.loadUrl(url)
-    }
-
-    /**
-     * Java Script Interface here
-     */
-    inner class WebAppInterface internal constructor(internal var context: Context) {
-
-        /** Show a toast from the web page  */
-        @JavascriptInterface
-        fun showToast(toast: String) {
-            Toast.makeText(requireContext(), toast, Toast.LENGTH_SHORT).show()
-        }
     }
 
 

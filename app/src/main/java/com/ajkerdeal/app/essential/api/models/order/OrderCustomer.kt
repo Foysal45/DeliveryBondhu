@@ -18,6 +18,8 @@ data class OrderCustomer(
     var deliveryCommission: Int = 0,
     @SerializedName("TotalOrder")
     var totalOrder: Int = 0,
+    @SerializedName("TotalPayment")
+    var totalPayment: Int = 0,
 
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),

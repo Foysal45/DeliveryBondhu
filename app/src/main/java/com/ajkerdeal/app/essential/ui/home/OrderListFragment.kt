@@ -49,6 +49,7 @@ class OrderListFragment : Fragment() {
     private var filterStatus: String = "-1"
     private var dtStatus: String = "-1"
     private var collectionFlag: Int = 1
+    private var lastFilterIndex: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -102,8 +103,12 @@ class OrderListFragment : Fragment() {
                 collectionPointAvailable = actionModel.collectionPointAvailable
 
                 if (actionModel.isPaymentType == 1) {
-                    val url = "https://m.ajkerdeal.com/MSingleOrder/bkashpaymentofdeliverybondhuforapp.aspx?CID=${orderModel.couponId}"
-                    findNavController().navigate(R.id.nav_action_orderList_webView, bundleOf("url" to url))
+                    val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=${orderModel.couponId}"
+                    val bundle = bundleOf(
+                        "url" to url,
+                        "updateModel" to requestBody
+                    )
+                    findNavController().navigate(R.id.nav_action_orderList_webView, bundle)
                 } else {
                     viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
                         if (it) {
@@ -187,6 +192,11 @@ class OrderListFragment : Fragment() {
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.appBarLayout.spinner.adapter = arrayAdapter
 
+            Timber.d("lastFilterIndex $lastFilterIndex")
+            if (lastFilterIndex != -1 && (lastFilterIndex in 0..filterList.size)) {
+                binding.appBarLayout.spinner.setSelection(lastFilterIndex)
+            }
+
             binding.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
@@ -196,6 +206,7 @@ class OrderListFragment : Fragment() {
                     if (position in 0..filterList.size) {
                         val selectedStatus = filterList[position].status
                         val selectedDTStatus = filterList[position].dtStatus
+                        lastFilterIndex = position
                         //if (selectedStatus != filterStatus) {
                             filterStatus = selectedStatus
                             dtStatus = selectedDTStatus
