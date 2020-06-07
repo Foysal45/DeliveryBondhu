@@ -32,7 +32,7 @@ class WebAppInterface(private val context: Context?, private val repository: App
     @JavascriptInterface
     fun goToOrderConfirmationPageInAppForBkash(id: String?, message: String?, CouponId: String?, OrderType: String?) {
 
-        Timber.d("WebAppInterface $id $message $CouponId $OrderType")
+        Timber.d("webView WebAppInterface $id $message $CouponId $OrderType")
         context?.toast(message)
         if (id == "1") {
 

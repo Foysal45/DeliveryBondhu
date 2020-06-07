@@ -113,7 +113,7 @@ class ParcelListFragment : Fragment() {
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
             var couponIdList: String = ""
-            var totalPrice: Int = 0
+            //var totalPrice: Int = 0
 
             if (orderModel != null) {
 
@@ -132,7 +132,7 @@ class ParcelListFragment : Fragment() {
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
                 couponIdList = orderModel.couponId
-                totalPrice = orderCustomer.totalPayment
+                //totalPrice = orderCustomer.totalPayment
 
             } else {
 
@@ -156,12 +156,12 @@ class ParcelListFragment : Fragment() {
                         couponIdList += orderModel.couponId + ","
                     }
                 }
-                totalPrice = orderCustomer.totalPayment
+                //totalPrice = orderCustomer.totalPayment
                 instructions = orderCustomer.collectionSource?.sourceMessageData?.instructions
             }
 
             if (actionModel.isPaymentType == 1) {
-                val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList&TOTAL=$totalPrice"
+                val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList"
                 val bundle = bundleOf(
                     "url" to url,
                     "updateModel" to requestBody

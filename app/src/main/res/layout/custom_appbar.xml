@@ -60,12 +60,14 @@
                     android:paddingTop="16dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="16dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/backBtn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_logout"
-                    tools:visibility="visible" />
+                    tools:visibility="visible"
+
+                    />
 
 
                 <androidx.cardview.widget.CardView

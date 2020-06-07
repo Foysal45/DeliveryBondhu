@@ -20,6 +20,7 @@ import com.ajkerdeal.app.essential.api.models.pod.PodOrderResponse
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
+import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.Retrofit
 import retrofit2.http.Body
@@ -55,6 +56,9 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/UpdateFirebaseToken")
     suspend fun updateFirebaseToken(@Body requestBody: UpdateTokenRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
+
+    @GET("api/SelfDelivery/UserAccess/{userId}/{isActive}/{flag}")
+    suspend fun updateUserStatus(@Path("userId") userId: Int, @Path("isActive") isActive: String, @Path("flag") flag: Int): NetworkResponse<ResponseHeader<UserStatus>, ErrorResponse>
 
     @GET("api/SelfDelivery/LoadStatus")
     suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>

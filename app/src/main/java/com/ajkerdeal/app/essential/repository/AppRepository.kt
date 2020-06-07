@@ -28,6 +28,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
 
     suspend fun updateFirebaseToken(requestBody: UpdateTokenRequest) = apiInterface.updateFirebaseToken(requestBody)
 
+    suspend fun updateUserStatus(userId: Int, isActive: String, flag: Int) = apiInterface.updateUserStatus(userId, isActive, flag)
+
     suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
 
     suspend fun loadOrderList(requestBody: OrderRequest) = apiInterface.loadOrderList(requestBody)

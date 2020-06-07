@@ -49,8 +49,8 @@ class WebViewFragment: Fragment() {
         if (url.isEmpty()) {
             url = arguments?.getString("url", "") ?: ""
             val requestBody: MutableList<StatusUpdateModel> = arguments?.getParcelableArrayList("updateModel") ?: mutableListOf()
-            Timber.d("URL: $url")
-            Timber.d("requestBody: $requestBody")
+            Timber.d("webView URL: $url")
+            Timber.d("webView requestBody: $requestBody")
         }
 
         //url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
