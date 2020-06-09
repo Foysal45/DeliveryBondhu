@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.webkit.JavascriptInterface
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
+import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.ajkerdeal.app.essential.utils.toast
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -19,6 +20,13 @@ class WebAppInterface(private val context: Context?, private val repository: App
     @JavascriptInterface
     fun showToast(msg: String?) {
         context?.toast(msg)
+    }
+
+    @JavascriptInterface
+    fun SendToBackButtonInApp(isClicked: String) {
+        if (isClicked == "Clicked") {
+            (context as HomeActivity).onBackPressed()
+        }
     }
 
     /**

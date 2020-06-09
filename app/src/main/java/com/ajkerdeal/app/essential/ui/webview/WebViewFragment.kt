@@ -70,9 +70,9 @@ class WebViewFragment: Fragment() {
             setLayerType(View.LAYER_TYPE_HARDWARE, null)
             clearHistory()
             isHorizontalScrollBarEnabled = false
-            clearCache(true)
             addJavascriptInterface(WebAppInterface(requireContext(), repository, arguments), "Android")
             webViewClient = Callback()
+            //clearCache(true)
         }
 
         webView.loadUrl(url)

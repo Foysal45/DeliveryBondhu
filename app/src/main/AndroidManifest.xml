@@ -4,6 +4,8 @@
     package="com.ajkerdeal.app.essential">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:name=".MainApplication"
@@ -52,6 +54,10 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
+        <service android:name=".services.LocationUpdatesService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"/>
 
     </application>
 

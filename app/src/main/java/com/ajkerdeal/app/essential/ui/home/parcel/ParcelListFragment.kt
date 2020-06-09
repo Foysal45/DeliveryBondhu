@@ -31,7 +31,7 @@ import timber.log.Timber
 
 class ParcelListFragment : Fragment() {
 
-    private lateinit var binding: FragmentParcelListBinding
+    private var binding: FragmentParcelListBinding? = null
     private val viewModel: ParcelViewModel by inject()
 
     private var dialog: ProgressDialog? = null
@@ -45,6 +45,7 @@ class ParcelListFragment : Fragment() {
     private var searchKey: String = "-1"
     private var filterStatus: String = "-1"
     private var dtStatus: String = "-1"
+    private var lastFilterIndex: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_parcel_list, container, false)
@@ -58,7 +59,7 @@ class ParcelListFragment : Fragment() {
 
         val dataAdapter = ParcelListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
-        with(binding.recyclerView) {
+        with(binding!!.recyclerView) {
             setHasFixedSize(true)
             layoutManager = layoutManagerLinear
             adapter = dataAdapter
@@ -193,7 +194,7 @@ class ParcelListFragment : Fragment() {
                 dataAdapter.loadMoreData(it.dataList)
             }
             totalCount = it.totalCount
-            binding.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
+            binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
         viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
@@ -202,9 +203,14 @@ class ParcelListFragment : Fragment() {
             val statusName = filterList.map { it.statusName }
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.appBarLayout.spinner.adapter = arrayAdapter
+            binding!!.appBarLayout.spinner.adapter = arrayAdapter
 
-            binding.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            Timber.d("lastFilterIndex $lastFilterIndex")
+            if (lastFilterIndex != -1 && (lastFilterIndex in 0..filterList.size)) {
+                binding!!.appBarLayout.spinner.setSelection(lastFilterIndex)
+            }
+
+            binding!!.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
@@ -213,6 +219,7 @@ class ParcelListFragment : Fragment() {
                     if (position in 0..filterList.size) {
                         val selectedStatus = filterList[position].status
                         val selectedDTStatus = filterList[position].dtStatus
+                        lastFilterIndex = position
                         //if (selectedStatus != filterStatus) {
                             filterStatus = selectedStatus
                             dtStatus = selectedDTStatus
@@ -244,33 +251,33 @@ class ParcelListFragment : Fragment() {
                         }
                     } else if (state.type == 1) {
                         if (state.isShow) {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding!!.progressBar.visibility = View.VISIBLE
                         } else {
-                            binding.progressBar.visibility = View.GONE
+                            binding!!.progressBar.visibility = View.GONE
                         }
                     }
                 }
                 is ViewState.EmptyViewState -> {
                     dataAdapter.clearData()
-                    binding.appBarLayout.countTV.text = "০টি"
+                    binding!!.appBarLayout.countTV.text = "০টি"
                 }
             }
         })
 
-        binding.appBarLayout.searchBtn.setOnClickListener {
+        binding!!.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
-            searchKey = binding.appBarLayout.searchET.text.toString()
+            searchKey = binding!!.appBarLayout.searchET.text.toString()
             if (searchKey.isNotEmpty()) {
-                binding.appBarLayout.chipsGroup.visibility = View.VISIBLE
-                binding.appBarLayout.searchKey.text = searchKey
-                binding.appBarLayout.searchKey.setOnClickListener {
+                binding!!.appBarLayout.chipsGroup.visibility = View.VISIBLE
+                binding!!.appBarLayout.searchKey.text = searchKey
+                binding!!.appBarLayout.searchKey.setOnClickListener {
                     searchKey = "-1"
-                    binding.appBarLayout.searchET.text.clear()
-                    binding.appBarLayout.chipsGroup.visibility = View.GONE
+                    binding!!.appBarLayout.searchET.text.clear()
+                    binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     viewModel.loadOrderOrSearch(statusId = filterStatus,dtStatusId = dtStatus)
                 }
-                binding.appBarLayout.searchKey.setOnCloseIconClickListener {
-                    binding.appBarLayout.searchKey.performClick()
+                binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
+                    binding!!.appBarLayout.searchKey.performClick()
                 }
 
                 viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
@@ -278,16 +285,16 @@ class ParcelListFragment : Fragment() {
             //requireContext().toast(getString(R.string.development))
         }
 
-        binding.swipeRefresh.setOnRefreshListener {
-            binding.swipeRefresh.isRefreshing = false
+        binding!!.swipeRefresh.setOnRefreshListener {
+            binding!!.swipeRefresh.isRefreshing = false
             viewModel.loadOrderOrSearch(statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-            /*binding.searchET.text.clear()
-            if (binding.chipsGroup.visibility == View.VISIBLE) {
-                binding.chipsGroup.visibility = View.GONE
+            /*binding!!.searchET.text.clear()
+            if (binding!!.chipsGroup.visibility == View.VISIBLE) {
+                binding!!.chipsGroup.visibility = View.GONE
             }*/
         }
 
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding!!.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -303,8 +310,8 @@ class ParcelListFragment : Fragment() {
             }
         })
 
-        binding.appBarLayout.searchET.hint = getString(R.string.search_hint1)
-        binding.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        binding!!.appBarLayout.searchET.hint = getString(R.string.search_hint1)
+        binding!!.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
 
             val imeAction = when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_ACTION_SEND, EditorInfo.IME_ACTION_GO, EditorInfo.IME_ACTION_SEARCH -> true
@@ -312,16 +319,16 @@ class ParcelListFragment : Fragment() {
             }
             //val eventType = event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             return@OnEditorActionListener if (imeAction) {
-                binding.appBarLayout.searchBtn.performClick()
+                binding!!.appBarLayout.searchBtn.performClick()
                 true
             } else false
         })
 
-        binding.appBarLayout.backBtn.setOnClickListener {
+        binding!!.appBarLayout.backBtn.setOnClickListener {
             activity?.onBackPressed()
         }
 
-        binding.appBarLayout.logoutBtn.setOnClickListener {
+        binding!!.appBarLayout.logoutBtn.setOnClickListener {
             (activity as HomeActivity).logout()
         }
 
@@ -394,7 +401,8 @@ class ParcelListFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        binding.unbind()
+        binding?.unbind()
+        binding = null
         super.onDestroyView()
     }
 }

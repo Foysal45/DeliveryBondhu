@@ -7,5 +7,8 @@ data class UserStatus(
     @SerializedName("UserType")
     var userType: Int = 0,
     @SerializedName("IsNowOffline")
-    var isNowOffline: Boolean = false
+    var isNowOffline: Boolean = false,
+    @SerializedName("LocationUpdateIntervalInMinute")
+    var locationUpdateIntervalInMinute: Int = 0
+
 )

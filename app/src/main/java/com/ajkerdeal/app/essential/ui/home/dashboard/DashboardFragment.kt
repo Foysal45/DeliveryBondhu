@@ -47,6 +47,11 @@ class DashboardFragment : Fragment() {
                     binding?.button2?.visibility = View.VISIBLE
                 }
             }
+            if (userStatus.locationUpdateIntervalInMinute > 0) {
+                (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute)
+                // test
+                //(activity as HomeActivity).startLocationUpdate(1)
+            }
         })
 
         userName?.text = SessionManager.userName
@@ -68,6 +73,7 @@ class DashboardFragment : Fragment() {
         binding?.button2?.setOnClickListener {
             findNavController().navigate(R.id.nav_action_dashboard_parcelList)
             //test()
+            //(activity as HomeActivity).locationToggle()
         }
         binding?.logoutBtn?.setOnClickListener {
             (activity as HomeActivity).logout()

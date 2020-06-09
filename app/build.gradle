@@ -54,7 +54,7 @@ android {
         variant.outputs.each { output ->
             def versionName = variant.versionName
             def variantName = variant.name
-            def apkName = 'EssentialDelivery' + '_' + variantName + '_v' + versionName + '.apk'
+            def apkName = 'Delivery Bondhu' + '_' + variantName + '_v' + versionName + '.apk'
             output.outputFileName = apkName
         }
     }
@@ -138,6 +138,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.google.firebase:firebase-messaging:20.2.0'
+
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
 

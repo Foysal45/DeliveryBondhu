@@ -78,6 +78,15 @@ fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
     }.show()
 }
 
+fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, actionName: String, onClick: ((view: View) -> Unit)? = null){
+    Snackbar.make(this, message, length).also { snackbar ->
+        snackbar.setAction(actionName) {
+            onClick?.invoke(it)
+            snackbar.dismiss()
+        }
+    }.show()
+}
+
 fun Context.isConnectedToNetwork(): Boolean {
     var isConnected = false
     val connectivityManager = this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?

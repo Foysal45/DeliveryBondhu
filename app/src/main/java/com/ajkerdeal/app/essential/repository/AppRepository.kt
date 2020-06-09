@@ -11,6 +11,7 @@ import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 
 class AppRepository(private val apiInterface: ApiInterface) {
 
@@ -29,6 +30,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun updateFirebaseToken(requestBody: UpdateTokenRequest) = apiInterface.updateFirebaseToken(requestBody)
 
     suspend fun updateUserStatus(userId: Int, isActive: String, flag: Int) = apiInterface.updateUserStatus(userId, isActive, flag)
+
+    suspend fun updateUserLocation(requestBody: LocationUpdateRequest) = apiInterface.updateUserLocation(requestBody)
 
     suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
 

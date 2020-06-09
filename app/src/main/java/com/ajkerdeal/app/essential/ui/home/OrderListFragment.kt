@@ -33,7 +33,7 @@ import timber.log.Timber
 
 class OrderListFragment : Fragment() {
 
-    private lateinit var binding: FragmentOrderListBinding
+    private var binding: FragmentOrderListBinding? = null
 
     private val viewModel: HomeViewModel by inject()
 
@@ -63,7 +63,7 @@ class OrderListFragment : Fragment() {
 
         val dataAdapter = OrderListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
-        with(binding.recyclerView) {
+        with(binding!!.recyclerView) {
             setHasFixedSize(true)
             layoutManager = layoutManagerLinear
             adapter = dataAdapter
@@ -181,7 +181,7 @@ class OrderListFragment : Fragment() {
                 dataAdapter.loadMoreData(it.dataList)
             }
             totalCount = it.totalCount
-            binding.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
+            binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
         viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
@@ -190,14 +190,14 @@ class OrderListFragment : Fragment() {
             val statusName = filterList.map { it.statusName }
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.appBarLayout.spinner.adapter = arrayAdapter
+            binding!!.appBarLayout.spinner.adapter = arrayAdapter
 
             Timber.d("lastFilterIndex $lastFilterIndex")
             if (lastFilterIndex != -1 && (lastFilterIndex in 0..filterList.size)) {
-                binding.appBarLayout.spinner.setSelection(lastFilterIndex)
+                binding!!.appBarLayout.spinner.setSelection(lastFilterIndex)
             }
 
-            binding.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            binding!!.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
@@ -216,19 +216,19 @@ class OrderListFragment : Fragment() {
 
                         val collectionSwitchFlag = filterList[position].collectionFilter
                         if (collectionSwitchFlag == 1) {
-                            //binding.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
-                            binding.appBarLayout.tabLayout.visibility = View.VISIBLE
+                            //binding!!.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
+                            binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
                             collectionFlag = 1
                         } else {
-                            //binding.appBarLayout.collectionPointSwitch.visibility = View.GONE
-                            binding.appBarLayout.tabLayout.visibility = View.GONE
+                            //binding!!.appBarLayout.collectionPointSwitch.visibility = View.GONE
+                            binding!!.appBarLayout.tabLayout.visibility = View.GONE
                             collectionFlag = 0
-                            //binding.appBarLayout.collectionPointSwitch.isChecked = false
-                            binding.appBarLayout.tabLayout.getTabAt(0)?.select()
+                            //binding!!.appBarLayout.collectionPointSwitch.isChecked = false
+                            binding!!.appBarLayout.tabLayout.getTabAt(0)?.select()
                         }
 
                         dataAdapter.isCollectionPoint = collectionFlag
-                        //binding.appBarLayout.countTV.text = "০টি"
+                        //binding!!.appBarLayout.countTV.text = "০টি"
                             viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
 
                         //}
@@ -258,54 +258,54 @@ class OrderListFragment : Fragment() {
                         }
                     } else if (state.type == 1) {
                         if (state.isShow) {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding!!.progressBar.visibility = View.VISIBLE
                         } else {
-                            binding.progressBar.visibility = View.GONE
+                            binding!!.progressBar.visibility = View.GONE
                         }
                     }
                 }
                 is ViewState.EmptyViewState -> {
                     dataAdapter.clearData()
-                    binding.appBarLayout.countTV.text = "০টি"
+                    binding!!.appBarLayout.countTV.text = "০টি"
                 }
             }
         })
 
 
 
-        binding.appBarLayout.searchBtn.setOnClickListener {
+        binding!!.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
-            searchKey = binding.appBarLayout.searchET.text.toString()
+            searchKey = binding!!.appBarLayout.searchET.text.toString()
             if (searchKey.isNotEmpty()) {
-                binding.appBarLayout.chipsGroup.visibility = View.VISIBLE
-                binding.appBarLayout.searchKey.text = searchKey
-                binding.appBarLayout.searchKey.setOnClickListener {
+                binding!!.appBarLayout.chipsGroup.visibility = View.VISIBLE
+                binding!!.appBarLayout.searchKey.text = searchKey
+                binding!!.appBarLayout.searchKey.setOnClickListener {
                     searchKey = "-1"
-                    binding.appBarLayout.searchET.text.clear()
-                    binding.appBarLayout.chipsGroup.visibility = View.GONE
-                    binding.appBarLayout.countTV.text = "০টি"
+                    binding!!.appBarLayout.searchET.text.clear()
+                    binding!!.appBarLayout.chipsGroup.visibility = View.GONE
+                    binding!!.appBarLayout.countTV.text = "০টি"
                     viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus)
                 }
-                binding.appBarLayout.searchKey.setOnCloseIconClickListener {
-                    binding.appBarLayout.searchKey.performClick()
+                binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
+                    binding!!.appBarLayout.searchKey.performClick()
                 }
-                binding.appBarLayout.countTV.text = "০টি"
+                binding!!.appBarLayout.countTV.text = "০টি"
                 viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
             }
             //requireContext().toast(getString(R.string.development))
         }
 
-        binding.swipeRefresh.setOnRefreshListener {
-            binding.swipeRefresh.isRefreshing = false
+        binding!!.swipeRefresh.setOnRefreshListener {
+            binding!!.swipeRefresh.isRefreshing = false
             Timber.d("loadOrderOrSearch called from swipe refresh")
             viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-            /*binding.searchET.text.clear()
-            if (binding.chipsGroup.visibility == View.VISIBLE) {
-                binding.chipsGroup.visibility = View.GONE
+            /*binding!!.searchET.text.clear()
+            if (binding!!.chipsGroup.visibility == View.VISIBLE) {
+                binding!!.chipsGroup.visibility = View.GONE
             }*/
         }
 
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding!!.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
@@ -322,8 +322,8 @@ class OrderListFragment : Fragment() {
             }
         })
 
-        binding.appBarLayout.searchET.hint = getString(R.string.search_hint)
-        binding.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        binding!!.appBarLayout.searchET.hint = getString(R.string.search_hint)
+        binding!!.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
 
             val imeAction = when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_ACTION_SEND, EditorInfo.IME_ACTION_GO, EditorInfo.IME_ACTION_SEARCH -> true
@@ -331,16 +331,16 @@ class OrderListFragment : Fragment() {
             }
             //val eventType = event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             return@OnEditorActionListener if (imeAction) {
-                binding.appBarLayout.searchBtn.performClick()
+                binding!!.appBarLayout.searchBtn.performClick()
                 true
             } else false
         })
 
-        binding.appBarLayout.logoutBtn.setOnClickListener {
+        binding!!.appBarLayout.logoutBtn.setOnClickListener {
             (activity as HomeActivity).logout()
         }
 
-        /*binding.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        /*binding!!.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             val previousFlag = collectionFlag
             collectionFlag = if (isChecked) 1 else 0
             if (previousFlag != collectionFlag) {
@@ -348,11 +348,11 @@ class OrderListFragment : Fragment() {
             }
         }*/
 
-        binding.appBarLayout.backBtn.setOnClickListener {
+        binding!!.appBarLayout.backBtn.setOnClickListener {
             activity?.onBackPressed()
         }
 
-        binding.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -480,7 +480,8 @@ class OrderListFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        binding.unbind()
+        binding?.unbind()
+        binding = null
         super.onDestroyView()
     }
 }
