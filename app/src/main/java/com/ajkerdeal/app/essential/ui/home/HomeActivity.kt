@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,17 +23,19 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.snackbar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     private lateinit var navController: NavController
     private var doubleBackToExitPressedOnce = false
@@ -47,6 +50,8 @@ class HomeActivity : AppCompatActivity() {
     private var foregroundService: LocationUpdatesService? = null
     private var mBound: Boolean = false
     private var toggle: Boolean = false
+    private var snackBar: Snackbar? = null
+    private lateinit var connectivityReceiver : ConnectivityReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +74,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         receiver = MyReceiver()
-
+        connectivityReceiver = ConnectivityReceiver()
     }
 
     override fun onBackPressed() {
@@ -152,6 +157,8 @@ class HomeActivity : AppCompatActivity() {
         super.onStart()
         val intent = Intent(this, LocationUpdatesService::class.java)
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        registerReceiver(connectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        ConnectivityReceiver.connectivityReceiverListener = this
     }
 
     override fun onStop() {
@@ -159,6 +166,8 @@ class HomeActivity : AppCompatActivity() {
             unbindService(serviceConnection)
             mBound = false
         }
+        ConnectivityReceiver.connectivityReceiverListener = null
+        unregisterReceiver(connectivityReceiver)
         super.onStop()
     }
 
@@ -233,6 +242,15 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if (!isConnected) {
+            snackBar = Snackbar.make(parent, "ইন্টারনেট কানেকশন সমস্যা হচ্ছে", Snackbar.LENGTH_INDEFINITE)
+            snackBar?.show()
+        } else {
+            snackBar?.dismiss()
         }
     }
 

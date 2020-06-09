@@ -94,7 +94,6 @@ class DashboardFragment : Fragment() {
                     } else {
                         binding?.progressBar?.visibility = View.GONE
                     }
-
                 }
             }
         })
