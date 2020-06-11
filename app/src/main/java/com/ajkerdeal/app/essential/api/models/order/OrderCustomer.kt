@@ -20,6 +20,8 @@ data class OrderCustomer(
     var totalOrder: Int = 0,
     @SerializedName("TotalPayment")
     var totalPayment: Int = 0,
+    @SerializedName("BondhuCharge")
+    var bondhuCharge: Int = 0,
 
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),

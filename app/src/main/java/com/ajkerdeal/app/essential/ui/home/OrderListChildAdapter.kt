@@ -46,11 +46,13 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             holder.binding.productName.text = "${model.productTitle} (${model.couponId})"
 
-            val total = model.productPrice * model.productQtn
+            val total = model.productPrice * model.productQtn + model.deliveryCharge
             val banglaPrice = DigitConverter.toBanglaDigit(model.productPrice)
             val banglaQuantity = DigitConverter.toBanglaDigit(model.productQtn)
+            val deliveryCharge = if (model.deliveryCharge > 0) "+ ৳ ${DigitConverter.toBanglaDigit(model.deliveryCharge)}" else ""
             val banglaTotal = DigitConverter.toBanglaDigit(total)
-            holder.binding.productPrice.text = "৳ $banglaPrice x $banglaQuantity = ৳ $banglaTotal"
+            val price = "৳ $banglaPrice x $banglaQuantity $deliveryCharge = ৳ $banglaTotal"
+            holder.binding.productPrice.text = price
 
             if (position == dataList.lastIndex) {
                 holder.binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.separator.context, R.color.white))

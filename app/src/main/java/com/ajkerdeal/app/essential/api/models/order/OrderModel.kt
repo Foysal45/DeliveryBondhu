@@ -15,6 +15,10 @@ data class OrderModel(
     var imageUrl: String? = "",
     @SerializedName("StatusId")
     var statusId: Int = 0,
+    @SerializedName("BondhuCharge")
+    var bondhuCharge: Int = 0,
+    @SerializedName("DeliveryCharge")
+    var deliveryCharge: Int = 0,
 
     @SerializedName("IsDone")
     var isDone: Int = 0,
