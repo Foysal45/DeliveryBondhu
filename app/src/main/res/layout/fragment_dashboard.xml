@@ -45,11 +45,24 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profileLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/view"
             android:background="@color/white"
             >
+
+            <ImageView
+                android:id="@+id/userPic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_person_circle"
+                android:contentDescription="@string/cd"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                />
 
             <TextView
                 android:id="@+id/userName"
@@ -59,37 +72,40 @@
                 android:textColor="@color/black_90"
                 tools:text="User name"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/userPic"
                 app:layout_constraintEnd_toStartOf="@id/activeSwitch"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 />
             <TextView
-                android:id="@+id/userMobile"
+                android:id="@+id/dateStamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="@color/black_70"
-                tools:text="01755555555"
-                app:layout_constraintTop_toBottomOf="@id/userName"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="8dp"
+                android:textColor="@color/black_80"
+                tools:text="31-12-2020"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:includeFontPadding="false"
                 />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/activeSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toBottomOf="@id/dateStamp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="অর্ডার গ্রহণ"
+                android:text="Available"
                 android:textSize="14sp"
                 android:textColor="@color/black_90"
-                app:switchPadding="8dp"
+                app:switchPadding="4dp"
                 android:checked="true"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
+
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

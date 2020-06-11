@@ -15,6 +15,8 @@ import com.ajkerdeal.app.essential.utils.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DashboardFragment : Fragment() {
 
@@ -47,6 +49,18 @@ class DashboardFragment : Fragment() {
                     binding?.button2?.visibility = View.VISIBLE
                 }
             }
+            activeSwitch?.isChecked = userStatus.isNowOffline
+            activeSwitch?.text = if (userStatus.isNowOffline) "Available" else "Not Available"
+            activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    Timber.d("Checked")
+                    viewModel.updateUserStatus("true", 1)
+                    activeSwitch?.text = "Available"
+                } else {
+                    viewModel.updateUserStatus("false", 1)
+                    activeSwitch?.text = "Not Available"
+                }
+            }
             if (userStatus.locationUpdateIntervalInMinute > 0) {
                 (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute)
                 // test
@@ -55,16 +69,8 @@ class DashboardFragment : Fragment() {
         })
 
         userName?.text = SessionManager.userName
-        userMobile?.text = SessionManager.mobile
-
-        activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                Timber.d("Checked")
-                viewModel.updateUserStatus("true", 1)
-            } else {
-                viewModel.updateUserStatus("false", 1)
-            }
-        }
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+        dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
             findNavController().navigate(R.id.nav_action_dashboard_orderList)
@@ -74,6 +80,9 @@ class DashboardFragment : Fragment() {
             findNavController().navigate(R.id.nav_action_dashboard_parcelList)
             //test()
             //(activity as HomeActivity).locationToggle()
+        }
+        binding?.profileLayout?.setOnClickListener {
+            findNavController().navigate(R.id.nav_action_dashboard_profile)
         }
         binding?.logoutBtn?.setOnClickListener {
             (activity as HomeActivity).logout()

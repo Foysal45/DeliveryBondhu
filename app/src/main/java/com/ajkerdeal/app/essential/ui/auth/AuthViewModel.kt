@@ -27,7 +27,9 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     val userId = MutableLiveData<String>("")
     val password = MutableLiveData<String>("")
     // SignUp
+    val name = MutableLiveData<String>("")
     val userId1 = MutableLiveData<String>("")
+    val alterPhoneNumber = MutableLiveData<String>("")
     val password1 = MutableLiveData<String>("")
     val confirmPassword = MutableLiveData<String>("")
     val address = MutableLiveData<String>("")
@@ -152,7 +154,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.signUpUser(SignUpRequest("", userId1.value, password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0))
+            val response = repository.signUpUser(SignUpRequest(name.value, userId1.value, alterPhoneNumber.value, password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
@@ -196,6 +198,12 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     }
 
     private fun validateSignUp(): Boolean {
+
+        if (name.value.isNullOrEmpty()) {
+            val message = "আপনার নাম লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+        }
 
         if (userId1.value.isNullOrEmpty() || userId1.value?.length != 11) {
             val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
@@ -470,6 +478,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     }
 
     fun clearSignUp() {
+        name.value = ""
         userId1.value = ""
         password1.value = ""
         confirmPassword.value = ""
@@ -477,6 +486,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         thanaId.value = 0
         postCode.value = 0
         address.value = ""
+        alterPhoneNumber.value = ""
     }
 
     fun clearResetPasswordForm() {

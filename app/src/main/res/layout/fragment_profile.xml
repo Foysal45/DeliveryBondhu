@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            >
+
+            <ImageView
+                android:id="@+id/userPic"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="@string/cd"
+                android:src="@drawable/ic_person_circle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@tools:sample/avatars"
+                android:layout_marginTop="16dp"
+                />
+
+            <ImageView
+                android:id="@+id/userPicEdit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/cd"
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/bg_round_action"
+                app:layout_constraintEnd_toEndOf="@id/userPic"
+                app:layout_constraintBottom_toBottomOf="@id/userPic"
+                android:padding="4dp"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                app:layout_constraintTop_toBottomOf="@id/userPic"
+                android:layout_marginTop="24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    tools:text="Anup Dey"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mobileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/mobile_number"
+                app:layout_constraintTop_toBottomOf="@id/nameLayout"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    android:maxLength="11"
+                    tools:text="01728959986"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/alternateMobileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/alter_mobile_number"
+                app:layout_constraintTop_toBottomOf="@id/mobileLayout"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    android:maxLength="11"
+                    tools:text="01728959986"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/workingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/current_working"
+                app:layout_constraintTop_toBottomOf="@id/alternateMobileLayout"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="none"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    tools:text="Narayanganj"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/workingThanaLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/current_working_thana"
+                app:layout_constraintTop_toBottomOf="@id/workingLayout"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="none"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    tools:text="Narayanganj Sadar"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/NIDLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/workingThanaLayout"
+                android:layout_marginTop="8dp"
+                >
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="এন.আই.ডি (NID)"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+
+                <ImageView
+                    android:id="@+id/NIDPic"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:contentDescription="@string/cd"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_banner_place"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="5dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/NIDEdit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/cd"
+                    android:src="@drawable/ic_edit"
+                    android:background="@color/black_15"
+                    app:layout_constraintTop_toTopOf="@id/NIDPic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:padding="4dp"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/drivingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/NIDLayout"
+                android:layout_marginTop="8dp"
+                >
+
+                <TextView
+                    android:id="@+id/title1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ড্রাইভিং লাইসেন্স"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+
+                <ImageView
+                    android:id="@+id/drivingPic"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:contentDescription="@string/cd"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_banner_place"
+                    app:layout_constraintTop_toBottomOf="@id/title1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="5dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/drivingEdit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/cd"
+                    android:src="@drawable/ic_edit"
+                    android:background="@color/black_15"
+                    app:layout_constraintTop_toTopOf="@id/drivingPic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:padding="4dp"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveBtn"
+                android:layout_width="150dp"
+                android:layout_height="56dp"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="আপডেট"
+                app:layout_constraintTop_toBottomOf="@id/drivingLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>
+
+
+

@@ -8,6 +8,8 @@ data class SignUpRequest(
     var name: String? = "",
     @SerializedName("Mobile")
     var mobile: String? = "",
+    @SerializedName("AlterMobile")
+    var alterMobile: String? = "",
     @SerializedName("Password")
     var password: String? = "",
     @SerializedName("Address")

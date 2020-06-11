@@ -36,6 +36,14 @@
             app:popExitAnim="@anim/slide_out_right"
             />
 
+        <action android:id="@+id/nav_action_dashboard_profile"
+            app:destination="@id/nav_profile"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
     </fragment>
 
     <fragment
@@ -75,6 +83,13 @@
         android:name="com.ajkerdeal.app.essential.ui.webview.WebViewFragment"
         android:label="WebView"
         tools:layout="@layout/fragment_web_view"
+        />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.ajkerdeal.app.essential.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile"
         />
 
 </navigation>
