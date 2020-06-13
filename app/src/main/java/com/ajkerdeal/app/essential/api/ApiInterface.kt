@@ -17,6 +17,7 @@ import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderResponse
+import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
@@ -63,6 +64,12 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/UserLatLag")
     suspend fun updateUserLocation(@Body requestBody: LocationUpdateRequest): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
+
+    @GET("api/SelfDelivery/LoadBondhuInfo/{userId}")
+    suspend fun loadProfile(@Path("userId") userId: Int): NetworkResponse<ResponseHeader<ProfileData>, ErrorResponse>
+
+    @POST("api/SelfDelivery/ProfileUpdate")
+    suspend fun updateProfile(@Body requestBody: ProfileData): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
     @GET("api/SelfDelivery/LoadStatus")
     suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>

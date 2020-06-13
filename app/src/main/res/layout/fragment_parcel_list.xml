@@ -38,7 +38,7 @@
                     android:overScrollMode="never"
 
                     tools:itemCount="2"
-                    tools:listitem="@layout/item_view_order_parent"
+                    tools:listitem="@layout/item_view_parcel_parent"
                     tools:orientation="vertical"
 
                     />

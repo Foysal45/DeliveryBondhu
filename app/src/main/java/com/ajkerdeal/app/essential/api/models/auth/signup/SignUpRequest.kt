@@ -20,6 +20,10 @@ data class SignUpRequest(
     var thanaId: Int = 0,
     @SerializedName("PostCode")
     var postCode: Int = 0,
+    @SerializedName("DistrictName")
+    var districtName: String? = "",
+    @SerializedName("ThanaName")
+    var thanaName: String? = "",
     @SerializedName("IsActive")
     var isActive: Int = 0
 )

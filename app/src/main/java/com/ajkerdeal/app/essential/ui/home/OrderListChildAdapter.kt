@@ -116,6 +116,11 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.collectionPointLayout.visibility = View.GONE
             }
 
+            if (model?.collectionSource?.sourceMobile.isNullOrEmpty()) {
+                holder.binding.phoneShop.visibility = View.GONE
+            } else {
+                holder.binding.phoneShop.visibility = View.VISIBLE
+            }
 
             /*holder.binding.actionContainer.removeAllViews()
             model.actions?.forEach {action ->

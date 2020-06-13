@@ -110,10 +110,15 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 onPictureClicked?.invoke(model)
             }
 
-            if (isCollectionPoint == 1) {
-                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call_1))
-            }else {
-                holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call))
+            if (model.mobileNumber.isNullOrEmpty()) {
+                holder.binding.phone.visibility = View.GONE
+            } else {
+                holder.binding.phone.visibility = View.VISIBLE
+                if (isCollectionPoint == 1) {
+                    holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call_1))
+                }else {
+                    holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call))
+                }
             }
         }
     }

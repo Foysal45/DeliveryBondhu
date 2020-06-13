@@ -49,6 +49,7 @@ class LocationUpdatesService: Service() {
     private val repository: AppRepository by inject()
     private var lastLat: Double = 0.0
     private var lastLng: Double = 0.0
+    private var distanceDifferenceInMeter = 20.0f
 
     companion object {
         val PACKAGE_NAME = "com.ajkerdeal.app.essential.services.LocationUpdatesService"
@@ -231,6 +232,10 @@ class LocationUpdatesService: Service() {
         }
     }
 
+    fun setLocationDifference(difference: Int) {
+        distanceDifferenceInMeter = difference.toFloat()
+    }
+
     inner class LocalBinder: Binder() {
         fun getServerInstance(): LocationUpdatesService = this@LocationUpdatesService
     }
@@ -248,7 +253,7 @@ class LocationUpdatesService: Service() {
             val distance = floatArrayOf(0.0f)
             Location.distanceBetween(lastLat, lastLng, location.latitude, location.longitude, distance)
             if (distance.isNotEmpty()) {
-                if (distance[0] > 10.0) { // difference in meter
+                if (distance[0] > distanceDifferenceInMeter) { // difference in meter
                     lastLat = location.latitude
                     lastLng = location.longitude
                     Timber.d("LocationServiceLog difference > 10 meter")

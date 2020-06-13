@@ -217,9 +217,11 @@ class ParcelListFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (position in 0..filterList.size) {
-                        val selectedStatus = filterList[position].status
-                        val selectedDTStatus = filterList[position].dtStatus
+                        val model = filterList[position]
+                        val selectedStatus = model.status
+                        val selectedDTStatus = model.dtStatus
                         lastFilterIndex = position
+                        binding!!.appBarLayout.filterName.text = model.statusName
                         //if (selectedStatus != filterStatus) {
                             filterStatus = selectedStatus
                             dtStatus = selectedDTStatus

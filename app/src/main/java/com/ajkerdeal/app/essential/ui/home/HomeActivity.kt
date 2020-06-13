@@ -136,9 +136,10 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
     }
 
-    fun startLocationUpdate(intervalInMinute: Int = 20) {
+    fun startLocationUpdate(intervalInMinute: Int = 20, locationDistanceInMeter: Int = 20) {
         if (isLocationPermission()) {
             foregroundService?.setLocationInterval(intervalInMinute)
+            foregroundService?.setLocationDifference(locationDistanceInMeter)
             foregroundService?.requestLocationUpdates()
         }
     }

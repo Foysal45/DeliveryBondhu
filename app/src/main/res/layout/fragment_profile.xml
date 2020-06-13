@@ -39,6 +39,7 @@
                 app:layout_constraintEnd_toEndOf="@id/userPic"
                 app:layout_constraintBottom_toBottomOf="@id/userPic"
                 android:padding="4dp"
+                android:layout_margin="12dp"
                 />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -51,6 +52,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
@@ -72,6 +74,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/mobile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
@@ -94,6 +97,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/alterMobile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
@@ -116,10 +120,13 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/district"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="none"
+                    android:inputType="none|textNoSuggestions"
+                    android:focusable="false"
+                    android:cursorVisible="false"
                     android:textSize="14sp"
                     android:textColor="@color/black_80"
                     tools:text="Narayanganj"
@@ -137,10 +144,13 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/thana"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="none"
+                    android:inputType="none|textNoSuggestions"
+                    android:focusable="false"
+                    android:cursorVisible="false"
                     android:textSize="14sp"
                     android:textColor="@color/black_80"
                     tools:text="Narayanganj Sadar"
@@ -154,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/workingThanaLayout"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 >
 
                 <TextView
@@ -187,7 +197,7 @@
                     android:layout_height="24dp"
                     android:contentDescription="@string/cd"
                     android:src="@drawable/ic_edit"
-                    android:background="@color/black_15"
+                    android:background="@color/black_25"
                     app:layout_constraintTop_toTopOf="@id/NIDPic"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:padding="4dp"
@@ -200,7 +210,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/NIDLayout"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 >
 
                 <TextView
@@ -233,12 +243,13 @@
                     android:layout_height="24dp"
                     android:contentDescription="@string/cd"
                     android:src="@drawable/ic_edit"
-                    android:background="@color/black_15"
+                    android:background="@color/black_25"
                     app:layout_constraintTop_toTopOf="@id/drivingPic"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:padding="4dp"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveBtn"
@@ -252,6 +263,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="24dp"
+                />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:indeterminate="true"
+                app:layout_constraintTop_toTopOf="@id/saveBtn"
+                app:layout_constraintBottom_toBottomOf="@id/saveBtn"
+                app:layout_constraintStart_toStartOf="@id/saveBtn"
+                android:elevation="8dp"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_marginStart="12dp"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

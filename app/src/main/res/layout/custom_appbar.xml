@@ -88,8 +88,7 @@
                     app:layout_constraintEnd_toStartOf="@id/acceptFilterCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/backBtn"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    >
+                    app:layout_constraintVertical_chainStyle="packed">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -157,10 +156,10 @@
                             android:id="@+id/spinner"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            tools:entries="@array/filter"
                             android:spinnerMode="dropdown"
                             android:theme="@style/custom_spinner_style"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:entries="@array/filter" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
@@ -203,33 +202,31 @@
                     app:layout_constraintTop_toBottomOf="@id/tabLayout">
 
                     <TextView
-                        android:id="@+id/total"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="মোটঃ"
-                        android:textColor="@color/black_90"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        />
-
-                    <TextView
                         android:id="@+id/countTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="০টি"
                         android:textColor="@color/colorAccent"
                         android:textSize="14sp"
-                        android:text="০টি"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/total"
-                        android:layout_marginStart="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+
                         />
 
-
-
+                    <TextView
+                        android:id="@+id/filterName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text=""
+                        android:textColor="@color/black_90"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/countTV"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="filter name" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -240,11 +237,10 @@
 
 
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:tabTextAppearance="@style/TabLayoutTextStyle"
-                    app:layout_constraintTop_toBottomOf="@id/chipsGroup"
                     app:layout_constraintBottom_toTopOf="@id/countLayout"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/chipsGroup"
+                    app:tabTextAppearance="@style/TabLayoutTextStyle"
+                    tools:visibility="visible">
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
@@ -256,9 +252,7 @@
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="কাস্টমার"
-                        />
-
+                        android:text="কাস্টমার" />
 
 
                 </com.google.android.material.tabs.TabLayout>

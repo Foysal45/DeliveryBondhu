@@ -10,6 +10,7 @@ import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
+import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 
@@ -32,6 +33,10 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun updateUserStatus(userId: Int, isActive: String, flag: Int) = apiInterface.updateUserStatus(userId, isActive, flag)
 
     suspend fun updateUserLocation(requestBody: LocationUpdateRequest) = apiInterface.updateUserLocation(requestBody)
+
+    suspend fun loadProfile(userId: Int) = apiInterface.loadProfile(userId)
+
+    suspend fun updateProfile(requestBody: ProfileData) = apiInterface.updateProfile(requestBody)
 
     suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
 

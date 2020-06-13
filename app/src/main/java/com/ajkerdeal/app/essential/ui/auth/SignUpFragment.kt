@@ -79,6 +79,7 @@ class SignUpFragment : Fragment() {
                         districtId = districtModelList[position].districtId
                         viewModel.districtId.value = districtId
                         viewModel.address.value = districtName
+                        viewModel.districtName.value = districtName
                         binding?.thanaLayout?.visibility = View.VISIBLE
                     }
                 }
@@ -109,6 +110,7 @@ class SignUpFragment : Fragment() {
                         viewModel.thanaId.value = thanaId
                         viewModel.postCode.value = model.postalCode.toIntOrNull() ?: 0
                         viewModel.address.value = "$thanaName, $districtName"
+                        viewModel.thanaName.value = thanaName
                     }
                 }
 

@@ -62,7 +62,7 @@ class DashboardFragment : Fragment() {
                 }
             }
             if (userStatus.locationUpdateIntervalInMinute > 0) {
-                (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute)
+                (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute, userStatus.locationDistanceInMeter)
                 // test
                 //(activity as HomeActivity).startLocationUpdate(1)
             }

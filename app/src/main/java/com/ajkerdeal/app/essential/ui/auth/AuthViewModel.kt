@@ -36,6 +36,8 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     val districtId = MutableLiveData<Int>(0)
     val thanaId = MutableLiveData<Int>(0)
     val postCode = MutableLiveData<Int>(0)
+    val districtName = MutableLiveData<String>("")
+    val thanaName = MutableLiveData<String>("")
 
     var otpMobile: String? = ""
     var otpType: Int = 0
@@ -154,7 +156,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.signUpUser(SignUpRequest(name.value, userId1.value, alterPhoneNumber.value, password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0))
+            val response = repository.signUpUser(SignUpRequest(name.value, userId1.value, alterPhoneNumber.value, password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {

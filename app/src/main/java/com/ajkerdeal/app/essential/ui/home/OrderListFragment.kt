@@ -204,8 +204,9 @@ class OrderListFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                     if (position in 0..filterList.size) {
-                        val selectedStatus = filterList[position].status
-                        val selectedDTStatus = filterList[position].dtStatus
+                        val model = filterList[position]
+                        val selectedStatus = model.status
+                        val selectedDTStatus = model.dtStatus
                         lastFilterIndex = position
                         //if (selectedStatus != filterStatus) {
                             filterStatus = selectedStatus
@@ -213,8 +214,8 @@ class OrderListFragment : Fragment() {
                             dataAdapter.clearData()
                             Timber.d("loadOrderOrSearch called from filter spinner")
 
-
-                        val collectionSwitchFlag = filterList[position].collectionFilter
+                        binding!!.appBarLayout.filterName.text = model.statusName
+                        val collectionSwitchFlag = model.collectionFilter
                         if (collectionSwitchFlag == 1) {
                             //binding!!.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
                             binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE

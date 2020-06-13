@@ -8,6 +8,7 @@ import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.ui.home.HomeViewModel
 import com.ajkerdeal.app.essential.ui.home.dashboard.DashboardViewModel
 import com.ajkerdeal.app.essential.ui.home.parcel.ParcelViewModel
+import com.ajkerdeal.app.essential.ui.profile.ProfileViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -20,4 +21,5 @@ val appModule = module {
     viewModel { ParcelViewModel(get()) }
     viewModel { HomeActivityViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
 }
