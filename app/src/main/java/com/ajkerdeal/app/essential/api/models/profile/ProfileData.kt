@@ -6,8 +6,6 @@ import com.google.gson.annotations.SerializedName
 data class ProfileData(
     @SerializedName("BondhuId")
     var bondhuId: Int? = 0,
-    @SerializedName("Id")
-    var id: Int? = 0,
     @SerializedName("Name")
     var name: String? = "",
     @SerializedName("Mobile")

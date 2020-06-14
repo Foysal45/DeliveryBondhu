@@ -187,7 +187,6 @@ class ProfileFragment : Fragment() {
         binding!!.saveBtn.isEnabled = false
 
         val model = ProfileData().apply {
-            id = SessionManager.userId
             bondhuId = SessionManager.userId
             name = binding!!.name.text.toString().trim()
             mobile = binding!!.mobile.text.toString().trim()
@@ -212,20 +211,23 @@ class ProfileFragment : Fragment() {
         WorkManager.getInstance(requireContext()).beginUniqueWork("sync", ExistingWorkPolicy.KEEP, request).enqueue()
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(request.id).observe(viewLifecycleOwner, Observer { workInfo ->
             if (workInfo != null){
-                /*if (workInfo.state == WorkInfo.State.SUCCEEDED){
-                    context?.toast("প্রোফাইল আপডেট হয়েছে")
+                if (workInfo.state == WorkInfo.State.SUCCEEDED){
+                    //context?.toast("প্রোফাইল আপডেট হয়েছে")
+                    binding?.progressBar?.visibility = View.GONE
+                    binding?.saveBtn?.isEnabled = true
+                    profileUri = ""
+                    nidUri = ""
+                    drivingUri = ""
                 } else if (workInfo.state == WorkInfo.State.FAILED){
-                    context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
-                }*/
+                    //context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
+                    binding?.progressBar?.visibility = View.GONE
+                    binding?.saveBtn?.isEnabled = true
+                }
                 val result = workInfo.outputData.getString("work_result")
                 context?.toast(result)
 
-                binding?.progressBar?.visibility = View.GONE
-                binding!!.saveBtn.isEnabled = true
             }
         })
-
-
 
     }
 
