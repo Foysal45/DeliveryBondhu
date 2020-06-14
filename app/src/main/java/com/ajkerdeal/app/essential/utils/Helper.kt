@@ -3,6 +3,7 @@ package com.ajkerdeal.app.essential.utils
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -80,6 +81,7 @@ fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
 
 fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, actionName: String, onClick: ((view: View) -> Unit)? = null){
     Snackbar.make(this, message, length).also { snackbar ->
+        snackbar.setActionTextColor(Color.WHITE)
         snackbar.setAction(actionName) {
             onClick?.invoke(it)
             snackbar.dismiss()

@@ -12,6 +12,9 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -66,6 +69,21 @@ class DashboardFragment : Fragment() {
                 // test
                 //(activity as HomeActivity).startLocationUpdate(1)
             }
+
+            if (!userStatus.isProfileImage || !userStatus.isNID) {
+                val msg = "নতুন অর্ডার পেতে আপনার ছবি, ভোটার আই.ডি কার্ড অথবা ড্রাইভিং লাইসেন্স এর ছবি আপলোড করুন"
+                binding?.parent?.snackbar(msg,actionName = "আপডেট") {
+                    findNavController().navigate(R.id.nav_action_dashboard_profile)
+                }
+            }
+
+            Glide.with(this)
+                .load(userStatus.profileImage)
+                .apply(RequestOptions().placeholder(R.drawable.ic_person_circle).error(R.drawable.ic_person_circle).circleCrop())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(binding!!.userPic)
+
         })
 
         userName?.text = SessionManager.userName

@@ -115,6 +115,7 @@ class ParcelListFragment : Fragment() {
             var instructions: String? = null
             var couponIdList: String = ""
             //var totalPrice: Int = 0
+            var bondhuCharge = 0
 
             if (orderModel != null) {
 
@@ -157,12 +158,18 @@ class ParcelListFragment : Fragment() {
                         couponIdList += orderModel.couponId + ","
                     }
                 }
+                bondhuCharge = orderCustomer.bondhuCharge
                 //totalPrice = orderCustomer.totalPayment
                 instructions = orderCustomer.collectionSource?.sourceMessageData?.instructions
             }
 
             if (actionModel.isPaymentType == 1) {
-                val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList"
+                val paymentData = "${SessionManager.mobile},$bondhuCharge"
+                Timber.d("Encryption plainData: $paymentData")
+                val encryptedData = AESEncryptionClass.encryptMessage(paymentData)
+                Timber.d("Encryption encrypted: $encryptedData")
+
+                val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList&ID=$encryptedData"
                 val bundle = bundleOf(
                     "url" to url,
                     "updateModel" to requestBody

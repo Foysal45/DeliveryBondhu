@@ -11,5 +11,14 @@ data class UserStatus(
     @SerializedName("LocationUpdateIntervalInMinute")
     var locationUpdateIntervalInMinute: Int = 20,
     @SerializedName("LocationDistanceInMeter")
-    var locationDistanceInMeter: Int = 20
+    var locationDistanceInMeter: Int = 20,
+
+    @SerializedName("IsProfileImage")
+    var isProfileImage: Boolean = false,
+    @SerializedName("IsDrivingLicense")
+    var isDrivingLicense: Boolean = false,
+    @SerializedName("IsNID")
+    var isNID: Boolean = false,
+    @SerializedName("ProfileImage")
+    var profileImage: String? = ""
 )
