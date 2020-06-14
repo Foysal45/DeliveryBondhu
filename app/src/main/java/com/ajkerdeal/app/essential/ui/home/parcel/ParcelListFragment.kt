@@ -165,8 +165,9 @@ class ParcelListFragment : Fragment() {
 
             if (actionModel.isPaymentType == 1) {
                 val paymentData = "${SessionManager.mobile},$bondhuCharge"
+                val key = "3byamAfK"
                 Timber.d("Encryption plainData: $paymentData")
-                val encryptedData = AESEncryptionClass.encryptMessage(paymentData)
+                val encryptedData = Cryptography.Encrypt(paymentData, key)
                 Timber.d("Encryption encrypted: $encryptedData")
 
                 val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIdList&ID=$encryptedData"

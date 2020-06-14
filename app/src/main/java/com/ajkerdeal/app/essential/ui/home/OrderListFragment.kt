@@ -107,9 +107,10 @@ class OrderListFragment : Fragment() {
                 if (actionModel.isPaymentType == 1) {
 
                     val paymentData = "${SessionManager.mobile},$bondhuCharge"
-                    Timber.d("Encryption plainData: $paymentData")
-                    val encryptedData = AESEncryptionClass.encryptMessage(paymentData)
-                    Timber.d("Encryption encrypted: $encryptedData")
+                    val key = "3byamAfK"
+                    Timber.d("Encryption plainData $paymentData")
+                    val encryptedData = Cryptography.Encrypt(paymentData, key)
+                    Timber.d("Encryption encrypted $encryptedData")
                     //Timber.d("Encryption decrypted: ${AESEncryptionClass.decryptMessage(encryptedData)}")
 
                     val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=${orderModel.couponId}&ID=$encryptedData"
