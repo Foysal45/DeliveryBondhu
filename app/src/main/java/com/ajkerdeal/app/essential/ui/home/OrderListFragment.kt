@@ -83,6 +83,7 @@ class OrderListFragment : Fragment() {
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
             var collectionPointAvailable = 0
+            var bondhuCharge = 0
 
             if (orderModel != null) {
 
@@ -101,9 +102,17 @@ class OrderListFragment : Fragment() {
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
                 collectionPointAvailable = actionModel.collectionPointAvailable
+                bondhuCharge = orderModel.bondhuCharge
 
                 if (actionModel.isPaymentType == 1) {
-                    val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=${orderModel.couponId}"
+
+                    val paymentData = "${SessionManager.mobile},$bondhuCharge"
+                    Timber.d("Encryption plainData: $paymentData")
+                    val encryptedData = AESEncryptionClass.encryptMessage(paymentData)
+                    Timber.d("Encryption encrypted: $encryptedData")
+                    //Timber.d("Encryption decrypted: ${AESEncryptionClass.decryptMessage(encryptedData)}")
+
+                    val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=${orderModel.couponId}&ID=$encryptedData"
                     val bundle = bundleOf(
                         "url" to url,
                         "updateModel" to requestBody

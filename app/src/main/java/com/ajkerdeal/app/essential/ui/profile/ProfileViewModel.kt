@@ -51,7 +51,7 @@ class ProfileViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
-    fun updateProfile(model: ProfileData) {
+    /*fun updateProfile(model: ProfileData) {
 
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
@@ -79,7 +79,7 @@ class ProfileViewModel(private val repository: AppRepository): ViewModel() {
                 }.exhaustive
             }
         }
-    }
+    }*/
 
     fun loadLocationList(id: Int = 0): LiveData<LocationResponse> {
 

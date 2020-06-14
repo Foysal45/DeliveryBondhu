@@ -9,18 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.work.*
+import com.ajkerdeal.app.essential.R
+
 import com.ajkerdeal.app.essential.api.models.profile.AreaInfo
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.databinding.FragmentProfileBinding
+import com.ajkerdeal.app.essential.services.ProfileUpdateWorker
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
+import com.google.gson.Gson
 import com.theartofdev.edmodo.cropper.CropImage
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -29,6 +35,8 @@ class ProfileFragment : Fragment() {
 
     private var binding: FragmentProfileBinding? = null
     private val viewModel: ProfileViewModel by inject()
+    private val gson = Gson()
+
     private var contentType: Int = 0
     private var districtId = 0
     private var thanaId = 0
@@ -36,6 +44,11 @@ class ProfileFragment : Fragment() {
     private var thanaName = ""
     private var areaId = 0
     private var postCode = 0
+
+    private var profileUri: String? = ""
+    private var nidUri: String? = ""
+    private var drivingUri: String? = ""
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentProfileBinding.inflate(inflater).also {
@@ -67,12 +80,20 @@ class ProfileFragment : Fragment() {
             Glide.with(this)
                 .load(model?.imageInfo?.profileImage)
                 .apply(RequestOptions().circleCrop())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(binding!!.userPic)
             Glide.with(this)
                 .load(model?.imageInfo?.nid)
+                .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(binding!!.NIDPic)
             Glide.with(this)
                 .load(model?.imageInfo?.drivingImage)
+                .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(binding!!.drivingPic)
         })
 
@@ -161,14 +182,50 @@ class ProfileFragment : Fragment() {
 
     private fun updateProfile() {
 
+        context?.toast("প্রোফাইল আপডেট হচ্ছে, অপেক্ষা করুন")
+        binding?.progressBar?.visibility = View.VISIBLE
+        binding!!.saveBtn.isEnabled = false
+
         val model = ProfileData().apply {
             id = SessionManager.userId
+            bondhuId = SessionManager.userId
             name = binding!!.name.text.toString().trim()
             mobile = binding!!.mobile.text.toString().trim()
             alternativeMobile = binding!!.alterMobile.text.toString().trim()
             areaInfo = listOf(AreaInfo(districtId, thanaId, postCode, areaId, districtName, thanaName))
+
+            isProfileImage = !profileUri.isNullOrEmpty()
+            isDrivingLicense = !drivingUri.isNullOrEmpty()
+            isNID = !nidUri.isNullOrEmpty()
         }
-        viewModel.updateProfile(model)
+        //viewModel.updateProfile(model)
+
+        val data = Data.Builder()
+            .putString("Data", gson.toJson(model))
+            .putString("profileUri", profileUri)
+            .putString("nidUri", nidUri)
+            .putString("drivingUri", drivingUri)
+            .build()
+
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val request = OneTimeWorkRequestBuilder<ProfileUpdateWorker>().setConstraints(constraints).setInputData(data).build()
+        WorkManager.getInstance(requireContext()).beginUniqueWork("sync", ExistingWorkPolicy.KEEP, request).enqueue()
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(request.id).observe(viewLifecycleOwner, Observer { workInfo ->
+            if (workInfo != null){
+                /*if (workInfo.state == WorkInfo.State.SUCCEEDED){
+                    context?.toast("প্রোফাইল আপডেট হয়েছে")
+                } else if (workInfo.state == WorkInfo.State.FAILED){
+                    context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
+                }*/
+                val result = workInfo.outputData.getString("work_result")
+                context?.toast(result)
+
+                binding?.progressBar?.visibility = View.GONE
+                binding!!.saveBtn.isEnabled = true
+            }
+        })
+
+
 
     }
 
@@ -196,19 +253,30 @@ class ProfileFragment : Fragment() {
                 val uri = result.uri
                 when (contentType) {
                     0 -> {
+                        profileUri = uri.path
                         Glide.with(this)
                             .load(uri)
                             .apply(RequestOptions().circleCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
                             .into(binding!!.userPic)
                     }
                     1 -> {
+                        nidUri = uri.path
                         Glide.with(this)
                             .load(uri)
+                            .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
                             .into(binding!!.NIDPic)
                     }
                     2 -> {
+                        drivingUri = uri.path
                         Glide.with(this)
                             .load(uri)
+                            .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
                             .into(binding!!.drivingPic)
                     }
                 }

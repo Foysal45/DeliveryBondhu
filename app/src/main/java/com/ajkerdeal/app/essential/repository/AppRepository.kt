@@ -13,6 +13,8 @@ import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class AppRepository(private val apiInterface: ApiInterface) {
 
@@ -37,6 +39,9 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun loadProfile(userId: Int) = apiInterface.loadProfile(userId)
 
     suspend fun updateProfile(requestBody: ProfileData) = apiInterface.updateProfile(requestBody)
+
+    suspend fun updateProfile(requestBody: RequestBody, file1: MultipartBody.Part? = null, file2: MultipartBody.Part?, file3: MultipartBody.Part?) =
+        apiInterface.updateProfile(requestBody, file1, file2, file3)
 
     suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
 

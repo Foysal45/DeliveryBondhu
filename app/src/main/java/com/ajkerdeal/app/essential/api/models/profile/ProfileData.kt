@@ -4,6 +4,8 @@ package com.ajkerdeal.app.essential.api.models.profile
 import com.google.gson.annotations.SerializedName
 
 data class ProfileData(
+    @SerializedName("BondhuId")
+    var bondhuId: Int? = 0,
     @SerializedName("Id")
     var id: Int? = 0,
     @SerializedName("Name")
@@ -18,5 +20,12 @@ data class ProfileData(
     @SerializedName("imageInfo")
     var imageInfo: ImageInfo? = null,
     @SerializedName("AreaInfo")
-    var areaInfo: List<AreaInfo>? = listOf()
+    var areaInfo: List<AreaInfo>? = listOf(),
+
+    @SerializedName("IsProfileImage")
+    var isProfileImage: Boolean = false,
+    @SerializedName("IsDrivingLicense")
+    var isDrivingLicense: Boolean = false,
+    @SerializedName("IsNID")
+    var isNID: Boolean = false
 )

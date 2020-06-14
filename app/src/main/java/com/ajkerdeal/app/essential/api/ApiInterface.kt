@@ -24,11 +24,10 @@ import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.haroldadmin.cnradapter.NetworkResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Retrofit
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ApiInterface {
 
@@ -70,6 +69,10 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/ProfileUpdate")
     suspend fun updateProfile(@Body requestBody: ProfileData): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
+
+    @Multipart
+    @POST("api/SelfDelivery/ProfileUpload")
+    suspend fun updateProfile(@Part("Data") requestBody: RequestBody, @Part file1: MultipartBody.Part? = null, @Part file2: MultipartBody.Part? = null, @Part file3: MultipartBody.Part? = null): NetworkResponse<ResponseHeader<Boolean>, ErrorResponse>
 
     @GET("api/SelfDelivery/LoadStatus")
     suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
