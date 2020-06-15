@@ -2,16 +2,18 @@ package com.ajkerdeal.app.essential.ui.profile
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.ajkerdeal.app.essential.R
-
 import com.ajkerdeal.app.essential.api.models.profile.AreaInfo
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.databinding.FragmentProfileBinding
@@ -30,6 +32,10 @@ import com.google.gson.Gson
 import com.theartofdev.edmodo.cropper.CropImage
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ProfileFragment : Fragment() {
 
@@ -48,6 +54,10 @@ class ProfileFragment : Fragment() {
     private var profileUri: String? = ""
     private var nidUri: String? = ""
     private var drivingUri: String? = ""
+
+    private var currentPhotoPath: String = ""
+    private var currentPhotoUri: Uri? = null
+    private val REQUEST_TAKE_PHOTO = 15620
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,7 +89,7 @@ class ProfileFragment : Fragment() {
 
             Glide.with(this)
                 .load(model?.imageInfo?.profileImage)
-                .apply(RequestOptions().circleCrop())
+                .apply(RequestOptions().placeholder(R.drawable.ic_person_circle).error(R.drawable.ic_person_circle).circleCrop())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(binding!!.userPic)
@@ -146,6 +156,7 @@ class ProfileFragment : Fragment() {
         binding!!.userPic.setOnClickListener {
             contentType = 0
             ImagePicker.cameraOnly().start(this)
+            //dispatchTakePictureIntent()
         }
         binding!!.NIDPic.setOnClickListener {
             contentType = 1
@@ -235,24 +246,27 @@ class ProfileFragment : Fragment() {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             val image: Image? = ImagePicker.getFirstImageOrNull(data)
             image?.path?.let {
-                Timber.d("path: $it")
-                MediaScannerConnection.scanFile(requireContext(), arrayOf(it), null) { path, uri ->
+                Timber.d("ImageLog ImagePickerPath: $it")
+                /*MediaScannerConnection.scanFile(requireContext(), arrayOf(it), null) { path, uri ->
                     Timber.d("uri: $uri")
+                }*/
+                val uri = FileProvider.getUriForFile(requireContext(), "com.ajkerdeal.app.essential.fileprovider", File(it))
+                Timber.d("ImageLog ImagePickerUri: $uri")
 
-                    val builder = CropImage.activity(uri)
-                    if (contentType == 0) {
-                        builder.setAspectRatio(1, 1)
-                    } else {
-                        builder.setAspectRatio(800, 500)
-                    }
-                    builder.start(requireContext(), this)
+                val builder = CropImage.activity(uri)
+                if (contentType == 0) {
+                    builder.setAspectRatio(1, 1)
+                } else {
+                    builder.setAspectRatio(800, 500)
                 }
+                builder.start(requireContext(), this)
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
                 val uri = result.uri
+                Timber.d("ImageLog cropPhotoURI $uri")
                 when (contentType) {
                     0 -> {
                         profileUri = uri.path
@@ -288,6 +302,23 @@ class ProfileFragment : Fragment() {
                 Timber.d(msg)
             }
         }
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+
+            /*Glide.with(this)
+                .load(currentPhotoPath)
+                .apply(RequestOptions().circleCrop())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(binding!!.userPic)*/
+
+            val builder = CropImage.activity(currentPhotoUri)
+            if (contentType == 0) {
+                builder.setAspectRatio(1, 1)
+            } else {
+                builder.setAspectRatio(800, 500)
+            }
+            builder.start(requireContext(), this)
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -295,5 +326,40 @@ class ProfileFragment : Fragment() {
         binding?.unbind()
         binding = null
         super.onDestroyView()
+    }
+
+    private fun dispatchTakePictureIntent() {
+
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(requireContext().packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (e: IOException) {
+                    Timber.d(e)
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    currentPhotoUri = FileProvider.getUriForFile(requireContext(), "com.ajkerdeal.app.essential.fileprovider", it)
+                    Timber.d("ImageLog photoURI $currentPhotoUri")
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("IMG_${timeStamp}_", ".jpg", storageDir).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+            Timber.d("ImageLog currentPhotoPath $currentPhotoPath")
+        }
     }
 }

@@ -150,18 +150,18 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
 
         val id = "channel1"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(id, "Profile Update", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(id, "Profile Update", NotificationManager.IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(channel)
         }
 
         notificationBuilder = NotificationCompat.Builder(applicationContext, id)
             .setContentTitle("Updating Profile")
             .setTicker("Delivery Bondhu")
-            .setContentText("Uploading profile data and images")
+            .setContentText("please wait")
             .setSmallIcon(R.drawable.ic_logo_hand)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setProgress(10, 0, true)
 
         notificationManager.notify(notificationId, notificationBuilder.build())

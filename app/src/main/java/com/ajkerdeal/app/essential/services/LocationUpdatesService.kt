@@ -89,7 +89,8 @@ class LocationUpdatesService: Service() {
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelID, "Service", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(channelID, "Service", NotificationManager.IMPORTANCE_LOW)
+            channel.enableVibration(false)
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -143,7 +144,7 @@ class LocationUpdatesService: Service() {
                 .setContentText(lastAddress)
                 .setTicker(lastAddress)
                 .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.ic_logo_hand)
                 .setWhen(System.currentTimeMillis())
                 .addAction(R.drawable.ic_logo_hand, "Open App", activityPendingIntent)

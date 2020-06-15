@@ -50,4 +50,6 @@
     <color name="parentColor">#EAE9F1</color>
     <color name="childColor">#FDEEE4</color>
 
+    <color name="action_icon_background">#E6322E7F</color>
+
 </resources>
