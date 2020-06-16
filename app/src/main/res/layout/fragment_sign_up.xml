@@ -84,7 +84,6 @@
                         android:paddingBottom="8dp"
                         android:textColor="@color/black_80"
                         android:textSize="14sp"
-                        android:maxLength="11"
                         android:text="@={viewModel.name}"
                         />
 

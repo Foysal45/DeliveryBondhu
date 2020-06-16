@@ -16,6 +16,7 @@ import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.databinding.FragmentProfileBinding
 import com.ajkerdeal.app.essential.services.ProfileUpdateWorker
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
+import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
@@ -219,6 +220,9 @@ class ProfileFragment : Fragment() {
                     profileUri = ""
                     nidUri = ""
                     drivingUri = ""
+
+                    (activity as HomeActivity).onBackPressed()
+
                 } else if (workInfo.state == WorkInfo.State.FAILED){
                     //context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
                     binding?.progressBar?.visibility = View.GONE

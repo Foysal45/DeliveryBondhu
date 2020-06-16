@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/workingThanaLayout"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 >
 
                 <TextView
@@ -182,8 +182,8 @@
 
                 <ImageView
                     android:id="@+id/NIDPic"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:contentDescription="@string/cd"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_banner_place"
@@ -191,6 +191,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="5dp"
+                    app:layout_constraintDimensionRatio="H,2:1"
                     />
 
                 <ImageView
@@ -212,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/NIDLayout"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 >
 
                 <TextView
@@ -228,8 +229,8 @@
 
                 <ImageView
                     android:id="@+id/drivingPic"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:contentDescription="@string/cd"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_banner_place"
@@ -237,6 +238,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="5dp"
+                    app:layout_constraintDimensionRatio="H,2:1"
                     />
 
                 <ImageView

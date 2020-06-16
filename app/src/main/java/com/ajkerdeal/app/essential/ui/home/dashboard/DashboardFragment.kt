@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,6 +14,7 @@ import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -25,6 +25,7 @@ class DashboardFragment : Fragment() {
 
     private var binding: FragmentDashboardBinding? = null
     private val viewModel: DashboardViewModel by inject()
+    private var snackbar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_dashboard, container, false)
@@ -66,15 +67,14 @@ class DashboardFragment : Fragment() {
             }
             if (userStatus.locationUpdateIntervalInMinute > 0) {
                 (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute, userStatus.locationDistanceInMeter)
-                // test
-                //(activity as HomeActivity).startLocationUpdate(1)
             }
 
             if (!userStatus.isProfileImage || !userStatus.isNID) {
                 val msg = "নতুন অর্ডার পেতে আপনার ছবি, ভোটার আই.ডি কার্ড অথবা ড্রাইভিং লাইসেন্স এর ছবি আপলোড করুন"
-                binding?.parent?.snackbar(msg,actionName = "আপডেট") {
+                snackbar = binding?.parent?.snackbar(msg,actionName = "আপডেট") {
                     findNavController().navigate(R.id.nav_action_dashboard_profile)
                 }
+                snackbar?.show()
             }
 
             Glide.with(this)
@@ -91,19 +91,17 @@ class DashboardFragment : Fragment() {
         dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
+            snackbar?.dismiss()
             findNavController().navigate(R.id.nav_action_dashboard_orderList)
         }
 
         binding?.button2?.setOnClickListener {
+            snackbar?.dismiss()
             findNavController().navigate(R.id.nav_action_dashboard_parcelList)
-            //test()
-            //(activity as HomeActivity).locationToggle()
         }
         binding?.profileLayout?.setOnClickListener {
+            snackbar?.dismiss()
             findNavController().navigate(R.id.nav_action_dashboard_profile)
-        }
-        binding?.logoutBtn?.setOnClickListener {
-            (activity as HomeActivity).logout()
         }
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
@@ -133,14 +131,14 @@ class DashboardFragment : Fragment() {
         super.onDestroyView()
     }
 
-    private fun test() {
+    /*private fun test() {
         val url = "${AppConstant.GATEWAY_bKASH_SINGLE}??CID=3849331"
         //val url = "http://157.245.254.139/"
-        /*ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
+        *//*ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
             findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to fallbackUrl))
-        }*/
+        }*//*
         // or
-        findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
-    }
+        //findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
+    }*/
 
 }

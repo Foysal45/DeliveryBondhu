@@ -20,7 +20,7 @@
     <string name="development">Under Development</string>
     <string name="name">নাম</string>
     <string name="current_working">বর্তমান কর্মস্থান</string>
-    <string name="current_working_thana">থানা</string>
+    <string name="current_working_thana">এরিয়া</string>
 
     <string name="default_notification_channel_id">Promotion</string>
 

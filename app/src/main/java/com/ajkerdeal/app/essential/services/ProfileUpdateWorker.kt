@@ -11,6 +11,7 @@ import androidx.work.WorkerParameters
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.repository.AppRepository
+import com.ajkerdeal.app.essential.utils.ProgressRequestBody
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.google.gson.Gson
@@ -26,13 +27,13 @@ import timber.log.Timber
 import java.io.File
 
 
-class ProfileUpdateWorker(private val context: Context, private val parameters: WorkerParameters): CoroutineWorker(context, parameters), KoinComponent {
+class ProfileUpdateWorker(private val context: Context, private val parameters: WorkerParameters): CoroutineWorker(context, parameters), KoinComponent, ProgressRequestBody.UploadCallback {
 
     private val repository: AppRepository by inject()
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private lateinit var notificationBuilder: NotificationCompat.Builder
     private val notificationId: Int = 23220
-    private var maxProgress: Int = 10
+    private var maxProgress: Int = 100
     private var isError: Boolean = false
     private var resultMsg: String? = ""
     private val mediaTypeMultipart = "multipart/form-data".toMediaTypeOrNull()
@@ -83,7 +84,8 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
                 val file = File(profileUri)
                 if (file.exists()) {
                     val compressedFile = Compressor.compress(context, file)
-                    val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    //val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    val requestFile = ProgressRequestBody(compressedFile, mediaTypeMultipart, this)
                     file1 = MultipartBody.Part.createFormData("file1", "profileimage.jpg", requestFile)
                 }
             }
@@ -168,7 +170,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
     }
 
     private fun updateProgress(progress: Int) {
-        notificationBuilder.setContentText("$progress out of $maxProgress")
+        notificationBuilder.setContentText("$progress/$maxProgress")
         notificationBuilder.setProgress(maxProgress, progress, false)
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
@@ -178,6 +180,10 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
         notificationBuilder.setOngoing(false)
         notificationBuilder.setContentText(msg)
         notificationManager.notify(notificationId, notificationBuilder.build())
+    }
+
+    override fun onProgressUpdate(percentage: Int) {
+        updateProgress(percentage)
     }
 
 }

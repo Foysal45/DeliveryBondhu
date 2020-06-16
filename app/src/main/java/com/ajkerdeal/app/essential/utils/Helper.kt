@@ -79,14 +79,15 @@ fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
     }.show()
 }
 
-fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, actionName: String, onClick: ((view: View) -> Unit)? = null){
-    Snackbar.make(this, message, length).also { snackbar ->
+fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, actionName: String, onClick: ((view: View) -> Unit)? = null): Snackbar {
+    return Snackbar.make(this, message, length).also { snackbar ->
+        snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).maxLines = 5
         snackbar.setActionTextColor(Color.WHITE)
         snackbar.setAction(actionName) {
             onClick?.invoke(it)
             snackbar.dismiss()
         }
-    }.show()
+    }
 }
 
 fun Context.isConnectedToNetwork(): Boolean {

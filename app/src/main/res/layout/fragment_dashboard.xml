@@ -13,36 +13,22 @@
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="100dp"
             android:background="@color/colorPrimary"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="130dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/cd"
             android:src="@drawable/ic_logo_splash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/logoutBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/cd"
-            android:paddingStart="8dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="16dp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logout"
-            tools:visibility="visible" />
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -153,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="প্রোডাক্ট"
+                android:text="কালেকশন ও"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@id/subTitle1"
