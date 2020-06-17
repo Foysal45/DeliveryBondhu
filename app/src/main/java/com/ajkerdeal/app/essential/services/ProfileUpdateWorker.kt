@@ -19,7 +19,6 @@ import com.haroldadmin.cnradapter.NetworkResponse
 import id.zelory.compressor.Compressor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -34,7 +33,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
     private lateinit var notificationBuilder: NotificationCompat.Builder
     private val notificationId: Int = 23220
     private var maxProgress: Int = 100
-    private var isError: Boolean = false
+    private var isSuccess: Boolean = false
     private var resultMsg: String? = ""
     private val mediaTypeMultipart = "multipart/form-data".toMediaTypeOrNull()
     private val mediaTypeText = "text/plain".toMediaTypeOrNull()
@@ -57,6 +56,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
             when (responseProfileData) {
                 is NetworkResponse.Success -> {
                     resultMsg = responseProfileData.body.data?.message
+                    isSuccess = true
                 }
                 is NetworkResponse.ServerError -> {
                     resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
@@ -94,7 +94,8 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
                 val file = File(nidUri)
                 if (file.exists()) {
                     val compressedFile = Compressor.compress(context, file)
-                    val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    //val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    val requestFile = ProgressRequestBody(compressedFile, mediaTypeMultipart, this)
                     file2 = MultipartBody.Part.createFormData("file2", "nid.jpg", requestFile)
                 }
             }
@@ -103,7 +104,8 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
                 val file = File(drivingUri)
                 if (file.exists()) {
                     val compressedFile = Compressor.compress(context, file)
-                    val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    //val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
+                    val requestFile = ProgressRequestBody(compressedFile, mediaTypeMultipart, this)
                     file3 = MultipartBody.Part.createFormData("file3", "drivinglicense.jpg", requestFile)
                 }
             }
@@ -113,6 +115,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
                 is NetworkResponse.Success -> {
                     if (response.body.data == true) {
                         resultMsg = "প্রোফাইল আপডেট হয়েছে"
+                        isSuccess = true
                     } else {
                         resultMsg = "কোথাও কোনো সমস্যা হচ্ছে"
                     }
@@ -130,8 +133,9 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
             }.exhaustive
         }
 
+        //delay(5000)
 
-        return if (!isError) {
+        return if (isSuccess) {
             completeProgress("Completed")
             notificationManager.cancel(notificationId)
             val outputData = Data.Builder().putString("work_result", "$resultMsg").build()
@@ -176,13 +180,14 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
     }
 
     private fun completeProgress(msg: String = ""){
-        notificationBuilder.setProgress(0, 0, false)
-        notificationBuilder.setOngoing(false)
         notificationBuilder.setContentText(msg)
+        notificationBuilder.setOngoing(false)
+        notificationBuilder.setProgress(0, 0, false)
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
     override fun onProgressUpdate(percentage: Int) {
+        Timber.d("updateProgress $percentage")
         updateProgress(percentage)
     }
 

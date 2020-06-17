@@ -85,6 +85,7 @@
                         android:textColor="@color/black_80"
                         android:textSize="14sp"
                         android:text="@={viewModel.name}"
+                        android:maxLength="70"
                         />
 
                     <View
@@ -116,6 +117,30 @@
                         android:background="@color/separator" />
 
                     <EditText
+                        android:id="@+id/bKashAccountNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@color/white"
+                        android:hint="@string/bKash_account"
+                        android:importantForAutofill="no"
+                        android:inputType="phone"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp"
+                        android:textColor="@color/black_80"
+                        android:textSize="14sp"
+                        android:maxLength="11"
+                        android:text="@={viewModel.bKashAccountNumber}"
+                        />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/separator" />
+
+
+                    <EditText
                         android:id="@+id/etAlterMobileNo"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
@@ -145,7 +170,8 @@
                         android:background="@color/white"
                         android:hint="@string/password"
                         android:importantForAutofill="no"
-                        android:inputType="textPassword"
+                        android:inputType="text"
+
                         android:paddingStart="16dp"
                         android:paddingTop="8dp"
                         android:paddingEnd="16dp"
@@ -171,7 +197,7 @@
                         android:background="@color/white"
                         android:hint="কনফার্ম পাসওয়ার্ড"
                         android:importantForAutofill="no"
-                        android:inputType="textPassword"
+                        android:inputType="text"
                         android:paddingStart="16dp"
                         android:paddingTop="8dp"
                         android:paddingEnd="16dp"

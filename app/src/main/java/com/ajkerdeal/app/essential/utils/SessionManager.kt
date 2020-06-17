@@ -150,4 +150,33 @@ object SessionManager {
                 putString("deviceId", value)
             }
         }
+
+    var profileSignature: String
+        get() {
+            return pref.getString("profileSignature", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("profileSignature", value)
+            }
+        }
+    var nidSignature: String
+        get() {
+            return pref.getString("nidSignature", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("nidSignature", value)
+            }
+        }
+    var licenseSignature: String
+        get() {
+            return pref.getString("licenseSignature", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("licenseSignature", value)
+            }
+        }
+
 }

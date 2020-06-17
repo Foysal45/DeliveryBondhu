@@ -12,6 +12,8 @@ data class ProfileData(
     var mobile: String? = "",
     @SerializedName("AlternativeMobile")
     var alternativeMobile: String? = "",
+    @SerializedName("bKashAccountNumber")
+    var bKashAccountNumber: String? = "",
     @SerializedName("Address")
     var address: String? = "",
 

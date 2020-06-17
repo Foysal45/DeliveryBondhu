@@ -80,11 +80,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="none"
                     android:textSize="14sp"
                     android:textColor="@color/black_80"
                     android:maxLength="11"
                     tools:text="01728959986"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:importantForAutofill="no"
                     />
             </com.google.android.material.textfield.TextInputLayout>
@@ -113,11 +115,34 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bKashAccountLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/bKash_account"
+                app:layout_constraintTop_toBottomOf="@id/alternateMobileLayout"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bKashAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:textSize="14sp"
+                    android:textColor="@color/black_80"
+                    android:maxLength="11"
+                    tools:text="01728959986"
+                    android:importantForAutofill="no"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/workingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/current_working"
-                app:layout_constraintTop_toBottomOf="@id/alternateMobileLayout"
+                app:layout_constraintTop_toBottomOf="@id/bKashAccountLayout"
                 android:layout_marginTop="8dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >

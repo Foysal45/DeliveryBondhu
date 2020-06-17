@@ -77,7 +77,7 @@ interface ApiInterface {
     @GET("api/SelfDelivery/LoadStatus")
     suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
 
-    @POST("api/SelfDelivery/LoadOrder")
+    @POST("api/SelfDelivery/LoadOrderNew")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
 
     @POST("api/SelfDelivery/LoadOrderPodWise")

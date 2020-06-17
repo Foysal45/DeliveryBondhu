@@ -12,6 +12,7 @@
     <string name="password">পাসওয়ার্ড</string>
     <string name="confirm_password">পুনরায় পাসওয়ার্ড লিখুন</string>
     <string name="mobile_number">মোবাইল নম্বর</string>
+    <string name="bKash_account">বিকাশ একাউন্ট নম্বর</string>
     <string name="alter_mobile_number">বিকল্প মোবাইল নম্বর</string>
     <string name="order_list">অর্ডার লিস্ট</string>
     <string name="search_hint">নাম, ফোন নাম্বার</string>

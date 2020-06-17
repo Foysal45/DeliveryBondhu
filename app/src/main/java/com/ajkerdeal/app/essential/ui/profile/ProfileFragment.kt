@@ -66,6 +66,7 @@ class ProfileFragment : Fragment() {
             binding!!.name.setText(model.name)
             binding!!.mobile.setText(model.mobile)
             binding!!.alterMobile.setText(model.alternativeMobile)
+            binding!!.bKashAccount.setText(model.bKashAccountNumber)
 
             val areaInfo = model.areaInfo!![0]
             districtId = areaInfo.districtId
@@ -121,27 +122,31 @@ class ProfileFragment : Fragment() {
 
         binding!!.thana.setOnClickListener {
 
-            binding!!.thana.isEnabled = false
-            viewModel.loadLocationList(districtId).observe(viewLifecycleOwner, Observer { response ->
+            if (districtId == 0) {
+                context?.toast("বর্তমান কর্মস্থান নির্বাচন করুন")
+            } else {
+                binding!!.thana.isEnabled = false
+                viewModel.loadLocationList(districtId).observe(viewLifecycleOwner, Observer { response ->
 
-                val thanaModelList = response.districtInfo[0].thanaHome
-                val thanaNameList = thanaModelList.map { it.thanaBng }
+                    val thanaModelList = response.districtInfo[0].thanaHome
+                    val thanaNameList = thanaModelList.map { it.thanaBng }
 
-                val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
-                dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                dialog.onLocationPicked = { position, value ->
-                    //context?.toast(value)
-                    thanaName = value
-                    binding?.thana?.setText(value)
-                    if (position in 0..thanaModelList.size) {
-                        val model = thanaModelList[position]
-                        thanaId = model.thanaId
-                        postCode = model.postalCode.toIntOrNull() ?: 0
-                        //areaId = 0
+                    val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
+                    dialog.show(childFragmentManager, LocationSelectionDialog.tag)
+                    dialog.onLocationPicked = { position, value ->
+                        //context?.toast(value)
+                        thanaName = value
+                        binding?.thana?.setText(value)
+                        if (position in 0..thanaModelList.size) {
+                            val model = thanaModelList[position]
+                            thanaId = model.thanaId
+                            postCode = model.postalCode.toIntOrNull() ?: 0
+                            //areaId = 0
+                        }
                     }
-                }
-                binding!!.thana.isEnabled = true
-            })
+                    binding!!.thana.isEnabled = true
+                })
+            }
         }
 
         binding!!.userPic.setOnClickListener {
@@ -193,6 +198,7 @@ class ProfileFragment : Fragment() {
             name = binding!!.name.text.toString().trim()
             mobile = binding!!.mobile.text.toString().trim()
             alternativeMobile = binding!!.alterMobile.text.toString().trim()
+            bKashAccountNumber = binding!!.bKashAccount.text.toString().trim()
             areaInfo = listOf(AreaInfo(districtId, thanaId, postCode, areaId, districtName, thanaName))
 
             isProfileImage = !profileUri.isNullOrEmpty()
