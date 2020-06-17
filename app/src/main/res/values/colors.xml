@@ -51,5 +51,6 @@
     <color name="childColor">#FDEEE4</color>
 
     <color name="action_icon_background">#E6322E7F</color>
+    <color name="nav_header">#E6322E7F</color>
 
 </resources>

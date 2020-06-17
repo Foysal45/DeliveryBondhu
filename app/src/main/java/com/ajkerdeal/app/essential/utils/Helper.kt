@@ -69,6 +69,31 @@ fun Fragment.alert(title: CharSequence? = null, message: CharSequence? = null, s
     return dialog
 }
 
+fun Activity.alert(title: CharSequence? = null, message: CharSequence? = null, showCancel: Boolean = false, positiveButtonText: String = "ঠিক আছে", negativeButtonText: String = "ক্যানসেল", listener: ((type: Int) -> Unit)? = null): AlertDialog {
+
+    val builder = MaterialAlertDialogBuilder(this)
+    builder.setTitle(title)
+    // Display a message on alert dialog
+    builder.setMessage(message)
+    // Set a positive button and its click listener on alert dialog
+    builder.setPositiveButton(positiveButtonText) { dialog, which ->
+        dialog.dismiss()
+        listener?.invoke(AlertDialog.BUTTON_POSITIVE)
+    }
+    // Display a negative button on alert dialog
+    if (showCancel) {
+        builder.setNegativeButton(negativeButtonText) { dialog, which ->
+            dialog.dismiss()
+            listener?.invoke(AlertDialog.BUTTON_NEGATIVE)
+        }
+    }
+
+    val dialog = builder.create()
+    val typeface = ResourcesCompat.getFont(this, R.font.solaiman)
+    val textView = dialog.findViewById<TextView>(android.R.id.message)
+    textView?.typeface = typeface
+    return dialog
+}
 
 
 fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
@@ -82,7 +107,7 @@ fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE){
 fun View.snackbar(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, actionName: String, onClick: ((view: View) -> Unit)? = null): Snackbar {
     return Snackbar.make(this, message, length).also { snackbar ->
         snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).maxLines = 5
-        snackbar.setActionTextColor(Color.WHITE)
+        snackbar.setActionTextColor(Color.YELLOW)
         snackbar.setAction(actionName) {
             onClick?.invoke(it)
             snackbar.dismiss()

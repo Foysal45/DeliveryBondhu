@@ -15,20 +15,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
@@ -36,6 +33,9 @@ import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.snackbar
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -47,6 +47,8 @@ import timber.log.Timber
 class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
     private lateinit var navController: NavController
+    private lateinit var navView: NavigationView
+    private lateinit var drawerLayout: DrawerLayout
     private var doubleBackToExitPressedOnce = false
 
     private val viewModel: HomeActivityViewModel by inject()
@@ -55,6 +57,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
     private lateinit var parent: FrameLayout
+
     private lateinit var receiver: MyReceiver
     private var foregroundService: LocationUpdatesService? = null
     private var mBound: Boolean = false
@@ -64,6 +67,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    private var navigationMenuId: Int = 0
+    private var menuItem: MenuItem? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -71,13 +77,27 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         setSupportActionBar(toolbar)
         parent = findViewById(R.id.parent)
         navController = findNavController(R.id.nav_host_fragment)
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_dashboard, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_dashboard), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        navView.setNavigationItemSelectedListener { item ->
+            navigationMenuId = item.itemId
+            menuItem = item
+            drawerLayout.closeDrawer(GravityCompat.START)
+            /*val handled = NavigationUI.onNavDestinationSelected(item, navController)
+            if (handled) {
+                val parent = navView.parent
+                if (parent is DrawerLayout) {
+                    parent.closeDrawer(navView)
+                }
+            }*/
+
+            return@setNavigationItemSelectedListener true
+        }
+        drawerListener()
 
         FirebaseMessaging.getInstance().subscribeToTopic("EssentialDeliveryTopic")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
@@ -96,6 +116,8 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
         receiver = MyReceiver()
         connectivityReceiver = ConnectivityReceiver()
+
+        navHeaderData()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -117,6 +139,29 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 doubleBackToExitPressedOnce = false
             }, 2000L)
         }
+    }
+
+    private fun drawerListener() {
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener{
+            override fun onDrawerStateChanged(newState: Int) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerClosed(drawerView: View) {
+                when(navigationMenuId) {
+                    R.id.nav_dashboard -> {
+                        NavigationUI.onNavDestinationSelected(menuItem!!, navController)
+                    }
+                    R.id.nav_profile -> {
+                        navController.navigate(R.id.nav_profile)
+                        menuItem?.isChecked = true
+                    }
+                    R.id.nav_logout -> {
+                        logout()
+                    }
+                }
+                navigationMenuId = 0
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -239,7 +284,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
     }
 
-    private fun isLocationPermission(): Boolean {
+    fun isLocationPermission(): Boolean {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -294,6 +339,24 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         } else {
             snackBar?.dismiss()
         }
+    }
+
+
+    fun navHeaderData() {
+        val navHeaderView = navView.getHeaderView(0)
+        val parentHeader: ConstraintLayout = navHeaderView.findViewById(R.id.parent)
+        val userPic: ImageView = navHeaderView.findViewById(R.id.userPic)
+        val userName: TextView = navHeaderView.findViewById(R.id.name)
+        val userPhone: TextView = navHeaderView.findViewById(R.id.phone)
+
+        userName.text = SessionManager.userName
+        userPhone.text = SessionManager.mobile
+        Glide.with(this)
+            .load(SessionManager.userPic)
+            .apply(RequestOptions().placeholder(R.drawable.ic_person_circle).error(R.drawable.ic_person_circle).circleCrop())
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .into(userPic)
     }
 
 }

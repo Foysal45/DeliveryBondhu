@@ -1,9 +1,14 @@
 package com.ajkerdeal.app.essential.ui.home.dashboard
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -43,14 +48,20 @@ class DashboardFragment : Fragment() {
                 0 -> {
                     binding?.button1?.visibility = View.VISIBLE
                     binding?.button2?.visibility = View.VISIBLE
+                    binding?.button3?.visibility = View.VISIBLE
+                    binding?.button4?.visibility = View.VISIBLE
                 }
                 1 -> {
                     binding?.button1?.visibility = View.VISIBLE
-                    binding?.button2?.visibility = View.GONE
+                    binding?.button2?.visibility = View.VISIBLE
+                    binding?.button3?.visibility = View.VISIBLE
+                    binding?.button4?.visibility = View.GONE
                 }
                 2 -> {
                     binding?.button1?.visibility = View.GONE
-                    binding?.button2?.visibility = View.VISIBLE
+                    binding?.button2?.visibility = View.GONE
+                    binding?.button3?.visibility = View.GONE
+                    binding?.button4?.visibility = View.VISIBLE
                 }
             }
             activeSwitch?.isChecked = userStatus.isNowOffline
@@ -65,9 +76,6 @@ class DashboardFragment : Fragment() {
                     activeSwitch?.text = "Not Available"
                 }
             }
-            if (userStatus.locationUpdateIntervalInMinute > 0) {
-                (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute, userStatus.locationDistanceInMeter)
-            }
 
             if (!userStatus.isProfileImage || !userStatus.isNID) {
                 val msg = "নতুন অর্ডার পেতে আপনার ছবি, ভোটার আই.ডি কার্ড অথবা ড্রাইভিং লাইসেন্স এর ছবি আপলোড করুন"
@@ -77,6 +85,12 @@ class DashboardFragment : Fragment() {
                 snackbar?.show()
             }
 
+            if (userStatus.locationUpdateIntervalInMinute > 0) {
+                if (isLocationPermission()) {
+                    (activity as HomeActivity).startLocationUpdate(userStatus.locationUpdateIntervalInMinute, userStatus.locationDistanceInMeter)
+                }
+            }
+
             Glide.with(this)
                 .load(userStatus.profileImage)
                 .apply(RequestOptions().placeholder(R.drawable.ic_person_circle).error(R.drawable.ic_person_circle).circleCrop())
@@ -84,20 +98,37 @@ class DashboardFragment : Fragment() {
                 .skipMemoryCache(true)
                 .into(binding!!.userPic)
 
+            SessionManager.userPic = userStatus.profileImage ?: ""
+
         })
 
         userName?.text = SessionManager.userName
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+        val sdf = SimpleDateFormat("dd MMM (EEEE)", Locale("bn","BD"))
         dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
-            snackbar?.dismiss()
-            findNavController().navigate(R.id.nav_action_dashboard_orderList)
+            if (isLocationPermission()) {
+                snackbar?.dismiss()
+                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+            }
         }
-
         binding?.button2?.setOnClickListener {
-            snackbar?.dismiss()
-            findNavController().navigate(R.id.nav_action_dashboard_parcelList)
+            if (isLocationPermission()) {
+                snackbar?.dismiss()
+                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+            }
+        }
+        binding?.button3?.setOnClickListener {
+            if (isLocationPermission()) {
+                snackbar?.dismiss()
+                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+            }
+        }
+        binding?.button4?.setOnClickListener {
+            if (isLocationPermission()) {
+                snackbar?.dismiss()
+                findNavController().navigate(R.id.nav_action_dashboard_parcelList)
+            }
         }
         binding?.profileLayout?.setOnClickListener {
             snackbar?.dismiss()
@@ -125,6 +156,16 @@ class DashboardFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        snackbar?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        snackbar?.dismiss()
+    }
+
     override fun onDestroyView() {
         binding?.unbind()
         binding = null
@@ -140,5 +181,28 @@ class DashboardFragment : Fragment() {
         // or
         //findNavController().navigate(R.id.nav_action_dashboard_webView, bundleOf("url" to url))
     }*/
+
+    private fun isLocationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permission1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            if (permission1 != PackageManager.PERMISSION_GRANTED) {
+                showLocationPermissionDialog()
+                false
+            } else true
+        } else {
+            true
+        }
+
+    }
+
+    private fun showLocationPermissionDialog() {
+        snackbar?.dismiss()
+        alert("লোকেশন পারমিশন", "নতুন অর্ডার পেতে আপনার বর্তমান লোকেশন জানা অত্যন্ত জরুরি, লোকেশন পারমিশন দিন", true, "ঠিক আছে", "পরে দিবো") {
+            if (it == AlertDialog.BUTTON_POSITIVE) {
+                (activity as HomeActivity).isLocationPermission()
+            }
+            snackbar?.show()
+        }.show()
+    }
 
 }

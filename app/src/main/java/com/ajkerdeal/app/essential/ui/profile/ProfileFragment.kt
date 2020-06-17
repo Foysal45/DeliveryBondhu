@@ -63,6 +63,7 @@ class ProfileFragment : Fragment() {
         binding!!.lifecycleOwner = viewLifecycleOwner
         viewModel.loadProfile().observe(viewLifecycleOwner, Observer { model ->
 
+            SessionManager.userName = model.name ?: "আপনার নাম"
             binding!!.name.setText(model.name)
             binding!!.mobile.setText(model.mobile)
             binding!!.alterMobile.setText(model.alternativeMobile)

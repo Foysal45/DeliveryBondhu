@@ -26,56 +26,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/backBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/cd"
-                    android:padding="16dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_back" />
-
-                <TextView
-                    android:id="@+id/custom_appbar_toolbar_title_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:maxLines="1"
-                    android:text="অর্ডার লিস্ট"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@id/backBtn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/backBtn"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="অর্ডার লিস্ট" />
-
-                <ImageView
-                    android:id="@+id/logoutBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/cd"
-                    android:paddingStart="8dp"
-                    android:paddingTop="16dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="16dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/backBtn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_logout"
-                    tools:visibility="visible"
-
-                    />
-
-
                 <androidx.cardview.widget.CardView
                     android:id="@+id/searchCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
 
@@ -87,7 +43,7 @@
                     app:layout_constraintBottom_toTopOf="@id/chipsGroup"
                     app:layout_constraintEnd_toStartOf="@id/acceptFilterCard"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/backBtn"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -137,7 +93,7 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/acceptFilterCard"
-                    android:layout_width="150dp"
+                    android:layout_width="160dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="8dp"
 

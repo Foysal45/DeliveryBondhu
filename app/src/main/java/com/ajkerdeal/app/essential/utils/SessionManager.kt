@@ -119,7 +119,15 @@ object SessionManager {
             }
         }
 
-
+    var userPic: String
+        get() {
+            return pref.getString("userPic", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("userPic", value)
+            }
+        }
 
     var lastSyncedStamp: Long
         get() {

@@ -20,7 +20,6 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentParcelListBinding
-import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -333,14 +332,6 @@ class ParcelListFragment : Fragment() {
                 true
             } else false
         })
-
-        binding!!.appBarLayout.backBtn.setOnClickListener {
-            activity?.onBackPressed()
-        }
-
-        binding!!.appBarLayout.logoutBtn.setOnClickListener {
-            (activity as HomeActivity).logout()
-        }
 
     }
 

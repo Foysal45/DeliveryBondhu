@@ -347,21 +347,7 @@ class OrderListFragment : Fragment() {
             } else false
         })
 
-        binding!!.appBarLayout.logoutBtn.setOnClickListener {
-            (activity as HomeActivity).logout()
-        }
 
-        /*binding!!.appBarLayout.collectionPointSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            val previousFlag = collectionFlag
-            collectionFlag = if (isChecked) 1 else 0
-            if (previousFlag != collectionFlag) {
-                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
-            }
-        }*/
-
-        binding!!.appBarLayout.backBtn.setOnClickListener {
-            activity?.onBackPressed()
-        }
 
         binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
