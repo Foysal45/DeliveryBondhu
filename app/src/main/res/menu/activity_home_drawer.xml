@@ -8,7 +8,7 @@
             android:title="হোম" />
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_person_circle"
+            android:icon="@drawable/ic_account"
             android:title="প্রোফাইল" />
         <item
             android:id="@+id/nav_logout"
