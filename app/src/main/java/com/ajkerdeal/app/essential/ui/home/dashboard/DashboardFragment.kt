@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -109,19 +110,22 @@ class DashboardFragment : Fragment() {
         binding?.button1?.setOnClickListener {
             if (isLocationPermission()) {
                 snackbar?.dismiss()
-                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+                val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION)
+                findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button2?.setOnClickListener {
             if (isLocationPermission()) {
                 snackbar?.dismiss()
-                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+                val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY)
+                findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button3?.setOnClickListener {
             if (isLocationPermission()) {
                 snackbar?.dismiss()
-                findNavController().navigate(R.id.nav_action_dashboard_orderList)
+                val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_DELIVERY)
+                findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button4?.setOnClickListener {

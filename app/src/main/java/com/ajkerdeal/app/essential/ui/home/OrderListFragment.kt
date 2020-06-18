@@ -51,6 +51,8 @@ class OrderListFragment : Fragment() {
     private var collectionFlag: Int = 1
     private var lastFilterIndex: Int = -1
 
+    private var serviceTye: Int = 0
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
         return FragmentOrderListBinding.inflate(inflater, container, false).also {
@@ -60,6 +62,8 @@ class OrderListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        serviceTye = arguments?.getInt("serviceType", 0) ?: 0
 
         val dataAdapter = OrderListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
@@ -225,18 +229,15 @@ class OrderListFragment : Fragment() {
                             Timber.d("loadOrderOrSearch called from filter spinner")
 
                         binding!!.appBarLayout.filterName.text = model.statusName
-                        val collectionSwitchFlag = model.collectionFilter
+                        /*val collectionSwitchFlag = model.collectionFilter
                         if (collectionSwitchFlag == 1) {
-                            //binding!!.appBarLayout.collectionPointSwitch.visibility = View.VISIBLE
                             binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
                             collectionFlag = 1
                         } else {
-                            //binding!!.appBarLayout.collectionPointSwitch.visibility = View.GONE
                             binding!!.appBarLayout.tabLayout.visibility = View.GONE
                             collectionFlag = 0
-                            //binding!!.appBarLayout.collectionPointSwitch.isChecked = false
                             binding!!.appBarLayout.tabLayout.getTabAt(0)?.select()
-                        }
+                        }*/
 
                         dataAdapter.isCollectionPoint = collectionFlag
                         //binding!!.appBarLayout.countTV.text = "০টি"
@@ -348,6 +349,20 @@ class OrderListFragment : Fragment() {
         })
 
 
+        when (serviceTye) {
+            AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY -> {
+                collectionFlag = 1 // default
+                binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
+            }
+            AppConstant.SERVICE_TYPE_COLLECTION -> {
+                collectionFlag = 1
+                binding!!.appBarLayout.tabLayout.visibility = View.GONE
+            }
+            AppConstant.SERVICE_TYPE_DELIVERY -> {
+                collectionFlag = 0
+                binding!!.appBarLayout.tabLayout.visibility = View.GONE
+            }
+        }
 
         binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
