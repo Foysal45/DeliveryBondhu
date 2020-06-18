@@ -64,15 +64,15 @@ class DashboardFragment : Fragment() {
                     binding?.button4?.visibility = View.VISIBLE
                 }
             }
-            activeSwitch?.isChecked = userStatus.isNowOffline
-            activeSwitch?.text = if (userStatus.isNowOffline) "Available" else "Not Available"
+            activeSwitch?.isChecked = !userStatus.isNowOffline
+            activeSwitch?.text = if (!userStatus.isNowOffline) "Available" else "Not Available"
             activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     Timber.d("Checked")
-                    viewModel.updateUserStatus("true", 1)
+                    viewModel.updateUserStatus("false", 1)
                     activeSwitch?.text = "Available"
                 } else {
-                    viewModel.updateUserStatus("false", 1)
+                    viewModel.updateUserStatus("true", 1)
                     activeSwitch?.text = "Not Available"
                 }
             }

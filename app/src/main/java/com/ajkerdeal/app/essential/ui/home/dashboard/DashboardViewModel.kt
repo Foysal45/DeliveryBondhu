@@ -19,12 +19,12 @@ class DashboardViewModel(private var repository: AppRepository): ViewModel() {
 
     val viewState = MutableLiveData<ViewState>(ViewState.NONE)
 
-    fun updateUserStatus(isActive: String = "true", flag: Int = 0): LiveData<UserStatus> {
+    fun updateUserStatus(isOffline: String = "true", flag: Int = 0): LiveData<UserStatus> {
 
         val responseData: MutableLiveData<UserStatus> = MutableLiveData()
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.updateUserStatus(SessionManager.userId, isActive, flag)
+            val response = repository.updateUserStatus(SessionManager.userId, isOffline, flag)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {

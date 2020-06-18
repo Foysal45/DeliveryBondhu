@@ -190,10 +190,14 @@ class LocationUpdatesService: Service() {
 
     private fun addressFromLocation(location: Location?) {
         location?.let {
-            val list = geoCoder.getFromLocation(it.latitude, it.longitude, 1)
-            if (list.isNotEmpty()) {
-                val addressObj = list.first()
-                lastAddress = addressObj.getAddressLine(0)
+            try {
+                val list = geoCoder.getFromLocation(it.latitude, it.longitude, 1)
+                if (list.isNotEmpty()) {
+                    val addressObj = list.first()
+                    lastAddress = addressObj.getAddressLine(0)
+                }
+            } catch (e: Exception) {
+                Timber.d(e)
             }
         }
     }

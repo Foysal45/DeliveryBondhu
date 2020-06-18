@@ -45,6 +45,7 @@ class ProfileFragment : Fragment() {
     private var thanaName = ""
     private var areaId = 0
     private var postCode = 0
+    private var profileMobile: String? = ""
 
     private var profileUri: String? = ""
     private var nidUri: String? = ""
@@ -64,8 +65,9 @@ class ProfileFragment : Fragment() {
         viewModel.loadProfile().observe(viewLifecycleOwner, Observer { model ->
 
             SessionManager.userName = model.name ?: "আপনার নাম"
+            profileMobile = model.mobile
             binding!!.name.setText(model.name)
-            binding!!.mobile.setText(model.mobile)
+            binding!!.mobile.setText(profileMobile)
             binding!!.alterMobile.setText(model.alternativeMobile)
             binding!!.bKashAccount.setText(model.bKashAccountNumber)
 
@@ -197,7 +199,7 @@ class ProfileFragment : Fragment() {
         val model = ProfileData().apply {
             bondhuId = SessionManager.userId
             name = binding!!.name.text.toString().trim()
-            mobile = binding!!.mobile.text.toString().trim()
+            mobile = profileMobile
             alternativeMobile = binding!!.alterMobile.text.toString().trim()
             bKashAccountNumber = binding!!.bKashAccount.text.toString().trim()
             areaInfo = listOf(AreaInfo(districtId, thanaId, postCode, areaId, districtName, thanaName))

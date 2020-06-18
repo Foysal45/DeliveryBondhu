@@ -10,7 +10,7 @@ data class SignUpRequest(
     var mobile: String? = "",
     @SerializedName("AlternativeMobile")
     var alterMobile: String? = "",
-    @SerializedName("bKashAccountNumber")
+    @SerializedName("BkashMobileNumber")
     var bKashAccountNumber: String? = "",
     @SerializedName("Password")
     var password: String? = "",

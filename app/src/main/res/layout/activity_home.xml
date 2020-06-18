@@ -26,7 +26,9 @@
                 app:contentInsetStart="0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:title="" />
+                app:title=""
+
+                />
 
         </com.google.android.material.appbar.AppBarLayout>
 
