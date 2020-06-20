@@ -38,6 +38,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
@@ -357,6 +358,20 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .into(userPic)
+    }
+
+    fun availabilityState(status: Boolean) {
+
+        val switch: SwitchMaterial? = navView.menu.findItem(R.id.action_switch).actionView.findViewById(R.id.switchMaterial) as SwitchMaterial
+        switch?.setOnCheckedChangeListener(null)
+        switch?.isChecked = status
+        switch?.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                viewModel.updateUserStatus("false", 1)
+            } else {
+                viewModel.updateUserStatus("true", 1)
+            }
+        }
     }
 
 }

@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
+import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -31,6 +32,8 @@ class DashboardFragment : Fragment() {
 
     private var binding: FragmentDashboardBinding? = null
     private val viewModel: DashboardViewModel by inject()
+    private val viewModelHomeActivity: HomeActivityViewModel by inject()
+
     private var snackbar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,17 +69,8 @@ class DashboardFragment : Fragment() {
                 }
             }
             activeSwitch?.isChecked = !userStatus.isNowOffline
-            activeSwitch?.text = if (!userStatus.isNowOffline) "Available" else "Not Available"
-            activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    Timber.d("Checked")
-                    viewModel.updateUserStatus("false", 1)
-                    activeSwitch?.text = "Available"
-                } else {
-                    viewModel.updateUserStatus("true", 1)
-                    activeSwitch?.text = "Not Available"
-                }
-            }
+            (activity as HomeActivity).availabilityState(!userStatus.isNowOffline)
+            availabilityState(!userStatus.isNowOffline)
 
             if (!userStatus.isProfileImage || !userStatus.isNID) {
                 val msg = "নতুন অর্ডার পেতে আপনার ছবি, ভোটার আই.ডি কার্ড অথবা ড্রাইভিং লাইসেন্স এর ছবি আপলোড করুন"
@@ -101,6 +95,13 @@ class DashboardFragment : Fragment() {
 
             SessionManager.userPic = userStatus.profileImage ?: ""
 
+        })
+
+        viewModelHomeActivity.isOfflineLive.observe(viewLifecycleOwner, Observer {
+            Timber.d("viewModelHomeActivity isOfflineLive $it")
+            activeSwitch?.setOnCheckedChangeListener(null)
+            activeSwitch?.isChecked = !it
+            availabilityState(!it)
         })
 
         userName?.text = SessionManager.userName
@@ -207,6 +208,22 @@ class DashboardFragment : Fragment() {
             }
             snackbar?.show()
         }.show()
+    }
+
+    private fun availabilityState(status: Boolean) {
+        activeSwitch?.text = if (status) "Available" else "Not Available"
+        activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                Timber.d("Checked")
+                viewModel.updateUserStatus("false", 1)
+                activeSwitch?.text = "Available"
+
+            } else {
+                viewModel.updateUserStatus("true", 1)
+                activeSwitch?.text = "Not Available"
+            }
+            (activity as HomeActivity).availabilityState(isChecked)
+        }
     }
 
 }

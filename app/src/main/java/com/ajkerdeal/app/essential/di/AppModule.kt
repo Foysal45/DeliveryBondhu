@@ -16,10 +16,12 @@ val appModule = module {
     single { RetrofitSingleton.instance }
     single { ApiInterface(get()) }
     single { AppRepository(get()) }
+
     single { AuthViewModel(get()) }
-    viewModel { HomeViewModel(get()) }
-    viewModel { ParcelViewModel(get()) }
-    viewModel { HomeActivityViewModel(get()) }
+    single { HomeActivityViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
+    viewModel { HomeViewModel(get()) }
+    viewModel { ParcelViewModel(get()) }
+
 }
