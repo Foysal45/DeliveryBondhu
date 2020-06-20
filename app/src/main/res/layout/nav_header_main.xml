@@ -46,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:maxLines="1"
         android:ellipsize="end"
+        android:textIsSelectable="true"
         />
 
     <ImageView
