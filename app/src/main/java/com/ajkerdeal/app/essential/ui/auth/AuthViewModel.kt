@@ -88,7 +88,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
 
-            val response = repository.authUser(LoginRequest(userId.value, password.value, firebaseToken.value))
+            val response = repository.authUser(LoginRequest(userId.value?.trim(), password.value?.trim(), firebaseToken.value))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
@@ -157,7 +157,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.signUpUser(SignUpRequest(name.value, userId1.value, alterPhoneNumber.value, bKashAccountNumber.value , password1.value, address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value))
+            val response = repository.signUpUser(SignUpRequest(name.value?.trim(), userId1.value?.trim(), alterPhoneNumber.value?.trim(), bKashAccountNumber.value?.trim() , password1.value?.trim(), address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
