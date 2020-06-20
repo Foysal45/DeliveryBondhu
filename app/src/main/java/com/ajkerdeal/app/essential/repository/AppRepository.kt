@@ -43,7 +43,7 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun updateProfile(requestBody: RequestBody, file1: MultipartBody.Part? = null, file2: MultipartBody.Part?, file3: MultipartBody.Part?) =
         apiInterface.updateProfile(requestBody, file1, file2, file3)
 
-    suspend fun loadFilterStatus() = apiInterface.loadFilterStatus()
+    suspend fun loadFilterStatus(serviceType: String) = apiInterface.loadFilterStatus(serviceType)
 
     suspend fun loadOrderList(requestBody: OrderRequest) = apiInterface.loadOrderList(requestBody)
 

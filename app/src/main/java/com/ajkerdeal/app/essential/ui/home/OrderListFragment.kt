@@ -51,7 +51,7 @@ class OrderListFragment : Fragment() {
     private var collectionFlag: Int = 1
     private var lastFilterIndex: Int = -1
 
-    private var serviceTye: Int = 0
+    private var serviceTye: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -63,7 +63,7 @@ class OrderListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        serviceTye = arguments?.getInt("serviceType", 0) ?: 0
+        serviceTye = arguments?.getString("serviceType", "collectionanddelivery") ?: "collectionanddelivery"
 
         val dataAdapter = OrderListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
@@ -129,7 +129,7 @@ class OrderListFragment : Fragment() {
                             if (!instructions.isNullOrEmpty()) {
                                 orderDialog(instructions!!)
                             }
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
                         }
                     })
                 }
@@ -158,7 +158,7 @@ class OrderListFragment : Fragment() {
                         if (!instructions.isNullOrEmpty()) {
                             orderDialog(instructions!!)
                         }
-                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
                     }
                 })
             }
@@ -198,7 +198,7 @@ class OrderListFragment : Fragment() {
             binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
-        viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
+        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list->
             Timber.d("$list")
             val filterList = list.filter { it.flag == 1 }
             val statusName = filterList.map { it.statusName }
@@ -241,7 +241,7 @@ class OrderListFragment : Fragment() {
 
                         dataAdapter.isCollectionPoint = collectionFlag
                         //binding!!.appBarLayout.countTV.text = "০টি"
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
 
                         //}
 
@@ -296,13 +296,13 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.searchET.text.clear()
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus)
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye)
                 }
                 binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
                     binding!!.appBarLayout.searchKey.performClick()
                 }
                 binding!!.appBarLayout.countTV.text = "০টি"
-                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
             }
             //requireContext().toast(getString(R.string.development))
         }
@@ -310,7 +310,7 @@ class OrderListFragment : Fragment() {
         binding!!.swipeRefresh.setOnRefreshListener {
             binding!!.swipeRefresh.isRefreshing = false
             Timber.d("loadOrderOrSearch called from swipe refresh")
-            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
             /*binding!!.searchET.text.clear()
             if (binding!!.chipsGroup.visibility == View.VISIBLE) {
                 binding!!.chipsGroup.visibility = View.GONE
@@ -328,7 +328,7 @@ class OrderListFragment : Fragment() {
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
-                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, flag = collectionFlag, searchKey = searchKey, type = SearchType.Product)
+                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, flag = collectionFlag, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
                     }
                 }
             }
@@ -385,7 +385,7 @@ class OrderListFragment : Fragment() {
                 }
 
                 if (previousFlag != collectionFlag) {
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
                 }
             }
         })
@@ -397,7 +397,7 @@ class OrderListFragment : Fragment() {
         //Timber.d("onStart called")
         if (filterStatus != "-1") {
             Timber.d("loadOrderOrSearch called from onStart")
-            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product)
+            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
         }
     }
 

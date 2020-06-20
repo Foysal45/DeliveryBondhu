@@ -29,9 +29,9 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
     val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None) {
+    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId)
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
         }
@@ -127,10 +127,10 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         return responseLive
     }
 
-    fun loadFilterStatus(): LiveData<MutableList<FilterStatus>> {
+    fun loadFilterStatus(serviceType: String): LiveData<MutableList<FilterStatus>> {
 
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.loadFilterStatus()
+            val response = repository.loadFilterStatus(serviceType)
             withContext(Dispatchers.Main) {
                 when (response) {
                     is NetworkResponse.Success -> {

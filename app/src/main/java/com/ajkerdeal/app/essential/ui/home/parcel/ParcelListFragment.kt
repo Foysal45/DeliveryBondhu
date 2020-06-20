@@ -46,6 +46,8 @@ class ParcelListFragment : Fragment() {
     private var dtStatus: String = "-1"
     private var lastFilterIndex: Int = -1
 
+    private var serviceTye: String = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_parcel_list, container, false)
         return FragmentParcelListBinding.inflate(inflater, container, false).also {
@@ -55,6 +57,8 @@ class ParcelListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        serviceTye = arguments?.getString("serviceType", "") ?: ""
 
         val dataAdapter = ParcelListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
@@ -204,7 +208,7 @@ class ParcelListFragment : Fragment() {
             binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
-        viewModel.loadFilterStatus().observe(viewLifecycleOwner, Observer { list->
+        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list->
             Timber.d("$list")
             val filterList = list.filter { it.flag == 2 }
             val statusName = filterList.map { it.statusName }

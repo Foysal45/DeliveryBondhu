@@ -74,8 +74,8 @@ interface ApiInterface {
     @POST("api/SelfDelivery/ProfileUpload")
     suspend fun updateProfile(@Part("Data") requestBody: RequestBody, @Part file1: MultipartBody.Part? = null, @Part file2: MultipartBody.Part? = null, @Part file3: MultipartBody.Part? = null): NetworkResponse<ResponseHeader<Boolean>, ErrorResponse>
 
-    @GET("api/SelfDelivery/LoadStatus")
-    suspend fun loadFilterStatus(): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
+    @GET("api/SelfDelivery/LoadStatusNew/{serviceType}")
+    suspend fun loadFilterStatus(@Path("serviceType") serviceType: String): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
 
     @POST("api/SelfDelivery/LoadOrderNew")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>

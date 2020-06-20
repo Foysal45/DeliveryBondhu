@@ -122,10 +122,10 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
         return responseLive
     }
 
-    fun loadFilterStatus(): LiveData<MutableList<FilterStatus>> {
+    fun loadFilterStatus(serviceType: String): LiveData<MutableList<FilterStatus>> {
 
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.loadFilterStatus()
+            val response = repository.loadFilterStatus(serviceType)
             withContext(Dispatchers.Main) {
                 when (response) {
                     is NetworkResponse.Success -> {
