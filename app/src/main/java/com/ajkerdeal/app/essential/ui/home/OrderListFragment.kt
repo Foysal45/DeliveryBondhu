@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.tabs.TabLayout
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -229,6 +228,8 @@ class OrderListFragment : Fragment() {
                             Timber.d("loadOrderOrSearch called from filter spinner")
 
                         binding!!.appBarLayout.filterName.text = model.statusName
+                        collectionFlag = model.collectionFilter
+
                         /*val collectionSwitchFlag = model.collectionFilter
                         if (collectionSwitchFlag == 1) {
                             binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
@@ -352,25 +353,22 @@ class OrderListFragment : Fragment() {
         when (serviceTye) {
             AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY -> {
                 collectionFlag = 1 // default
-                binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
+                //binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
             }
             AppConstant.SERVICE_TYPE_COLLECTION -> {
                 collectionFlag = 1
-                binding!!.appBarLayout.tabLayout.visibility = View.GONE
+                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
             AppConstant.SERVICE_TYPE_DELIVERY -> {
                 collectionFlag = 0
-                binding!!.appBarLayout.tabLayout.visibility = View.GONE
+                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
         }
 
-        binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        /*binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
             override fun onTabSelected(tab: TabLayout.Tab?) {
-
                 val previousFlag = collectionFlag
                 collectionFlag = when(tab?.position) {
                     0 -> {
@@ -388,7 +386,7 @@ class OrderListFragment : Fragment() {
                     viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
                 }
             }
-        })
+        })*/
 
     }
 

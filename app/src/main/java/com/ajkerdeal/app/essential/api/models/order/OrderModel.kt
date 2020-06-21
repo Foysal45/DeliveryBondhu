@@ -20,8 +20,6 @@ data class OrderModel(
     @SerializedName("DeliveryCharge")
     var deliveryCharge: Int = 0,
 
-    @SerializedName("IsDone")
-    var isDone: Int = 0,
     @SerializedName("Comments")
     var comments: String? = "",
     @SerializedName("OrderDate")
