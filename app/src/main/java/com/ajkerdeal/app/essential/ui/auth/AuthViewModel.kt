@@ -97,7 +97,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         val data = response.body.data
                         if (data != null && data.deliveryUserId != 0) {
 
-                            SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,"")
+                            SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,data.bkashMobileNumber)
                             userId.value = ""
                             password.value = ""
                             viewState.value = ViewState.NextState()
@@ -130,14 +130,14 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
     private fun validate(): Boolean {
 
-        if (userId.value.isNullOrEmpty() || userId.value?.length != 11) {
-            val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
+        if (userId.value?.trim().isNullOrEmpty() || userId.value?.length != 11) {
+            val message = "আপনার সঠিক মোবাইল নম্বর লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return false
         }
 
-        if (password.value.isNullOrEmpty()) {
+        if (password.value?.trim().isNullOrEmpty()) {
             val message = "আপনার পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
@@ -202,28 +202,42 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
     private fun validateSignUp(): Boolean {
 
-        if (name.value.isNullOrEmpty()) {
+        if (name.value?.trim().isNullOrEmpty()) {
             val message = "আপনার নাম লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
         }
 
-        if (userId1.value.isNullOrEmpty() || userId1.value?.length != 11) {
-            val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
+        if (userId1.value?.trim().isNullOrEmpty() || userId1.value?.length != 11) {
+            val message = "আপনার সঠিক মোবাইল নম্বর লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return false
         }
 
-        if (password1.value.isNullOrEmpty()) {
+        if (bKashAccountNumber.value?.trim().isNullOrEmpty() || bKashAccountNumber.value?.length != 11) {
+            val message = "আপনার সঠিক বিকাশ একাউন্ট নম্বর লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+            return false
+        }
+
+        if (password1.value?.trim().isNullOrEmpty()) {
             val message = "আপনার পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return false
         }
 
-        if (confirmPassword.value.isNullOrEmpty() || password1.value != confirmPassword.value) {
+        if (confirmPassword.value?.trim().isNullOrEmpty()) {
             val message = "আপনার কনফার্ম পাসওয়ার্ড লিখুন"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+            return false
+        }
+
+        if (password1.value != confirmPassword.value) {
+            val message = "পাসওয়ার্ড দুটি মিলছে না"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return false
@@ -280,8 +294,8 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         viewState.value = ViewState.KeyboardState()
 
-        if (mobile.isNullOrEmpty() || mobile?.length != 11) {
-            val message = "আপনার সঠিক মোবাইল নাম্বার লিখুন"
+        if (mobile?.trim().isNullOrEmpty() || mobile?.length != 11) {
+            val message = "আপনার সঠিক মোবাইল নম্বর লিখুন"
             viewState.value = ViewState.ShowMessage(message)
 
             viewState.value = ViewState.NONE
@@ -377,7 +391,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     private fun verifyOTP(mobile: String, code: String) {
 
         viewState.value = ViewState.KeyboardState()
-        if (otpCode.value.isNullOrEmpty()) {
+        if (otpCode.value?.trim().isNullOrEmpty()) {
             val message = "সঠিক OTP কোড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
@@ -424,19 +438,27 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     private fun updatePassword() {
 
         viewState.value = ViewState.KeyboardState()
-        if (newPassword.value.isNullOrEmpty()) {
+        if (newPassword.value?.trim().isNullOrEmpty()) {
             val message = "আপনার পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return
         }
 
-        if (newConfirmPassword.value.isNullOrEmpty() || newPassword.value != newConfirmPassword.value) {
+        if (newConfirmPassword.value?.trim().isNullOrEmpty()) {
             val message = "আপনার কনফার্ম পাসওয়ার্ড লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
             return
         }
+
+        if (newPassword.value != newConfirmPassword.value) {
+            val message = "পাসওয়ার্ড দুটি মিলছে না"
+            viewState.value = ViewState.ShowMessage(message)
+            viewState.value = ViewState.NONE
+            return
+        }
+
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId))

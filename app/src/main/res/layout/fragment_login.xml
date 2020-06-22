@@ -75,7 +75,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/mobile_number"
+                        android:hint="মোবাইল নম্বর"
                         app:boxBackgroundColor="@color/white"
                         app:boxStrokeWidth="0dp"
                         app:endIconMode="clear_text"
@@ -107,7 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="@string/password"
+                        android:hint="পাসওয়ার্ড"
                         app:boxBackgroundColor="@color/white"
                         app:endIconMode="password_toggle">
 

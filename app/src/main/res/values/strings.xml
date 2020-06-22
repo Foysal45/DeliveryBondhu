@@ -4,24 +4,24 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd">image</string>
     <string name="subTitle">Essentials</string>
-    <string name="login">লগইন</string>
+    <string name="login">সাইন ইন</string>
     <string name="login_action">লগইন করুন</string>
     <string name="registration_action">রেজিস্ট্রেশন</string>
     <string name="forget_password">পাসওয়ার্ড ভুলে গেছেন?</string>
     <string name="registration">একাউন্ট খুলুন</string>
-    <string name="password">পাসওয়ার্ড</string>
+    <string name="password">পাসওয়ার্ড *</string>
     <string name="confirm_password">পুনরায় পাসওয়ার্ড লিখুন</string>
-    <string name="mobile_number">মোবাইল নম্বর</string>
-    <string name="bKash_account">বিকাশ একাউন্ট নম্বর</string>
+    <string name="mobile_number">মোবাইল নম্বর *</string>
+    <string name="bKash_account">বিকাশ একাউন্ট নম্বর *</string>
     <string name="alter_mobile_number">বিকল্প মোবাইল নম্বর</string>
     <string name="order_list">অর্ডার লিস্ট</string>
     <string name="search_hint">নাম, ফোন নাম্বার</string>
     <string name="search_hint1">পিওডি, ফোন নাম্বার</string>
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
     <string name="development">Under Development</string>
-    <string name="name">নাম</string>
-    <string name="current_working">বর্তমান কর্মস্থান</string>
-    <string name="current_working_thana">এরিয়া</string>
+    <string name="name">নাম *</string>
+    <string name="current_working">বর্তমান কর্মস্থান *</string>
+    <string name="current_working_thana">এরিয়া *</string>
 
     <string name="default_notification_channel_id">Promotion</string>
 

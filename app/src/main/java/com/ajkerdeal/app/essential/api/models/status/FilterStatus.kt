@@ -13,5 +13,7 @@ data class FilterStatus(
     @SerializedName("Flag")
     var flag: Int = 0,
     @SerializedName("CollectionFilter")
-    var collectionFilter: Int = 0
+    var collectionFilter: Int = 0,
+    @SerializedName("CustomType")
+    var customType: String = "no"
 )

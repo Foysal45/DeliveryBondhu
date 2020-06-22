@@ -14,14 +14,14 @@ object SessionManager {
         pref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
     }
 
-    fun createSession(userId: Int, name: String?, mobile: String?, token: String) {
+    fun createSession(userId: Int, name: String?, mobile: String?, bkashMobileNumber: String?) {
 
         pref.edit {
             putBoolean("isLogin", true)
             putInt("userId", userId)
             putString("username", name)
             putString("mobile", mobile)
-            putString("accessToken", token)
+            putString("bkashMobileNumber", bkashMobileNumber)
         }
     }
 
@@ -96,6 +96,16 @@ object SessionManager {
         set(value) {
             pref.edit {
                 putString("mobile", value)
+            }
+        }
+
+    var bkashMobileNumber: String
+        get() {
+            return pref.getString("bkashMobileNumber", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("bkashMobileNumber", value)
             }
         }
 

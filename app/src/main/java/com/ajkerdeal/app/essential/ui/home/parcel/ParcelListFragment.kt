@@ -167,7 +167,7 @@ class ParcelListFragment : Fragment() {
             }
 
             if (actionModel.isPaymentType == 1) {
-                val paymentData = "${SessionManager.mobile},$bondhuCharge"
+                val paymentData = "${SessionManager.bkashMobileNumber},$bondhuCharge"
                 val key = "3byamAfK"
                 Timber.d("Encryption plainData: $paymentData")
                 val encryptedData = Cryptography.Encrypt(paymentData, key)

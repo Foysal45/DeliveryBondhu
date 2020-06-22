@@ -75,12 +75,19 @@ class SignUpFragment : Fragment() {
                     //context?.toast(value)
                     districtName = value
                     binding?.districtET?.text = value
+                    binding?.thanaET?.text = ""
                     if (position in 0..districtModelList.size) {
                         districtId = districtModelList[position].districtId
                         viewModel.districtId.value = districtId
                         viewModel.address.value = districtName
                         viewModel.districtName.value = districtName
+
                         binding?.thanaLayout?.visibility = View.VISIBLE
+                        viewModel.thanaName.value = ""
+                        viewModel.thanaId.value = 0
+
+                        thanaName = ""
+                        thanaId = 0
                     }
                 }
 
