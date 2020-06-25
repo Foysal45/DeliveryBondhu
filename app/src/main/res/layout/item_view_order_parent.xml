@@ -37,7 +37,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/phone"
+                app:layout_constraintEnd_toStartOf="@id/reportLocation"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Maleka Begum" />
@@ -58,6 +58,20 @@
                 app:layout_constraintTop_toBottomOf="@id/indicator"
 
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
+
+            <ImageView
+                android:id="@+id/reportLocation"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@string/cd"
+                android:padding="4dp"
+                android:src="@drawable/ic_location"
+                app:layout_constraintEnd_toStartOf="@id/phone"
+                app:layout_constraintTop_toTopOf="parent"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
 
             <ImageView
                 android:id="@+id/phone"

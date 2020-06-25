@@ -98,6 +98,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         if (data != null && data.deliveryUserId != 0) {
 
                             SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,data.bkashMobileNumber)
+                            SessionManager.userPic = data.profileImage ?: ""
                             userId.value = ""
                             password.value = ""
                             viewState.value = ViewState.NextState()

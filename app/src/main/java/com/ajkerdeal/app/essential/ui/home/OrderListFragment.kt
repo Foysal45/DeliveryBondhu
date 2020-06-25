@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.ui.home
 
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.collection.CollectionData
+import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
@@ -180,6 +182,24 @@ class OrderListFragment : Fragment() {
             pictureDialog(orderModel)
         }
 
+        dataAdapter.onLocationReport = { parentModel ->
+            if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
+                alert("লোকেশন রিপোর্ট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা","না") {
+                    if (it == Dialog.BUTTON_POSITIVE) {
+                        val model = MerchantLocationRequest(parentModel.merchantId,parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
+                        (activity as HomeActivity).updateMerchantLocation(model)
+                    }
+                }.show()
+            } else {
+                val gmmIntentUri = Uri.parse("geo:${parentModel.latitude},${parentModel.longitude}?q=${parentModel.latitude},${parentModel.longitude}")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                mapIntent.resolveActivity(requireContext().packageManager)?.let {
+                    startActivity(mapIntent)
+                }
+            }
+        }
+
         //viewModel.loadOrderOrSearch()
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
             if (it.isInitLoad) {
@@ -187,6 +207,8 @@ class OrderListFragment : Fragment() {
                 Timber.d("initData: ${it.dataList}")
                 dataAdapter.loadInitData(it.dataList)
                 firstCall = 20
+                binding!!.emptyView.visibility = View.GONE
+
             } else {
                 Timber.d("pagingState load more")
                 isLoading = false
@@ -222,7 +244,7 @@ class OrderListFragment : Fragment() {
                         val selectedStatus = model.status
                         val selectedDTStatus = model.dtStatus
                         lastFilterIndex = position
-                        //if (selectedStatus != filterStatus) {
+
                             filterStatus = selectedStatus
                             dtStatus = selectedDTStatus
                             dataAdapter.clearData()
@@ -242,10 +264,15 @@ class OrderListFragment : Fragment() {
                         }*/
 
                         dataAdapter.isCollectionPoint = collectionFlag
-                        //binding!!.appBarLayout.countTV.text = "০টি"
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                        dataAdapter.isCollectionPointGroup = model.collectionFilter
 
-                        //}
+                        if (SessionManager.isOffline && model.isUnavailableShow) {
+                            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
+                            binding!!.emptyView.visibility = View.VISIBLE
+                        } else {
+                            binding!!.emptyView.visibility = View.GONE
+                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                        }
 
                     }
                 }
@@ -281,6 +308,8 @@ class OrderListFragment : Fragment() {
                 is ViewState.EmptyViewState -> {
                     dataAdapter.clearData()
                     binding!!.appBarLayout.countTV.text = "০টি"
+                    binding!!.emptyView.text = "এই মুহূর্তে কোনো অর্ডার নেই"
+                    binding!!.emptyView.visibility = View.VISIBLE
                 }
             }
         })

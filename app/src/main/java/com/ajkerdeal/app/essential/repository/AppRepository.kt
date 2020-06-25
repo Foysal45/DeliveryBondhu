@@ -8,6 +8,7 @@ import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileReq
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
+import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
@@ -48,6 +49,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun loadOrderList(requestBody: OrderRequest) = apiInterface.loadOrderList(requestBody)
 
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterface.updateStatus(requestBody)
+
+    suspend fun updateMerchantLocation(requestBody: MerchantLocationRequest) = apiInterface.updateMerchantLocation(requestBody)
 
     suspend fun loadOrderPodWiseList(requestBody: PodOrderRequest) = apiInterface.loadOrderPodWiseList(requestBody)
 

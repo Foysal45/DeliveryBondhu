@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.provider.Settings
-import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -22,17 +21,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.snackbar
+import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -55,7 +57,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private val viewModel: HomeActivityViewModel by inject()
 
     private val PERMISSION_REQUEST_CODE = 8620
-    private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var parent: FrameLayout
 
@@ -67,6 +69,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private lateinit var connectivityReceiver : ConnectivityReceiver
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private var currentLocation: Location? = null
 
     private var navigationMenuId: Int = 0
     private var menuItem: MenuItem? = null
@@ -122,7 +125,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
+        //val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -165,9 +168,10 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return true
+        //return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -178,7 +182,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
+    }*/
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
@@ -281,6 +285,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             val location: Location? = intent?.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
                 Timber.d("MyReceiver $location")
+                currentLocation = location
             }
         }
     }
@@ -372,6 +377,24 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 viewModel.updateUserStatus("true", 1)
             }
         }
+    }
+
+    fun updateMerchantLocation(model: MerchantLocationRequest) {
+        //toast("Under Development lat: ${currentLocation?.latitude} lnt: ${currentLocation?.longitude}", Toast.LENGTH_SHORT)
+        if (currentLocation != null) {
+            model.latitude = currentLocation?.latitude.toString()
+            model.longitude = currentLocation?.longitude.toString()
+            viewModel.updateMerchantLocation(model).observe(this, Observer {
+                if (it) {
+                    this.toast("সফলভাবে আপডেট হয়েছে")
+                } else {
+                    this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                }
+            })
+        } else {
+            this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+        }
+
     }
 
 }

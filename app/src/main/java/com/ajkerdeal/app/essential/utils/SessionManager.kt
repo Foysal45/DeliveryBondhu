@@ -79,6 +79,16 @@ object SessionManager {
             }
         }
 
+    var isOffline: Boolean
+        get() {
+            return pref.getBoolean("isOffline", false)
+        }
+        set(value) {
+            pref.edit {
+                putBoolean("isOffline", value)
+            }
+        }
+
     var accessToken: String
         get() {
             return pref.getString("accessToken", "")!!

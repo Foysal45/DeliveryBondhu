@@ -1,9 +1,13 @@
 package com.ajkerdeal.app.essential.ui.home.dashboard
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,28 +113,28 @@ class DashboardFragment : Fragment() {
         dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
-            if (isLocationPermission()) {
+            if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button2?.setOnClickListener {
-            if (isLocationPermission()) {
+            if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button3?.setOnClickListener {
-            if (isLocationPermission()) {
+            if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_DELIVERY)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
         binding?.button4?.setOnClickListener {
-            if (isLocationPermission()) {
+            if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
                 findNavController().navigate(R.id.nav_action_dashboard_parcelList)
             }
@@ -164,6 +168,7 @@ class DashboardFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         snackbar?.show()
+        checkLocationEnable()
     }
 
     override fun onPause() {
@@ -200,6 +205,16 @@ class DashboardFragment : Fragment() {
 
     }
 
+    private fun checkLocationEnable(): Boolean {
+        if (isLocationEnabled()) {
+            return true
+        } else {
+            showLocationOnDialog()
+            return false
+        }
+    }
+
+
     private fun showLocationPermissionDialog() {
         snackbar?.dismiss()
         alert("লোকেশন পারমিশন", "নতুন অর্ডার পেতে আপনার বর্তমান লোকেশন জানা অত্যন্ত জরুরি, লোকেশন পারমিশন দিন", true, "ঠিক আছে", "পরে দিবো") {
@@ -209,6 +224,17 @@ class DashboardFragment : Fragment() {
             snackbar?.show()
         }.show()
     }
+
+    private fun showLocationOnDialog() {
+        snackbar?.dismiss()
+        alert("জিপিএস পারমিশন", "জিপিএস অন করুন", true, "ঠিক আছে", "পরে দিবো") {
+            if (it == AlertDialog.BUTTON_POSITIVE) {
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            snackbar?.show()
+        }.show()
+    }
+
 
     private fun availabilityState(status: Boolean) {
         activeSwitch?.text = if (status) "Available" else "Not Available"
@@ -223,6 +249,29 @@ class DashboardFragment : Fragment() {
                 activeSwitch?.text = "Not Available"
             }
             (activity as HomeActivity).availabilityState(isChecked)
+        }
+    }
+
+
+    private fun isLocationEnabled(): Boolean {
+
+        val lm: LocationManager? = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lm != null && lm.isLocationEnabled
+        } else {
+            var gpsEnabled = false
+            var networkEnabled = false
+            try {
+                gpsEnabled = lm?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            try {
+                networkEnabled = lm?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            gpsEnabled && networkEnabled
         }
     }
 

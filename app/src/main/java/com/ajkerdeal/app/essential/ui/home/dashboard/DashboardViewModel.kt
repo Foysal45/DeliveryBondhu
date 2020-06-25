@@ -30,6 +30,7 @@ class DashboardViewModel(private var repository: AppRepository): ViewModel() {
                 when (response) {
                     is NetworkResponse.Success -> {
                         responseData.value = response.body.data
+                        SessionManager.isOffline = response.body.data?.isNowOffline ?: false
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"

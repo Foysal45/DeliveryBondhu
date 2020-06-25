@@ -10,6 +10,8 @@ data class LoginResponse(
     var mobileNumber: String? = "",
     @SerializedName("BkashMobileNumber")
     var bkashMobileNumber: String? = "",
+    @SerializedName("ProfileImage")
+    var profileImage: String? = "",
     @SerializedName("DeliveryUserName")
     var deliveryUserName: String? = "",
     @SerializedName("Message")

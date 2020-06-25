@@ -13,6 +13,7 @@ import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
+import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
@@ -85,6 +86,9 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/LoadCollectionProduct")
     suspend fun loadCollectionList(@Body requestBody: CollectionRequest): NetworkResponse<ResponseHeader<List<CollectionData>>, ErrorResponse>
+
+    @POST("api/SelfDelivery/MerchantLatLag")
+    suspend fun updateMerchantLocation(@Body requestBody: MerchantLocationRequest): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
 
     @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>

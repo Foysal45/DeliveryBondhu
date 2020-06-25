@@ -23,6 +23,17 @@ data class OrderCustomer(
     @SerializedName("BondhuCharge")
     var bondhuCharge: Int = 0,
 
+    @SerializedName("Latitude")
+    var latitude: String? = "",
+    @SerializedName("Longitude")
+    var longitude: String? = "",
+    @SerializedName("CollectAddressDistrictId")
+    var collectAddressDistrictId: Int = 0,
+    @SerializedName("CollectAddressThanaId")
+    var collectAddressThanaId: Int = 0,
+    @SerializedName("MerchantId")
+    var merchantId: Int = 0,
+
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),
     @SerializedName("SourceInfo")

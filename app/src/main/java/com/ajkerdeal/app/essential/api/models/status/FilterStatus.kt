@@ -15,5 +15,7 @@ data class FilterStatus(
     @SerializedName("CollectionFilter")
     var collectionFilter: Int = 0,
     @SerializedName("CustomType")
-    var customType: String = "no"
+    var customType: String = "no",
+    @SerializedName("isUnavailableShow")
+    var isUnavailableShow: Boolean = false
 )

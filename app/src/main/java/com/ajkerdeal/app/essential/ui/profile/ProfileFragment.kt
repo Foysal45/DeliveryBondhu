@@ -3,9 +3,7 @@ package com.ajkerdeal.app.essential.ui.profile
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -53,6 +51,7 @@ class ProfileFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        //setHasOptionsMenu(true)
         return FragmentProfileBinding.inflate(inflater).also {
             binding = it
         }.root
@@ -279,6 +278,9 @@ class ProfileFragment : Fragment() {
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(binding!!.userPic)
+
+
+                        updateProfile()
                     }
                     1 -> {
                         nidUri = uri.path
@@ -288,6 +290,8 @@ class ProfileFragment : Fragment() {
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(binding!!.NIDPic)
+
+                        updateProfile()
                     }
                     2 -> {
                         drivingUri = uri.path
@@ -297,6 +301,8 @@ class ProfileFragment : Fragment() {
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(binding!!.drivingPic)
+
+                        updateProfile()
                     }
                 }
 
@@ -306,6 +312,22 @@ class ProfileFragment : Fragment() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_profile, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_update -> {
+
+                updateProfile()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onDestroyView() {

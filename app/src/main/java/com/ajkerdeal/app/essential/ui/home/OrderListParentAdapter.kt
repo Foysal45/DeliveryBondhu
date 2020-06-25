@@ -23,6 +23,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
+    var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
+    var isCollectionPointGroup: Int = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -120,6 +122,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     holder.binding.phone.setImageDrawable(ContextCompat.getDrawable(holder.binding.phone.context, R.drawable.ic_call))
                 }
             }
+
+            if (isCollectionPointGroup == 1) {
+                holder.binding.reportLocation.visibility = View.VISIBLE
+            } else {
+                holder.binding.reportLocation.visibility = View.GONE
+            }
         }
     }
 
@@ -139,6 +147,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             if (isChildView) {
                 binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.parent.context, R.color.childColor))
                 binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.separator.context, R.color.separator_gray))
+            }
+
+            binding.reportLocation.setOnClickListener {
+                onLocationReport?.invoke(dataList[adapterPosition])
             }
 
             /*if (isCollectionPoint == 1) {
