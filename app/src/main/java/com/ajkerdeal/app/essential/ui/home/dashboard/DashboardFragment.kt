@@ -39,6 +39,7 @@ class DashboardFragment : Fragment() {
     private val viewModelHomeActivity: HomeActivityViewModel by inject()
 
     private var snackbar: Snackbar? = null
+    private var isGPS: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_dashboard, container, false)
@@ -106,6 +107,9 @@ class DashboardFragment : Fragment() {
             activeSwitch?.setOnCheckedChangeListener(null)
             activeSwitch?.isChecked = !it
             availabilityState(!it)
+        })
+        viewModelHomeActivity.isGPS.observe(viewLifecycleOwner, Observer {
+            isGPS = it
         })
 
         userName?.text = SessionManager.userName
@@ -206,11 +210,11 @@ class DashboardFragment : Fragment() {
     }
 
     private fun checkLocationEnable(): Boolean {
-        if (isLocationEnabled()) {
-            return true
+        return if (isGPS) {
+            true
         } else {
-            showLocationOnDialog()
-            return false
+            (activity as HomeActivity).turnOnGPS()
+            false
         }
     }
 
@@ -256,9 +260,7 @@ class DashboardFragment : Fragment() {
     private fun isLocationEnabled(): Boolean {
 
         val lm: LocationManager? = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            lm != null && lm.isLocationEnabled
-        } else {
+
             var gpsEnabled = false
             var networkEnabled = false
             try {
@@ -271,8 +273,7 @@ class DashboardFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            gpsEnabled && networkEnabled
-        }
+            return gpsEnabled && networkEnabled
     }
 
 }

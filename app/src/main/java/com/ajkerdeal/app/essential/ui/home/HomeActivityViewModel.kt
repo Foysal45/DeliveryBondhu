@@ -19,6 +19,7 @@ import timber.log.Timber
 class HomeActivityViewModel(private val repository: AppRepository): ViewModel() {
 
     val isOfflineLive = MutableLiveData<Boolean>()
+    val isGPS = MutableLiveData<Boolean>(false)
 
     fun clearFirebaseToken(userId: Int) {
 

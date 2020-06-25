@@ -1,6 +1,7 @@
 package com.ajkerdeal.app.essential.ui.home
 
 import android.Manifest
+import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
@@ -32,9 +33,7 @@ import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationR
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
-import com.ajkerdeal.app.essential.utils.SessionManager
-import com.ajkerdeal.app.essential.utils.snackbar
-import com.ajkerdeal.app.essential.utils.toast
+import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -70,6 +69,8 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var currentLocation: Location? = null
+    private lateinit var gpsUtils: GpsUtils
+    private var isGPS: Boolean = false
 
     private var navigationMenuId: Int = 0
     private var menuItem: MenuItem? = null
@@ -122,6 +123,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         connectivityReceiver = ConnectivityReceiver()
 
         navHeaderData()
+
+        gpsUtils = GpsUtils(this)
+        turnOnGPS()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -397,4 +401,23 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     }
 
+    fun turnOnGPS() {
+        gpsUtils.turnGPSOn {
+            isGPS = it
+            viewModel.isGPS.value = it
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppConstant.GPS_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                isGPS = true
+                viewModel.isGPS.value = true
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                isGPS = false
+                viewModel.isGPS.value = false
+            }
+        }
+    }
 }
