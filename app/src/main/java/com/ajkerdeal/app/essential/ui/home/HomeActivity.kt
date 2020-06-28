@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -31,6 +32,7 @@ import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
+import com.ajkerdeal.app.essential.fcm.FCMData
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.*
@@ -103,6 +105,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             return@setNavigationItemSelectedListener true
         }
         drawerListener()
+        onNewIntent(intent)
 
         FirebaseMessaging.getInstance().subscribeToTopic("EssentialDeliveryTopic")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
@@ -170,6 +173,20 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 navigationMenuId = 0
             }
         })
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            val model = intent.getParcelableExtra<FCMData>("data")
+            Timber.d("onNewIntent $model")
+            if (model != null) {
+                if (model.serviceType?.isNotEmpty() == true) {
+                    val bundle = bundleOf("serviceType" to model.serviceType)
+                    navController.navigate(R.id.nav_action_dashboard_orderList, bundle)
+                }
+            }
+        }
     }
 
     /*override fun onCreateOptionsMenu(menu: Menu): Boolean {

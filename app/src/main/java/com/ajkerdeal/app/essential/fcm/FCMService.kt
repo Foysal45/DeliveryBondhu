@@ -23,6 +23,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ import timber.log.Timber
 class FCMService : FirebaseMessagingService() {
 
     private val repository: AppRepository by inject()
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
@@ -42,22 +44,26 @@ class FCMService : FirebaseMessagingService() {
         val type = p0.data["notificationType"] ?: "0"
         val imageLink = p0.data["imageLink"] ?: ""
         val bigText = p0.data["bigText"] ?: ""
-        val productImage = p0.data["productImage"] ?: ""
+
+
+        val jsonElement = gson.toJsonTree(p0.data)
+        val fcmModel: FCMData = gson.fromJson(jsonElement, FCMData::class.java)
 
         val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.putExtra("data", fcmModel)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
 
         val builder = NotificationCompat.Builder(this, getString(R.string.default_notification_channel_id))
         with(builder) {
-            setSmallIcon(R.drawable.ic_shopping)
+            setSmallIcon(R.drawable.ic_logo_hand)
             setContentTitle(title)
             setContentText(description)
             setAutoCancel(true)
             color = ContextCompat.getColor(this@FCMService, R.color.colorPrimary)
             setDefaults(NotificationCompat.DEFAULT_ALL)
-            priority = NotificationCompat.PRIORITY_DEFAULT
+            priority = NotificationCompat.PRIORITY_HIGH
             setContentIntent(pendingIntent)
         }
 
@@ -70,7 +76,7 @@ class FCMService : FirebaseMessagingService() {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build()
 
-            val channel = NotificationChannel(getString(R.string.default_notification_channel_id), "Promotion", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(getString(R.string.default_notification_channel_id), "Promotion", NotificationManager.IMPORTANCE_HIGH)
             with(channel) {
                 setDescription("Essential delivery offers and promotions")
                 setShowBadge(true)

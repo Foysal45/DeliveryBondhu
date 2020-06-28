@@ -19,5 +19,7 @@ data class Action(
     @SerializedName("Icon")
     var icon: String? = "",
     @SerializedName("IsPaymentType")
-    var isPaymentType: Int = 0
+    var isPaymentType: Int = 0,
+    @SerializedName("PopUpDialog")
+    var popUpDialogType: Int = 0
 )

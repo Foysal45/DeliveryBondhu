@@ -37,7 +37,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/reportLocation"
+                app:layout_constraintEnd_toStartOf="@id/showLocation"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Maleka Begum" />
@@ -59,19 +59,36 @@
 
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
 
-            <ImageView
-                android:id="@+id/reportLocation"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/cd"
-                android:padding="4dp"
-                android:src="@drawable/ic_location"
+            <LinearLayout
+                android:id="@+id/showLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toStartOf="@id/phone"
                 app:layout_constraintTop_toTopOf="parent"
-                android:tint="@color/colorPrimary"
                 android:visibility="gone"
                 tools:visibility="visible"
-                />
+                android:gravity="center"
+                android:layout_marginEnd="5dp"
+                >
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_location"
+                    android:tint="@color/colorPrimary"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ম্যাপে দেখুন"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    />
+
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/phone"
@@ -102,6 +119,39 @@
                 tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
                 tools:visibility="visible" />
 
+            <LinearLayout
+                android:id="@+id/addLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/collectionMsg"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                >
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_location_add"
+                    app:layout_constraintEnd_toStartOf="@id/phone"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:tint="@color/colorPrimary"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ম্যাপে মার্চেন্টের লোকেশন সেট করুন"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    />
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAction"
                 android:layout_width="0dp"
@@ -114,7 +164,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
 
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/collectionMsg"
+                app:layout_constraintTop_toBottomOf="@id/addLocation"
 
                 tools:itemCount="2"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

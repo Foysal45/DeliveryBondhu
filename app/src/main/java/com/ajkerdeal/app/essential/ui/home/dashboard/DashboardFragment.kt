@@ -91,14 +91,16 @@ class DashboardFragment : Fragment() {
                 }
             }
 
+            val profileImage = if(userStatus.profileImage.isNullOrEmpty()) "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.userId}/profileimage.jpg" else userStatus.profileImage
+
             Glide.with(this)
-                .load(userStatus.profileImage)
+                .load(profileImage)
                 .apply(RequestOptions().placeholder(R.drawable.ic_person_circle).error(R.drawable.ic_person_circle).circleCrop())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(binding!!.userPic)
 
-            SessionManager.userPic = userStatus.profileImage ?: ""
+            SessionManager.userPic = profileImage ?: ""
 
         })
 

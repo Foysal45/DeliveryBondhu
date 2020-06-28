@@ -25,6 +25,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionPoint: Int = 0
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var isCollectionPointGroup: Int = -1
+    var allowLocationAdd: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -124,9 +125,20 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (isCollectionPointGroup == 1) {
-                holder.binding.reportLocation.visibility = View.VISIBLE
+                val lat = model.latitude?.isNotEmpty() ?: false
+                val lng = model.longitude?.isNotEmpty() ?: false
+                if (lat && lng) {
+                    holder.binding.showLocation.visibility = View.VISIBLE
+                } else {
+                    holder.binding.showLocation.visibility = View.GONE
+                    if (allowLocationAdd) {
+                        holder.binding.addLocation.visibility = View.VISIBLE
+                    } else {
+                        holder.binding.addLocation.visibility = View.GONE
+                    }
+                }
             } else {
-                holder.binding.reportLocation.visibility = View.GONE
+                holder.binding.showLocation.visibility = View.GONE
             }
         }
     }
@@ -149,7 +161,11 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(binding.separator.context, R.color.separator_gray))
             }
 
-            binding.reportLocation.setOnClickListener {
+            binding.showLocation.setOnClickListener {
+                onLocationReport?.invoke(dataList[adapterPosition])
+            }
+
+            binding.addLocation.setOnClickListener {
                 onLocationReport?.invoke(dataList[adapterPosition])
             }
 

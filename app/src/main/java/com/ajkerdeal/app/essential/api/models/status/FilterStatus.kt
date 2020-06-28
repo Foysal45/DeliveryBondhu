@@ -17,5 +17,7 @@ data class FilterStatus(
     @SerializedName("CustomType")
     var customType: String = "no",
     @SerializedName("isUnavailableShow")
-    var isUnavailableShow: Boolean = false
+    var isUnavailableShow: Boolean = false,
+    @SerializedName("allowLocationAdd")
+    var allowLocationAdd: Boolean = false
 )

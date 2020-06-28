@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.ui.home
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
@@ -88,11 +89,10 @@ class OrderListFragment : Fragment() {
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
-            //var collectionPointAvailable = 0
             var bondhuCharge = 0
+            var couponIds: String = ""
 
             if (orderModel != null) {
-
                 val statusModel = StatusUpdateModel().apply {
                     couponId = orderModel.couponId
                     isDone = actionModel.updateStatus
@@ -107,38 +107,10 @@ class OrderListFragment : Fragment() {
                 }
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
-                //collectionPointAvailable = actionModel.collectionPointAvailable
                 bondhuCharge = orderModel.bondhuCharge
-
-                if (actionModel.isPaymentType == 1) {
-
-                    val paymentData = "${SessionManager.bkashMobileNumber},$bondhuCharge"
-                    val key = "3byamAfK"
-                    Timber.d("Encryption plainData $paymentData")
-                    val encryptedData = Cryptography.Encrypt(paymentData, key)
-                    Timber.d("Encryption encrypted $encryptedData")
-                    //Timber.d("Encryption decrypted: ${AESEncryptionClass.decryptMessage(encryptedData)}")
-
-                    val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=${orderModel.couponId}&ID=$encryptedData"
-                    val bundle = bundleOf(
-                        "url" to url,
-                        "updateModel" to requestBody
-                    )
-                    findNavController().navigate(R.id.nav_action_orderList_webView, bundle)
-                } else {
-                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            if (!instructions.isNullOrEmpty()) {
-                                orderDialog(instructions!!)
-                            }
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
-                        }
-                    })
-                }
-
+                couponIds = orderModel.couponId
             } else {
-
-                model.orderList?.forEach { orderModel ->
+                model.orderList?.forEachIndexed { index,  orderModel ->
                     val statusModel = StatusUpdateModel().apply {
                         couponId = orderModel.couponId
                         isDone = actionModel.updateStatus
@@ -152,39 +124,45 @@ class OrderListFragment : Fragment() {
                         pODNumber = orderModel.pODNumber ?: ""
                     }
                     requestBody.add(statusModel)
+                    if (index == model.orderList?.lastIndex) {
+                        couponIds += orderModel.couponId
+                    } else {
+                        couponIds += "${orderModel.couponId},"
+                    }
+
                 }
                 instructions = model.collectionSource?.sourceMessageData?.instructions
-
-                viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        if (!instructions.isNullOrEmpty()) {
-                            orderDialog(instructions!!)
-                        }
-                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
-                    }
-                })
             }
+            Timber.d("statusUpdateLog $couponIds $bondhuCharge $instructions")
 
-
-
-            /*if (collectionPointAvailable == 1) {
-                collectionDialog(orderModel?.couponId?.toIntOrNull() ?: 0, orderModel?.collectionPointId ?: 0) {
-                    viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, customType = customType)
-                        }
-                    })
+            when {
+                // Go to payment is success then update status
+                actionModel.isPaymentType == 1 -> {
+                    goToPaymentGateway(couponIds,bondhuCharge,requestBody)
                 }
-            }*/
+                // Show popup dialog first the update status
+                actionModel.popUpDialogType == 1 -> {
+                    alert("কনফার্ম করুন", "আপনি কি মার্চেন্টের কাছে গিয়েছেন?", true, "হ্যাঁ", "না") {
+                        if (it == AlertDialog.BUTTON_POSITIVE) {
+                            //ToDo: API Call here
+                        } else {
+                            //updateStatus(requestBody, instructions)
+                        }
+                    }.show()
+                }
+                // update status
+                else -> {
+                    updateStatus(requestBody, instructions)
+                }
+            }
 
         }
         dataAdapter.onPictureClicked = {orderModel ->
             pictureDialog(orderModel)
         }
-
         dataAdapter.onLocationReport = { parentModel ->
             if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
-                alert("লোকেশন রিপোর্ট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা","না") {
+                alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা","না") {
                     if (it == Dialog.BUTTON_POSITIVE) {
                         val model = MerchantLocationRequest(parentModel.merchantId,parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
                         (activity as HomeActivity).updateMerchantLocation(model)
@@ -265,6 +243,8 @@ class OrderListFragment : Fragment() {
 
                         dataAdapter.isCollectionPoint = collectionFlag
                         dataAdapter.isCollectionPointGroup = model.collectionFilter
+                        //ToDo:from api
+                        dataAdapter.allowLocationAdd = model.allowLocationAdd
 
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
@@ -313,8 +293,6 @@ class OrderListFragment : Fragment() {
                 }
             }
         })
-
-
 
         binding!!.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
@@ -379,7 +357,6 @@ class OrderListFragment : Fragment() {
             } else false
         })
 
-
         when (serviceTye) {
             AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY -> {
                 collectionFlag = 1 // default
@@ -394,30 +371,33 @@ class OrderListFragment : Fragment() {
                 //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
         }
+    }
 
-        /*binding!!.appBarLayout.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                val previousFlag = collectionFlag
-                collectionFlag = when(tab?.position) {
-                    0 -> {
-                        dataAdapter.isCollectionPoint = 1
-                        1
-                    }
-                    1 -> {
-                        dataAdapter.isCollectionPoint = 0
-                        0
-                    }
-                    else -> 0
+    private fun updateStatus(requestBody: MutableList<StatusUpdateModel>, message: String?) {
+        viewModel.updateOrderStatus(requestBody).observe(viewLifecycleOwner, Observer {
+            if (it) {
+                if (!message.isNullOrEmpty()) {
+                    orderDialog(message)
                 }
-
-                if (previousFlag != collectionFlag) {
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye)
-                }
+                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
             }
-        })*/
+        })
+    }
 
+    private fun goToPaymentGateway(couponIds: String, paybackChange: Int, requestBody: MutableList<StatusUpdateModel>) {
+        val paymentData = "${SessionManager.bkashMobileNumber},$paybackChange"
+        val key = "3byamAfK"
+        val encryptedData = Cryptography.Encrypt(paymentData, key)
+        Timber.d("Encryption plainData $paymentData")
+        Timber.d("Encryption encrypted $encryptedData")
+        //Timber.d("Encryption decrypted: ${AESEncryptionClass.decryptMessage(encryptedData)}")
+
+        val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIds&ID=$encryptedData"
+        val bundle = bundleOf(
+            "url" to url,
+            "updateModel" to requestBody
+        )
+        findNavController().navigate(R.id.nav_action_orderList_webView, bundle)
     }
 
     override fun onStart() {
