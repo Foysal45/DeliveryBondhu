@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -59,11 +60,20 @@ class LoginFragment : Fragment() {
         })
 
         binding?.registration?.setOnClickListener {
-            findNavController().navigate(R.id.action_login_signUp)
+            //findNavController().navigate(R.id.action_login_signUp)
+            val bundle = bundleOf(
+                "title" to "রেজিস্ট্রেশন",
+                "OTPType" to 2
+            )
+            findNavController().navigate(R.id.action_login_resetPassword, bundle)
         }
 
         binding?.forgetPassword?.setOnClickListener {
-            findNavController().navigate(R.id.action_login_resetPassword)
+            val bundle = bundleOf(
+                "title" to "পাসওয়ার্ড রিসেট",
+                "OTPType" to 1
+            )
+            findNavController().navigate(R.id.action_login_resetPassword, bundle)
         }
 
     }

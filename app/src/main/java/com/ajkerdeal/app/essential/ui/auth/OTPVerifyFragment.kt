@@ -45,7 +45,7 @@ class OTPVerifyFragment : Fragment() {
                     if (state.type == 1) {
                         findNavController().navigate(R.id.action_OTPVerify_resetPasswordForm)
                     } else if (state.type == 2) {
-                        findNavController().navigate(R.id.action_OTPVerify_login)
+                        findNavController().navigate(R.id.action_OTPVerify_signUp)
                     }
                 }
             }

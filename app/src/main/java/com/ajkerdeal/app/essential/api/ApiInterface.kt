@@ -22,6 +22,7 @@ import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
+import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -89,6 +90,9 @@ interface ApiInterface {
 
     @POST("api/SelfDelivery/MerchantLatLag")
     suspend fun updateMerchantLocation(@Body requestBody: MerchantLocationRequest): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
+
+    @POST("api/SelfDelivery/AddLatLag")
+    suspend fun updateStatusChangeLocation(@Body requestBody: StatusLocationRequest): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
 
     @POST("CustomerInfo/OrderStatusUpdateForDeliveryMan")
     suspend fun updateStatus(@Body requestBody: List<StatusUpdateModel>): NetworkResponse<StatusUpdateResponse, ErrorResponse>

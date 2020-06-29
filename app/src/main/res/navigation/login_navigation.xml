@@ -58,6 +58,18 @@
         tools:layout="@layout/fragment_sign_up">
 
         <action
+            android:id="@+id/action_signUp_login"
+            app:destination="@id/nav_login"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+
+            app:popUpTo="@id/nav_signUp"
+            app:popUpToInclusive="true"
+            />
+
+        <action
             android:id="@+id/action_signUp_OTPVerify"
             app:destination="@id/nav_OTPVerify"
             app:enterAnim="@anim/slide_in_right"
@@ -124,6 +136,18 @@
         <action
             android:id="@+id/action_OTPVerify_resetPasswordForm"
             app:destination="@id/nav_resetPasswordForm"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+
+            app:popUpTo="@id/nav_OTPVerify"
+            app:popUpToInclusive="true"
+            />
+
+        <action
+            android:id="@+id/action_OTPVerify_signUp"
+            app:destination="@id/nav_signUp"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"

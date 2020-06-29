@@ -33,6 +33,12 @@ class ResetPasswordFragment : Fragment() {
         binding?.lifecycleOwner = viewLifecycleOwner
         binding?.viewModel = viewModel
 
+        val title = arguments?.getString("title", "") ?: ""
+        val otpType = arguments?.getInt("OTPType", 1) ?: 1
+
+        viewModel.otpType = otpType
+        binding?.title?.text = title
+
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is ViewState.ShowMessage -> {

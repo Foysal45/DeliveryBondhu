@@ -50,7 +50,7 @@ class SignUpFragment : Fragment() {
                 }
                 is ViewState.NextState -> {
 
-                    findNavController().navigate(R.id.action_signUp_OTPVerify)
+                    findNavController().navigate(R.id.action_signUp_login)
                 }
             }
         })

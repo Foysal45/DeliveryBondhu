@@ -13,6 +13,7 @@ import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -51,6 +52,8 @@ class AppRepository(private val apiInterface: ApiInterface) {
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterface.updateStatus(requestBody)
 
     suspend fun updateMerchantLocation(requestBody: MerchantLocationRequest) = apiInterface.updateMerchantLocation(requestBody)
+
+    suspend fun updateStatusChangeLocation(requestBody: StatusLocationRequest) = apiInterface.updateStatusChangeLocation(requestBody)
 
     suspend fun loadOrderPodWiseList(requestBody: PodOrderRequest) = apiInterface.loadOrderPodWiseList(requestBody)
 

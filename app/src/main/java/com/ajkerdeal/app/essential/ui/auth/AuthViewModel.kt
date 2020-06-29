@@ -67,7 +67,12 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     }
 
     fun onResetPassword(view: View) {
-        checkMobile(resetMobile.value ?: "")
+        val mobile = resetMobile.value ?: ""
+        if (otpType == 1) {
+            checkMobile(mobile)
+        } else if (otpType == 2) {
+            sendOTP(mobile)
+        }
     }
 
     fun onResetPasswordForm(view: View) {
@@ -169,12 +174,11 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         if (data != null && data.customerId != 0) {
                             viewState.value = ViewState.ShowMessage(data.message)
 
-                            otpMobile = userId1.value ?: ""
-                            otpType = 2
-                            sendOTP(otpMobile)
+                            //otpType = 2
+                            //sendOTP(userId1.value ?: "")
                             password1.value = ""
                             confirmPassword.value = ""
-                            //viewState.value = ViewState.NextState()
+                            viewState.value = ViewState.NextState()
                         } else {
                             viewState.value = ViewState.ShowMessage(data?.message)
                         }
@@ -319,8 +323,8 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                                 val message = response.body.data?.message
                                 viewState.value = ViewState.ShowMessage(message)
                                 //viewState.value = ViewState.NextState()
-                                otpMobile = mobile
-                                otpType = 1
+
+                                //otpType = 1
                                 sendOTP(mobile)
                             }
                         //Timber.d("checkMobile $response")
@@ -359,6 +363,9 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
             viewState.value = ViewState.NONE
             return
         }
+
+        otpMobile = mobile
+
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.sendOTP(OTPSendRequest(mobile, mobile))
@@ -410,6 +417,9 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         if (flag == 1) {
                             val message = "OTP কোড ভেরিফাইড"
                             viewState.value = ViewState.ShowMessage(message)
+                            if (otpType == 2) {
+                                userId1.value = resetMobile.value
+                            }
                             viewState.value = ViewState.NextState(otpType)
                             otpCode.value = ""
                         } else {

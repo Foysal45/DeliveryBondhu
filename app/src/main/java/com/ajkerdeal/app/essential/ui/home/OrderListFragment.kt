@@ -23,6 +23,7 @@ import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.ui.dialog.CollectionAdapter
 import com.ajkerdeal.app.essential.utils.*
@@ -144,9 +145,11 @@ class OrderListFragment : Fragment() {
                 actionModel.popUpDialogType == 1 -> {
                     alert("কনফার্ম করুন", "আপনি কি মার্চেন্টের কাছে গিয়েছেন?", true, "হ্যাঁ", "না") {
                         if (it == AlertDialog.BUTTON_POSITIVE) {
-                            //ToDo: API Call here
+                            val requestModel = StatusLocationRequest(model.merchantId, SessionManager.userId)
+                            (activity as HomeActivity).updateStatusLocation(requestModel)
+                            updateStatus(requestBody, instructions)
                         } else {
-                            //updateStatus(requestBody, instructions)
+                            updateStatus(requestBody, instructions)
                         }
                     }.show()
                 }

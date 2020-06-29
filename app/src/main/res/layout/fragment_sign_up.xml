@@ -113,6 +113,8 @@
                         android:textSize="14sp"
                         android:maxLength="11"
                         android:text="@={viewModel.userId1}"
+                        android:clickable="false"
+                        android:focusable="false"
                         />
 
                     <View

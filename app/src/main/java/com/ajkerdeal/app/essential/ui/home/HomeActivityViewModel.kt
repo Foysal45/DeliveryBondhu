@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
+import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SessionManager
@@ -66,6 +67,36 @@ class HomeActivityViewModel(private val repository: AppRepository): ViewModel() 
         val responseData: MutableLiveData<Boolean> = MutableLiveData()
         viewModelScope.launch(Dispatchers.IO){
             val response = repository.updateMerchantLocation(requestBody)
+            withContext(Dispatchers.Main) {
+                //viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        responseData.value = response.body.data == 1
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        //viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        //viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        //viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+        }
+        return responseData
+    }
+
+    fun updateStatusLocation(requestBody: StatusLocationRequest): LiveData<Boolean> {
+
+        val responseData: MutableLiveData<Boolean> = MutableLiveData()
+        viewModelScope.launch(Dispatchers.IO){
+            val response = repository.updateStatusChangeLocation(requestBody)
             withContext(Dispatchers.Main) {
                 //viewState.value = ViewState.ProgressState(false)
                 when (response) {
