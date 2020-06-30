@@ -12,8 +12,8 @@ import android.webkit.*
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.repository.AppRepository
+import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -48,10 +48,12 @@ class WebViewFragment: Fragment() {
 
         if (url.isEmpty()) {
             url = arguments?.getString("url", "") ?: ""
-            val requestBody: MutableList<StatusUpdateModel> = arguments?.getParcelableArrayList("updateModel") ?: mutableListOf()
+            //val requestBody: MutableList<StatusUpdateModel> = arguments?.getParcelableArrayList("updateModel") ?: mutableListOf()
             Timber.d("webView URL: $url")
-            Timber.d("webView requestBody: $requestBody")
+            //Timber.d("webView requestBody: $requestBody")
         }
+        val title = arguments?.getString("title", "") ?: ""
+        (activity as HomeActivity).updateToolbarTitle(title)
 
         //url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
 
@@ -62,8 +64,8 @@ class WebViewFragment: Fragment() {
             setSupportZoom(true)
             builtInZoomControls = true
             displayZoomControls = false
-            loadWithOverviewMode = true
-            useWideViewPort = true
+            //loadWithOverviewMode = true
+            //useWideViewPort = true
             mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
         }
         with(webView) {

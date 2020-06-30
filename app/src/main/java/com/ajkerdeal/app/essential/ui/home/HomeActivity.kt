@@ -167,6 +167,15 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         navController.navigate(R.id.nav_profile)
                         menuItem?.isChecked = true
                     }
+                    R.id.nav_policy -> {
+
+                        val bundle = bundleOf(
+                            "url" to AppConstant.POLICY,
+                            "title" to "প্রাইভেসি পলিসি"
+                        )
+                        navController.navigate(R.id.nav_webView, bundle)
+                        menuItem?.isChecked = true
+                    }
                     R.id.nav_logout -> {
                         logout()
                     }
@@ -452,5 +461,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 viewModel.isGPS.value = false
             }
         }
+    }
+
+    fun updateToolbarTitle(title: String) {
+        supportActionBar?.title = title
     }
 }

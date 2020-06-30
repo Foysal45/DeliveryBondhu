@@ -399,7 +399,8 @@ class OrderListFragment : Fragment() {
         val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIds&ID=$encryptedData"
         val bundle = bundleOf(
             "url" to url,
-            "updateModel" to requestBody
+            "updateModel" to requestBody,
+            "title" to "পেমেন্ট"
         )
         findNavController().navigate(R.id.nav_action_orderList_webView, bundle)
     }

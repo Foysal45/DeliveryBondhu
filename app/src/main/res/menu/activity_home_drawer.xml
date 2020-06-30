@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_account"
             android:title="প্রোফাইল" />
         <item
+            android:id="@+id/nav_policy"
+            android:icon="@drawable/ic_policy"
+            android:title="প্রাইভেসি পলিসি" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="লগআউট" />
