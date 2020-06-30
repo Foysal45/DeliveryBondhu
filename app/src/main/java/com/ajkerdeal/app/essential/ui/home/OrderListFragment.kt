@@ -144,13 +144,14 @@ class OrderListFragment : Fragment() {
                 // Show popup dialog first the update status
                 actionModel.popUpDialogType == 1 -> {
                     alert("কনফার্ম করুন", "আপনি কি মার্চেন্টের কাছে গিয়েছেন?", true, "হ্যাঁ", "না") {
+                        val requestModel = StatusLocationRequest(model.merchantId, SessionManager.userId)
                         if (it == AlertDialog.BUTTON_POSITIVE) {
-                            val requestModel = StatusLocationRequest(model.merchantId, SessionManager.userId)
-                            (activity as HomeActivity).updateStatusLocation(requestModel)
-                            updateStatus(requestBody, instructions)
+                            requestModel.confirmation = "yes"
                         } else {
-                            updateStatus(requestBody, instructions)
+                            requestModel.confirmation = "no"
                         }
+                        (activity as HomeActivity).updateStatusLocation(requestModel)
+                        updateStatus(requestBody, instructions)
                     }.show()
                 }
                 // update status

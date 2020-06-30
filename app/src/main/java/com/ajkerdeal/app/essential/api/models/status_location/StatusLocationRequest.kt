@@ -8,8 +8,11 @@ data class StatusLocationRequest(
     var merchantId: Int? = 0,
     @SerializedName("DeliveryUserId")
     var deliveryUserId: Int? = 0,
+    @SerializedName("Confirmation")
+    var confirmation: String? = "",
     @SerializedName("Latitude")
     var latitude: String? = "",
     @SerializedName("Longitude")
     var longitude: String? = ""
+
 )
