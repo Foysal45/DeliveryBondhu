@@ -102,7 +102,7 @@ class LocationUpdatesService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.d("Service started")
+        Timber.tag("LocationLog").d("Service started")
         val startedFromNotification = intent?.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION, false) ?: false
         if (startedFromNotification) {
             removeLocationUpdates()
@@ -180,11 +180,11 @@ class LocationUpdatesService: Service() {
                     currentLocation = task.result
                     addressFromLocation(currentLocation)
                 } else {
-                    Timber.d("Failed to get location")
+                    Timber.tag("LocationLog").d("Failed to get location")
                 }
             }
         } catch (e: SecurityException) {
-            Timber.d(e)
+            Timber.tag("LocationLog").d(e)
         }
     }
 
@@ -197,7 +197,7 @@ class LocationUpdatesService: Service() {
                     lastAddress = addressObj.getAddressLine(0)
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.tag("LocationLog").d(e)
             }
         }
     }
@@ -210,12 +210,22 @@ class LocationUpdatesService: Service() {
         }
     }
 
+    fun recreateLocationRequest() {
+        fusedLocationClient.removeLocationUpdates(locationCallback).addOnSuccessListener {
+            try {
+                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+            } catch (e: SecurityException) {
+                Timber.tag("LocationLog").d(e)
+            }
+        }
+    }
+
     fun requestLocationUpdates() {
         startService(Intent(applicationContext, LocationUpdatesService::class.java))
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         } catch (e: SecurityException) {
-            Timber.d(e)
+            Timber.tag("LocationLog").d(e)
         }
     }
 
@@ -224,7 +234,7 @@ class LocationUpdatesService: Service() {
             fusedLocationClient.removeLocationUpdates(locationCallback)
             stopSelf()
         } catch (e: SecurityException) {
-            Timber.d(e)
+            Timber.tag("LocationLog").d(e)
         }
     }
 
@@ -249,11 +259,11 @@ class LocationUpdatesService: Service() {
     private fun updateLocationOnServer(location: Location?) {
 
         if (location == null) return
-        Timber.d("LocationServiceLog location ${location.latitude}, ${location.longitude}")
+        Timber.tag("LocationLog").d("LocationServiceLog location ${location.latitude}, ${location.longitude}")
         if (lastLat == 0.0 && lastLng == 0.0) {
             lastLat = location.latitude
             lastLng = location.longitude
-            Timber.d("LocationServiceLog first update")
+            Timber.tag("LocationLog").d("LocationServiceLog first update")
         } else {
             val distance = floatArrayOf(0.0f)
             Location.distanceBetween(lastLat, lastLng, location.latitude, location.longitude, distance)
@@ -261,18 +271,18 @@ class LocationUpdatesService: Service() {
                 if (distance[0] > distanceDifferenceInMeter) { // difference in meter
                     lastLat = location.latitude
                     lastLng = location.longitude
-                    Timber.d("LocationServiceLog difference > 10 meter")
+                    Timber.tag("LocationLog").d("LocationServiceLog difference > 10 meter")
                 } else {
-                    Timber.d("LocationServiceLog difference < 10 meter")
+                    Timber.tag("LocationLog").d("LocationServiceLog difference < 10 meter")
                     return
                 }
-                Timber.d("LocationServiceLog difference is ${distance[0]}")
+                Timber.tag("LocationLog").d("LocationServiceLog difference is ${distance[0]}")
             } else {
-                Timber.d("LocationServiceLog difference empty")
+                Timber.tag("LocationLog").d("LocationServiceLog difference empty")
                 return
             }
         }
-        Timber.d("LocationServiceLog update new location to server")
+        Timber.tag("LocationLog").d("LocationServiceLog update new location to server")
         CoroutineScope(Dispatchers.IO).launch {
             repository.updateUserLocation(LocationUpdateRequest(SessionManager.userId, location.latitude.toString(), location.longitude.toString()))
         }

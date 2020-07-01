@@ -132,8 +132,8 @@
                 >
 
                 <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:contentDescription="@string/cd"
                     android:padding="4dp"
                     android:src="@drawable/ic_location_add"
@@ -146,7 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ম্যাপে মার্চেন্টের লোকেশন সেট করুন"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     />
 

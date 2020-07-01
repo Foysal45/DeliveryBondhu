@@ -168,7 +168,7 @@ class OrderListFragment : Fragment() {
             if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
                 alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা","না") {
                     if (it == Dialog.BUTTON_POSITIVE) {
-                        val model = MerchantLocationRequest(parentModel.merchantId,parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
+                        val model = MerchantLocationRequest(parentModel.merchantId, parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
                         (activity as HomeActivity).updateMerchantLocation(model)
                     }
                 }.show()

@@ -129,6 +129,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val lng = model.longitude?.isNotEmpty() ?: false
                 if (lat && lng) {
                     holder.binding.showLocation.visibility = View.VISIBLE
+                    holder.binding.addLocation.visibility = View.GONE
                 } else {
                     holder.binding.showLocation.visibility = View.GONE
                     if (allowLocationAdd) {
@@ -139,6 +140,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             } else {
                 holder.binding.showLocation.visibility = View.GONE
+                holder.binding.addLocation.visibility = View.GONE
             }
         }
     }

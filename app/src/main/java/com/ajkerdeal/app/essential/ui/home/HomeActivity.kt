@@ -315,7 +315,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         override fun onReceive(context: Context?, intent: Intent?) {
             val location: Location? = intent?.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
-                Timber.d("MyReceiver $location")
+                Timber.tag("LocationLog").d("current location broadcast ${location.latitude},${location.longitude}")
                 currentLocation = location
             }
         }
@@ -412,35 +412,47 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     fun updateMerchantLocation(model: MerchantLocationRequest) {
         //toast("Under Development lat: ${currentLocation?.latitude} lnt: ${currentLocation?.longitude}", Toast.LENGTH_SHORT)
-        if (currentLocation != null) {
-            model.latitude = currentLocation?.latitude.toString()
-            model.longitude = currentLocation?.longitude.toString()
-            viewModel.updateMerchantLocation(model).observe(this, Observer {
-                if (it) {
-                    this.toast("সফলভাবে আপডেট হয়েছে")
-                } else {
-                    this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
-                }
-            })
-        } else {
-            this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
-        }
+
+        foregroundService?.recreateLocationRequest()
+        Handler().postDelayed({
+            Timber.tag("LocationLog").d("location refreshed")
+            if (currentLocation != null) {
+                model.latitude = currentLocation?.latitude.toString()
+                model.longitude = currentLocation?.longitude.toString()
+                viewModel.updateMerchantLocation(model).observe(this, Observer {
+                    if (it) {
+                        this.toast("সফলভাবে আপডেট হয়েছে")
+                    } else {
+                        this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                    }
+                })
+            } else {
+                this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+            }
+        }, 300L)
+
     }
 
     fun updateStatusLocation(model: StatusLocationRequest) {
-        if (currentLocation != null) {
-            model.latitude = currentLocation?.latitude.toString()
-            model.longitude = currentLocation?.longitude.toString()
-            viewModel.updateStatusLocation(model).observe(this, Observer {
-                if (it) {
-                    //this.toast("সফলভাবে আপডেট হয়েছে")
-                } else {
-                    //this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
-                }
-            })
-        } else {
-            this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
-        }
+
+        foregroundService?.recreateLocationRequest()
+        Handler().postDelayed({
+            Timber.tag("LocationLog").d("location refreshed")
+            if (currentLocation != null) {
+                model.latitude = currentLocation?.latitude.toString()
+                model.longitude = currentLocation?.longitude.toString()
+                viewModel.updateStatusLocation(model)/*.observe(this, Observer {
+                    if (it) {
+                        this.toast("সফলভাবে আপডেট হয়েছে")
+                    } else {
+                        this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                    }
+                })*/
+            } else {
+                this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+            }
+        },300L)
+
     }
 
     fun turnOnGPS() {
