@@ -44,6 +44,8 @@ class ProfileFragment : Fragment() {
     private var areaId = 0
     private var postCode = 0
     private var profileMobile: String? = ""
+    private var nameOld: String? = ""
+    private var bKashAccount: String? = ""
 
     private var profileUri: String? = ""
     private var nidUri: String? = ""
@@ -65,10 +67,14 @@ class ProfileFragment : Fragment() {
 
             SessionManager.userName = model.name ?: "আপনার নাম"
             profileMobile = model.mobile
-            binding!!.name.setText(model.name)
+            nameOld = model.name
+            bKashAccount = model.bKashAccountNumber
+
+            binding!!.name.setText(nameOld)
             binding!!.mobile.setText(profileMobile)
             binding!!.alterMobile.setText(model.alternativeMobile)
-            binding!!.bKashAccount.setText(model.bKashAccountNumber)
+            binding!!.bKashAccount.setText(bKashAccount)
+            SessionManager.bkashMobileNumber = bKashAccount ?: ""
 
             val areaInfo = model.areaInfo!![0]
             districtId = areaInfo.districtId
@@ -191,6 +197,39 @@ class ProfileFragment : Fragment() {
 
     private fun updateProfile() {
 
+
+        if (binding!!.name.text.toString().trim().isEmpty()) {
+            val message = "আপনার নাম লিখুন"
+            context?.toast(message)
+            return
+        }
+
+        val newBkashNumber = binding!!.bKashAccount.text.toString().trim()
+        if (newBkashNumber.isEmpty()) {
+            val message = "আপনার বিকাশ একাউন্ট নম্বর লিখুন"
+            context?.toast(message)
+            return
+        }
+
+        if (newBkashNumber.length != 11) {
+            val message = "আপনার সঠিক বিকাশ একাউন্ট নম্বর লিখুন"
+            context?.toast(message)
+            Timber.d("check number ${newBkashNumber.length}")
+            return
+        }
+
+        if (districtId == 0) {
+            val message = "বর্তমান কর্মস্থান নির্বাচন করুন"
+            context?.toast(message)
+            return
+        }
+
+        if (thanaId == 0) {
+            val message = "এরিয়া নির্বাচন করুন"
+            context?.toast(message)
+            return
+        }
+
         context?.toast("প্রোফাইল আপডেট হচ্ছে, অপেক্ষা করুন")
         binding?.progressBar?.visibility = View.VISIBLE
         binding!!.saveBtn.isEnabled = false
@@ -208,6 +247,7 @@ class ProfileFragment : Fragment() {
             isNID = !nidUri.isNullOrEmpty()
         }
         //viewModel.updateProfile(model)
+        SessionManager.bkashMobileNumber = binding!!.bKashAccount.text.toString().trim()
 
         val data = Data.Builder()
             .putString("Data", gson.toJson(model))
