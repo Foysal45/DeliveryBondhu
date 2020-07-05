@@ -19,13 +19,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
-import com.ajkerdeal.app.essential.ui.dialog.CollectionAdapter
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -79,8 +77,12 @@ class OrderListFragment : Fragment() {
         dataAdapter.onCall = { number: String? ->
 
             try {
+                val zoiperAvailable = isPackageInstalled(requireContext().packageManager,"com.zoiper.android.app")
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                if (zoiperAvailable) {
+                    intent.setPackage("com.zoiper.android.app")
+                }
                 startActivity(intent)
             } catch (e: Exception) {
                 requireContext().toast("Could not find an activity to place the call")
@@ -152,6 +154,13 @@ class OrderListFragment : Fragment() {
                         }
                         (activity as HomeActivity).updateStatusLocation(requestModel)
                         updateStatus(requestBody, instructions)
+                    }.show()
+                }
+                actionModel.popUpDialogType == 2 -> {
+                    alert("কনফার্ম করুন", "আপনি কি এই পরিবর্তন সম্পর্কে নিশ্চিত?", true, "হ্যাঁ", "না") {
+                        if (it == AlertDialog.BUTTON_POSITIVE) {
+                            updateStatus(requestBody, instructions)
+                        }
                     }.show()
                 }
                 // update status
@@ -389,14 +398,22 @@ class OrderListFragment : Fragment() {
     }
 
     private fun goToPaymentGateway(couponIds: String, paybackChange: Int, requestBody: MutableList<StatusUpdateModel>) {
-        val paymentData = "${SessionManager.bkashMobileNumber},$paybackChange"
-        val key = "3byamAfK"
-        val encryptedData = Cryptography.Encrypt(paymentData, key)
-        Timber.d("Encryption plainData $paymentData")
-        Timber.d("Encryption encrypted $encryptedData")
-        //Timber.d("Encryption decrypted: ${AESEncryptionClass.decryptMessage(encryptedData)}")
 
-        val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIds&ID=$encryptedData"
+        var query = ""
+        if (SessionManager.bkashMobileNumber.isNotEmpty()) {
+            try {
+                val paymentData = "${SessionManager.bkashMobileNumber},$paybackChange"
+                val key = "3byamAfK"
+                val encryptedData = Cryptography.Encrypt(paymentData, key)
+                Timber.d("Encryption plainData $paymentData")
+                Timber.d("Encryption encrypted $encryptedData")
+                query = "&ID=$encryptedData"
+            } catch (e: Exception) {
+                Timber.d(e)
+            }
+        }
+
+        val url = "${AppConstant.GATEWAY_bKASH_SINGLE}?CID=$couponIds$query"
         val bundle = bundleOf(
             "url" to url,
             "updateModel" to requestBody,
@@ -445,7 +462,33 @@ class OrderListFragment : Fragment() {
         }
     }
 
-    private fun collectionDialog( couponId: Int, collectionPoint: Int = 0, listener: ((type: Int) -> Unit)? = null) {
+    private fun pictureDialog(model: OrderModel, listener: ((type: Int) -> Unit)? = null) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_product_overview, null)
+        builder.setView(view)
+        val title: TextView = view.findViewById(R.id.title)
+        val productImage: ImageView = view.findViewById(R.id.image)
+        val close: ImageView = view.findViewById(R.id.close)
+
+        title.text = model.productTitle
+        Glide.with(productImage)
+            .load(model.imageUrl)
+            .apply(RequestOptions().placeholder(R.drawable.ic_logo_essentials))
+            .into(productImage)
+
+        val dialog = builder.create()
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#B3000000")))
+        dialog.show()
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    /*private fun collectionDialog( couponId: Int, collectionPoint: Int = 0, listener: ((type: Int) -> Unit)? = null) {
 
         val builder = MaterialAlertDialogBuilder(requireContext())
         val view = requireActivity().layoutInflater.inflate(R.layout.dialog_collection, null)
@@ -476,33 +519,7 @@ class OrderListFragment : Fragment() {
             }
         })
 
-    }
-
-    private fun pictureDialog(model: OrderModel, listener: ((type: Int) -> Unit)? = null) {
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_product_overview, null)
-        builder.setView(view)
-        val title: TextView = view.findViewById(R.id.title)
-        val productImage: ImageView = view.findViewById(R.id.image)
-        val close: ImageView = view.findViewById(R.id.close)
-
-        title.text = model.productTitle
-        Glide.with(productImage)
-            .load(model.imageUrl)
-            .apply(RequestOptions().placeholder(R.drawable.ic_logo_essentials))
-            .into(productImage)
-
-        val dialog = builder.create()
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val window = dialog.window
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
-        window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        window?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#B3000000")))
-        dialog.show()
-        close.setOnClickListener {
-            dialog.dismiss()
-        }
-    }
+    }*/
 
     override fun onDestroyView() {
         binding?.unbind()

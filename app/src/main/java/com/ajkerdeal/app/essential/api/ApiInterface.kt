@@ -12,6 +12,7 @@ import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
+import com.ajkerdeal.app.essential.api.models.features.FeatureData
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
@@ -38,6 +39,9 @@ interface ApiInterface {
             return retrofit.create(ApiInterface::class.java)
         }
     }
+
+    @GET("api/SelfDelivery/features")
+    suspend fun features(): NetworkResponse<ResponseHeader<FeatureData>, ErrorResponse>
 
     @POST("api/SelfDelivery/Login")
     suspend fun login(@Body requestBody: LoginRequest): NetworkResponse<ResponseHeader<LoginResponse>, ErrorResponse>

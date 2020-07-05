@@ -3,6 +3,7 @@ package com.ajkerdeal.app.essential.utils
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -151,3 +152,12 @@ val <T> T.exhaustive: T
 
 fun Number.spToPx(context: Context) = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_SP, this.toFloat(), context.resources.displayMetrics).toInt()
+
+fun isPackageInstalled(packageManager: PackageManager, packageName: String): Boolean {
+    return try {
+        packageManager.getPackageInfo(packageName, 0)
+        true
+    } catch (e: Exception) {
+        false
+    }
+}

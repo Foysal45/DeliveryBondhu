@@ -4,8 +4,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd">image</string>
     <string name="subTitle">Essentials</string>
-    <string name="login">সাইন ইন</string>
+    <string name="login">লগইন</string>
     <string name="login_action">লগইন করুন</string>
+    <string name="see_more">বিস্তারিত দেখুন ⪼</string>
     <string name="registration_action">রেজিস্ট্রেশন</string>
     <string name="forget_password">পাসওয়ার্ড ভুলে গেছেন?</string>
     <string name="registration">একাউন্ট খুলুন</string>

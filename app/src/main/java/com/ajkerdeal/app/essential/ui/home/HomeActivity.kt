@@ -108,7 +108,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         drawerListener()
         onNewIntent(intent)
 
-        FirebaseMessaging.getInstance().subscribeToTopic("EssentialDeliveryTopic")
+        FirebaseMessaging.getInstance().subscribeToTopic("BondhuTopic").addOnSuccessListener {
+            Timber.d("Firebase subscribeToTopic: BondhuTopic")
+        }
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result?.token

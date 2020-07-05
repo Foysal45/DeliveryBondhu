@@ -10,6 +10,7 @@ import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
+import com.ajkerdeal.app.essential.api.models.features.FeatureData
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.SessionManager
@@ -529,6 +530,37 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     fun clearResetPasswordForm() {
         newPassword.value = ""
         newConfirmPassword.value = ""
+    }
+
+    fun features(): LiveData<FeatureData> {
+
+        val responseBody = MutableLiveData<FeatureData>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.features()
+            withContext(Dispatchers.Main) {
+
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        responseBody.value = response.body.data
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+
+            }
+        }
+        return responseBody
     }
 
 }

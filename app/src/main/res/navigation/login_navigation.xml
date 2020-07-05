@@ -49,6 +49,14 @@
             app:popExitAnim="@anim/slide_out_right"
             />
 
+        <action android:id="@+id/nav_action_login_webView"
+            app:destination="@id/nav_webView"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
+
     </fragment>
 
     <fragment
@@ -159,6 +167,10 @@
 
     </fragment>
 
-
+    <fragment
+        android:id="@+id/nav_webView"
+        android:name="com.ajkerdeal.app.essential.ui.webview.WebViewFragment"
+        tools:layout="@layout/fragment_web_view"
+        />
 
 </navigation>

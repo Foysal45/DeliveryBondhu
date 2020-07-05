@@ -20,6 +20,8 @@ import okhttp3.RequestBody
 
 class AppRepository(private val apiInterface: ApiInterface) {
 
+    suspend fun features() = apiInterface.features()
+
     suspend fun authUser(requestBody: LoginRequest) = apiInterface.login(requestBody)
 
     suspend fun signUpUser(requestBody: SignUpRequest) = apiInterface.signUp(requestBody)

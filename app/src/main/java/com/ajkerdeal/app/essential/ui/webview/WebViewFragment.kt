@@ -53,7 +53,9 @@ class WebViewFragment: Fragment() {
             //Timber.d("webView requestBody: $requestBody")
         }
         val title = arguments?.getString("title", "") ?: ""
-        (activity as HomeActivity).updateToolbarTitle(title)
+        if (activity is HomeActivity) {
+            (activity as HomeActivity).updateToolbarTitle(title)
+        }
 
         //url = "https://m.ajkerdeal.com/msingleorder/bkashtokenizedcheckoutforapp.aspx?CID=3845773&totalPoint=69011&vId=0&vType=0"
 

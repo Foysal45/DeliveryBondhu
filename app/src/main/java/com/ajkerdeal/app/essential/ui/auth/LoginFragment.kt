@@ -10,9 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentLoginBinding
+import com.ajkerdeal.app.essential.ui.webview.ChromeCustomTabBrowser
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
+import com.bumptech.glide.Glide
 import com.google.firebase.iid.FirebaseInstanceId
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -22,6 +24,7 @@ class LoginFragment : Fragment() {
     private var binding: FragmentLoginBinding? = null
 
     private val viewModel: AuthViewModel by inject()
+    private var webUrl: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_login, container, false)
@@ -44,6 +47,16 @@ class LoginFragment : Fragment() {
                 Timber.d("FirebaseToken:\n${token}")
             }
         }
+
+        viewModel.features().observe(viewLifecycleOwner, Observer {
+
+            Glide.with(requireContext())
+                .load(it.bannerUrl)
+                .into(binding!!.bannerIV)
+
+            webUrl = it.webUrl ?: "http://deliverybondhu.com/"
+
+        })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -76,7 +89,26 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_login_resetPassword, bundle)
         }
 
+        binding?.moreDetails?.setOnClickListener {
+            goToWeb(webUrl)
+        }
+        binding?.bannerIV?.setOnClickListener {
+            goToWeb(webUrl)
+        }
+
     }
+
+    private fun goToWeb(url: String) {
+
+        //val url = "http://deliverybondhu.com/"
+        ChromeCustomTabBrowser.launch(requireContext(), url) { fallbackUrl ->
+            findNavController().navigate(R.id.nav_action_login_webView, bundleOf(
+                "url" to url,
+                "title" to "ফিচারস"
+            ))
+        }
+    }
+
 
     override fun onDestroyView() {
         viewModel.clearLogin()

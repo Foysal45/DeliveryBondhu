@@ -39,14 +39,14 @@
                 android:id="@+id/login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/login"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo"
-
+                android:includeFontPadding="false"
                 />
 
             <androidx.cardview.widget.CardView
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="36dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="36dp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="4dp"
@@ -72,7 +72,7 @@
                     android:paddingBottom="5dp">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="মোবাইল নম্বর"
@@ -103,7 +103,7 @@
                         android:background="@color/separator" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -136,7 +136,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="36dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="36dp"
                 android:onClick="@{viewModel::onLoginClicked}"
                 android:text="@string/login_action"
@@ -172,7 +172,7 @@
                 android:id="@+id/forgetPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/forget_password"
                 android:textColor="@color/white"
                 android:textSize="14sp"
@@ -183,13 +183,45 @@
                 android:id="@+id/registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/registration"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@id/loginBtn"
                 app:layout_constraintTop_toBottomOf="@id/loginBtn"
 
+                />
+
+            <ImageView
+                android:id="@+id/bannerIV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_banner_place"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/forgetPassword"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="36dp"
+                android:contentDescription="@string/cd"
+                />
+
+            <TextView
+                android:id="@+id/moreDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/see_more"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/bannerIV"
+                app:layout_constraintTop_toBottomOf="@id/bannerIV"
+                android:includeFontPadding="false"
+                android:textStyle="italic"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
