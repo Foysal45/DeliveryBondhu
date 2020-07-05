@@ -89,13 +89,12 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_login_resetPassword, bundle)
         }
 
-        binding?.moreDetails?.setOnClickListener {
-            goToWeb(webUrl)
-        }
         binding?.bannerIV?.setOnClickListener {
             goToWeb(webUrl)
         }
-
+        /*binding?.moreDetails?.setOnClickListener {
+            goToWeb(webUrl)
+        }*/
     }
 
     private fun goToWeb(url: String) {
