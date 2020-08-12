@@ -21,5 +21,5 @@ data class FilterStatus(
     @SerializedName("allowLocationAdd")
     var allowLocationAdd: Boolean = false,
     @SerializedName("allowPrint")
-    var allowPrint: Boolean = true
+    var allowPrint: Boolean = false
 )
