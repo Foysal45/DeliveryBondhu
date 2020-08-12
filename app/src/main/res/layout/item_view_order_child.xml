@@ -43,6 +43,18 @@
             android:visibility="gone"
             tools:visibility="visible"
             />
+        <ImageView
+            android:id="@+id/qrcodeBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/cd"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/paymentType"
+            android:src="@drawable/ic_qrcode"
+            app:tint="@color/colorPrimary"
+            android:visibility="visible"
+            tools:visibility="visible"
+            />
 
         <TextView
             android:id="@+id/productName"
@@ -53,7 +65,7 @@
             android:maxLines="2"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/paymentType"
+            app:layout_constraintEnd_toStartOf="@id/qrcodeBtn"
             app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)" />

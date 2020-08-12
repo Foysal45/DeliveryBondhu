@@ -1,9 +1,11 @@
 package com.ajkerdeal.app.essential.ui.home
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -20,18 +22,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
+import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
+import com.ajkerdeal.app.essential.api.models.print.PrintData
+import com.ajkerdeal.app.essential.api.models.print.PrintModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
+import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
+@SuppressLint("SetTextI18n")
 class OrderListFragment : Fragment() {
 
     private var binding: FragmentOrderListBinding? = null
@@ -61,6 +70,7 @@ class OrderListFragment : Fragment() {
             binding = it
         }.root
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -190,6 +200,12 @@ class OrderListFragment : Fragment() {
                 }
             }
         }
+        dataAdapter.onPrintClicked = { model ->
+            printInvoice(model)
+        }
+        dataAdapter.onQRCodeClicked = { model: OrderModel ->
+            showQRCode(model)
+        }
 
         //viewModel.loadOrderOrSearch()
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
@@ -256,9 +272,8 @@ class OrderListFragment : Fragment() {
 
                         dataAdapter.isCollectionPoint = collectionFlag
                         dataAdapter.isCollectionPointGroup = model.collectionFilter
-                        //ToDo:from api
                         dataAdapter.allowLocationAdd = model.allowLocationAdd
-
+                        dataAdapter.allowPrint = model.allowPrint
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
@@ -331,6 +346,7 @@ class OrderListFragment : Fragment() {
 
         binding!!.swipeRefresh.setOnRefreshListener {
             binding!!.swipeRefresh.isRefreshing = false
+            if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
             viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
             /*binding!!.searchET.text.clear()
@@ -525,5 +541,70 @@ class OrderListFragment : Fragment() {
         binding?.unbind()
         binding = null
         super.onDestroyView()
+    }
+
+    private fun printInvoice(model: OrderCustomer) {
+
+        val orderDataList: MutableList<PrintData> = mutableListOf()
+        model.orderList?.forEach {
+            orderDataList.add(
+                PrintData(
+                it.couponId,
+                it.productQtn,
+                it.productPrice
+            )
+            )
+        }
+
+        val printModel = PrintModel().apply {
+            userName = SessionManager.userName
+            userPhone =SessionManager.mobile
+            merchantName = model.name
+            merchantPhone = model.mobileNumber
+            dataList = orderDataList
+        }
+
+        PrintInvoice(requireContext(), printModel).print()
+    }
+
+    private fun showQRCode(model: OrderModel) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_qrcode, null)
+        builder.setView(view)
+        val title: TextView = view.findViewById(R.id.title)
+        val productImage: ImageView = view.findViewById(R.id.image)
+        val codeTV: TextView = view.findViewById(R.id.code)
+        val close: ImageView = view.findViewById(R.id.close)
+
+        title.text = model.productTitle
+        codeTV.text = model.couponId
+        val multiFormatWriter = MultiFormatWriter()
+        try {
+            val bitMatrix = multiFormatWriter.encode(model.couponId, BarcodeFormat.CODE_128, 512,256)
+            val bitmap = Bitmap.createBitmap(512,256,Bitmap.Config.RGB_565)
+            for (i in 0..511) {
+                for (j in 0..255) {
+                    val color: Int = if(bitMatrix.get(i,j)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
+                    bitmap.setPixel(i,j,color)
+                }
+            }
+            Glide.with(productImage)
+                .load(bitmap)
+                .apply(RequestOptions().placeholder(R.drawable.ic_logo_ad))
+                .into(productImage)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        val dialog = builder.create()
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#B3000000")))
+        dialog.show()
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 }

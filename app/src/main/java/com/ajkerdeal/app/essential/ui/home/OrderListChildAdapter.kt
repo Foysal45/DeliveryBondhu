@@ -24,6 +24,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
     var onCall: ((number: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
+    var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -197,6 +198,9 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.productImage.setOnClickListener {
                 onPictureClicked?.invoke(dataList[adapterPosition])
+            }
+            binding.qrcodeBtn.setOnClickListener {
+                onQRCodeClicked?.invoke(dataList[adapterPosition])
             }
         }
 

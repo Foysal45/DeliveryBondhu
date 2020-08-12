@@ -43,4 +43,16 @@
     <string-array name="filter">
         <item>সকল</item>
     </string-array>
+
+    <!-- printer -->
+    <string name="toast_1">Transaction print,use the AIDL mode!</string>
+    <string name="toast_2">No printing service found</string>
+    <string name="toast_3">Bluetooth device is unavailable</string>
+    <string name="toast_4">Bluetooth device not detected. Please open Bluetooth!</string>
+    <string name="toast_5">Not Found Printer!</string>
+    <string name="toast_6">Bluetooth connect failed!</string>
+    <string name="toast_7"> Only a single Qr code is printed for the AIDL mode</string>
+    <string name="toast_8">Now QrCode size must be less than 7!</string>
+    <string name="toast_9">BarCode type or content error!</string>
+
 </resources>

@@ -19,5 +19,7 @@ data class FilterStatus(
     @SerializedName("isUnavailableShow")
     var isUnavailableShow: Boolean = false,
     @SerializedName("allowLocationAdd")
-    var allowLocationAdd: Boolean = false
+    var allowLocationAdd: Boolean = false,
+    @SerializedName("allowPrint")
+    var allowPrint: Boolean = true
 )

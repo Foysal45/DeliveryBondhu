@@ -18,14 +18,18 @@ import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
 class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<OrderCustomer> = mutableListOf()
-    var onCall: ((number: String?) -> Unit)? = null
     var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
+    var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
+    var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
+    var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
+    var onCall: ((number: String?) -> Unit)? = null
+
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
-    var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var isCollectionPointGroup: Int = -1
     var allowLocationAdd: Boolean = false
+    var allowPrint: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -109,8 +113,11 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onCall = { number ->
                 onCall?.invoke(number)
             }
-            dataAdapter.onPictureClicked = {model ->
-                onPictureClicked?.invoke(model)
+            dataAdapter.onPictureClicked = { model1 ->
+                onPictureClicked?.invoke(model1)
+            }
+            dataAdapter.onQRCodeClicked = { model1 ->
+                onQRCodeClicked?.invoke(model1)
             }
 
             if (model.mobileNumber.isNullOrEmpty()) {
@@ -142,6 +149,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.showLocation.visibility = View.GONE
                 holder.binding.addLocation.visibility = View.GONE
             }
+
+            if (allowPrint) {
+                holder.binding.printBtn.visibility = View.VISIBLE
+            } else {
+                holder.binding.printBtn.visibility = View.GONE
+            }
         }
     }
 
@@ -169,6 +182,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.addLocation.setOnClickListener {
                 onLocationReport?.invoke(dataList[adapterPosition])
+            }
+
+            binding.printBtn.setOnClickListener {
+                onPrintClicked?.invoke(dataList[adapterPosition])
             }
 
             /*if (isCollectionPoint == 1) {
