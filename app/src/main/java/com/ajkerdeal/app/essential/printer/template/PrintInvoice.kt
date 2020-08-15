@@ -16,7 +16,7 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
     private val printerCommand: PrinterCommand = PrinterCommand.getInstance(context)
     private val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US)
 
-    fun print() {
+    fun print(isPrintBarCode: Boolean = false) {
 
         val date = sdf.format(Date())
         val s1 = "আজকের ডিল ডট কম"
@@ -28,6 +28,8 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
         val s7 = "কালেক্টর: "
         val s8 = "ফোন:"
         val s9 = "--------------------------------"
+        val s10 = "************************"
+        val s11 = "*                      *"
         val collectorName = model.userName
         val collectorPhone = model.userPhone
 
@@ -72,6 +74,16 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
             val row = couponId + " --- " + quantity + "টি --- " + price + "৳"
             printerCommand.printText(row)
             Timber.tag(tag).d(row)
+            if (isPrintBarCode) {
+                printerCommand.printBarCode(data.couponId, 8, 100, 2, 2)
+                Timber.tag(tag).d(s10)
+                Timber.tag(tag).d(s11)
+                Timber.tag(tag).d(s11)
+                Timber.tag(tag).d(s11)
+                Timber.tag(tag).d(s11)
+                Timber.tag(tag).d(s10)
+                Timber.tag(tag).d(data.couponId)
+            }
         }
 
         printerCommand.printText(s9)
@@ -91,6 +103,8 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
         val collector = "$s7$collectorName($collectorPhone)"
         printerCommand.printText(collector)
         Timber.tag(tag).d(collector)
+
+
         printerCommand.setLineGap(4)
 
     }

@@ -87,7 +87,7 @@ class OrderListFragment : Fragment() {
         dataAdapter.onCall = { number: String? ->
 
             try {
-                val zoiperAvailable = isPackageInstalled(requireContext().packageManager,"com.zoiper.android.app")
+                val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 if (zoiperAvailable) {
@@ -98,7 +98,7 @@ class OrderListFragment : Fragment() {
                 requireContext().toast("Could not find an activity to place the call")
             }
         }
-        dataAdapter.onActionClicked = { model, actionModel, orderModel  ->
+        dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
             var instructions: String? = null
@@ -123,7 +123,7 @@ class OrderListFragment : Fragment() {
                 bondhuCharge = orderModel.bondhuCharge
                 couponIds = orderModel.couponId
             } else {
-                model.orderList?.forEachIndexed { index,  orderModel ->
+                model.orderList?.forEachIndexed { index, orderModel ->
                     val statusModel = StatusUpdateModel().apply {
                         couponId = orderModel.couponId
                         isDone = actionModel.updateStatus
@@ -151,7 +151,7 @@ class OrderListFragment : Fragment() {
             when {
                 // Go to payment is success then update status
                 actionModel.isPaymentType == 1 -> {
-                    goToPaymentGateway(couponIds,bondhuCharge,requestBody)
+                    goToPaymentGateway(couponIds, bondhuCharge, requestBody)
                 }
                 // Show popup dialog first the update status
                 actionModel.popUpDialogType == 1 -> {
@@ -180,12 +180,12 @@ class OrderListFragment : Fragment() {
             }
 
         }
-        dataAdapter.onPictureClicked = {orderModel ->
+        dataAdapter.onPictureClicked = { orderModel ->
             pictureDialog(orderModel)
         }
         dataAdapter.onLocationReport = { parentModel ->
             if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
-                alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা","না") {
+                alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা", "না") {
                     if (it == Dialog.BUTTON_POSITIVE) {
                         val model = MerchantLocationRequest(parentModel.merchantId, parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
                         (activity as HomeActivity).updateMerchantLocation(model)
@@ -227,7 +227,7 @@ class OrderListFragment : Fragment() {
             binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
         })
 
-        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list->
+        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list ->
             Timber.d("$list")
             val filterList = list.filter { it.flag == 1 }
             val statusName = filterList.map { it.statusName }
@@ -252,10 +252,10 @@ class OrderListFragment : Fragment() {
                         val selectedDTStatus = model.dtStatus
                         lastFilterIndex = position
 
-                            filterStatus = selectedStatus
-                            dtStatus = selectedDTStatus
-                            dataAdapter.clearData()
-                            Timber.d("loadOrderOrSearch called from filter spinner")
+                        filterStatus = selectedStatus
+                        dtStatus = selectedDTStatus
+                        dataAdapter.clearData()
+                        Timber.d("loadOrderOrSearch called from filter spinner")
 
                         binding!!.appBarLayout.filterName.text = model.statusName
                         collectionFlag = model.collectionFilter
@@ -279,7 +279,15 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.VISIBLE
                         } else {
                             binding!!.emptyView.visibility = View.GONE
-                            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                            viewModel.loadOrderOrSearch(
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = SearchType.Product,
+                                serviceType = serviceTye,
+                                customType = customType
+                            )
                         }
 
                     }
@@ -339,7 +347,15 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.searchKey.performClick()
                 }
                 binding!!.appBarLayout.countTV.text = "০টি"
-                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                viewModel.loadOrderOrSearch(
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = SearchType.Product,
+                    serviceType = serviceTye,
+                    customType = customType
+                )
             }
             //requireContext().toast(getString(R.string.development))
         }
@@ -348,7 +364,15 @@ class OrderListFragment : Fragment() {
             binding!!.swipeRefresh.isRefreshing = false
             if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
-            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+            viewModel.loadOrderOrSearch(
+                flag = collectionFlag,
+                statusId = filterStatus,
+                dtStatusId = dtStatus,
+                searchKey = searchKey,
+                type = SearchType.Product,
+                serviceType = serviceTye,
+                customType = customType
+            )
             /*binding!!.searchET.text.clear()
             if (binding!!.chipsGroup.visibility == View.VISIBLE) {
                 binding!!.chipsGroup.visibility = View.GONE
@@ -366,7 +390,17 @@ class OrderListFragment : Fragment() {
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
-                        viewModel.loadOrderOrSearch(firstCall, 20, statusId = filterStatus, dtStatusId = dtStatus, flag = collectionFlag, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                        viewModel.loadOrderOrSearch(
+                            firstCall,
+                            20,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            flag = collectionFlag,
+                            searchKey = searchKey,
+                            type = SearchType.Product,
+                            serviceType = serviceTye,
+                            customType = customType
+                        )
                     }
                 }
             }
@@ -408,7 +442,15 @@ class OrderListFragment : Fragment() {
                 if (!message.isNullOrEmpty()) {
                     orderDialog(message)
                 }
-                viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+                viewModel.loadOrderOrSearch(
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = SearchType.Product,
+                    serviceType = serviceTye,
+                    customType = customType
+                )
             }
         })
     }
@@ -443,7 +485,15 @@ class OrderListFragment : Fragment() {
         //Timber.d("onStart called")
         if (filterStatus != "-1") {
             Timber.d("loadOrderOrSearch called from onStart")
-            viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, searchKey = searchKey, type = SearchType.Product, serviceType = serviceTye, customType = customType)
+            viewModel.loadOrderOrSearch(
+                flag = collectionFlag,
+                statusId = filterStatus,
+                dtStatusId = dtStatus,
+                searchKey = searchKey,
+                type = SearchType.Product,
+                serviceType = serviceTye,
+                customType = customType
+            )
         }
     }
 
@@ -548,23 +598,25 @@ class OrderListFragment : Fragment() {
         val orderDataList: MutableList<PrintData> = mutableListOf()
         model.orderList?.forEach {
             orderDataList.add(
-                PrintData(
-                it.couponId,
-                it.productQtn,
-                it.productPrice
-            )
+                PrintData(it.couponId, it.productQtn, it.productPrice)
             )
         }
 
         val printModel = PrintModel().apply {
             userName = SessionManager.userName
-            userPhone =SessionManager.mobile
+            userPhone = SessionManager.mobile
             merchantName = model.name
             merchantPhone = model.mobileNumber
             dataList = orderDataList
         }
 
-        PrintInvoice(requireContext(), printModel).print()
+        val printer = PrintInvoice(requireContext(), printModel)
+        if (dtStatus.contains("44,48")) { // Collection Status
+            printer.print(true)
+        } else {
+            printer.print(false)
+        }
+
     }
 
     private fun showQRCode(model: OrderModel) {
@@ -580,12 +632,12 @@ class OrderListFragment : Fragment() {
         codeTV.text = model.couponId
         val multiFormatWriter = MultiFormatWriter()
         try {
-            val bitMatrix = multiFormatWriter.encode(model.couponId, BarcodeFormat.CODE_128, 512,256)
-            val bitmap = Bitmap.createBitmap(512,256,Bitmap.Config.RGB_565)
+            val bitMatrix = multiFormatWriter.encode(model.couponId, BarcodeFormat.CODE_128, 512, 256)
+            val bitmap = Bitmap.createBitmap(512, 256, Bitmap.Config.RGB_565)
             for (i in 0..511) {
                 for (j in 0..255) {
-                    val color: Int = if(bitMatrix.get(i,j)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
-                    bitmap.setPixel(i,j,color)
+                    val color: Int = if (bitMatrix.get(i, j)) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
+                    bitmap.setPixel(i, j, color)
                 }
             }
             Glide.with(productImage)
