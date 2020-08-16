@@ -9,9 +9,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.ProgressRequestBody
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.repository.AppRepository
-import com.ajkerdeal.app.essential.utils.ProgressRequestBody
+
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.google.gson.Gson

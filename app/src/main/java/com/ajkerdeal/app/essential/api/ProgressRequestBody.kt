@@ -1,4 +1,4 @@
-package com.ajkerdeal.app.essential.utils
+package com.ajkerdeal.app.essential.api
 
 import android.os.Handler
 import android.os.Looper
@@ -27,7 +27,7 @@ class ProgressRequestBody(private val file: File,
     override fun writeTo(sink: BufferedSink) {
 
         Timber.d("writeTo called")
-        val length = file.length()
+        val length = file.length().toDouble()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         val fileInputStream = FileInputStream(file)
         var uploaded = 0L
@@ -42,10 +42,11 @@ class ProgressRequestBody(private val file: File,
         }
     }
 
-    inner class ProgressUpdater(private val uploaded: Long, private val total: Long) : Runnable {
+    inner class ProgressUpdater(private val uploaded: Long, private val total: Double) : Runnable {
         override fun run() {
-            Timber.d("onProgressUpdate $uploaded/$total")
-            callback.onProgressUpdate((100 * uploaded / total).toInt())
+            val progress = ((uploaded / total) * 100).toInt()
+            callback.onProgressUpdate(progress)
+            Timber.d("onProgressUpdate $uploaded/$total progress: $progress")
         }
     }
 

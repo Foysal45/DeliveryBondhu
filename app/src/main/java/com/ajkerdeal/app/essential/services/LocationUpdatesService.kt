@@ -10,6 +10,7 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.location_log.LocationLogRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
@@ -20,11 +21,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 
-class LocationUpdatesService: Service() {
-
-
+class LocationUpdatesService : Service() {
 
     private val EXTRA_STARTED_FROM_NOTIFICATION = "$PACKAGE_NAME.started_from_notification"
     private val channelID = "channel1"
@@ -33,6 +33,7 @@ class LocationUpdatesService: Service() {
     private val iBinder: IBinder = LocalBinder()
     private var UPDATE_INTERVAL_IN_MILLISECONDS = 10000L
     private var FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
+    private val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
 
     private var changingConfiguration: Boolean = false
     private lateinit var notificationManager: NotificationManager
@@ -137,7 +138,7 @@ class LocationUpdatesService: Service() {
             val servicePendingIntent = PendingIntent.getService(this, 0, destinationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             val activityIntent = Intent(this, HomeActivity::class.java)
-            val activityPendingIntent = PendingIntent.getActivity(this,9620 , activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val activityPendingIntent = PendingIntent.getActivity(this, 9620, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             notification = NotificationCompat.Builder(this, channelID)
                 .setContentTitle("Current Location")
@@ -148,7 +149,7 @@ class LocationUpdatesService: Service() {
                 .setSmallIcon(R.drawable.ic_logo_hand)
                 .setWhen(System.currentTimeMillis())
                 .addAction(R.drawable.ic_logo_hand, "Open App", activityPendingIntent)
-                //.addAction(R.mipmap.ic_launcher, "Remove location updates", servicePendingIntent)
+            //.addAction(R.mipmap.ic_launcher, "Remove location updates", servicePendingIntent)
 
             startForeground(NOTIFICATION_ID, notification.build())
         }
@@ -251,7 +252,7 @@ class LocationUpdatesService: Service() {
         distanceDifferenceInMeter = difference.toFloat()
     }
 
-    inner class LocalBinder: Binder() {
+    inner class LocalBinder : Binder() {
         fun getServerInstance(): LocationUpdatesService = this@LocationUpdatesService
     }
 
@@ -285,6 +286,7 @@ class LocationUpdatesService: Service() {
         Timber.tag("LocationLog").d("LocationServiceLog update new location to server")
         CoroutineScope(Dispatchers.IO).launch {
             repository.updateUserLocation(LocationUpdateRequest(SessionManager.userId, location.latitude.toString(), location.longitude.toString()))
+            repository.logRiderLocation(LocationLogRequest(SessionManager.userId, SessionManager.userName, location.latitude.toString(), location.longitude.toString(), sdf.format(Date())))
         }
     }
 }

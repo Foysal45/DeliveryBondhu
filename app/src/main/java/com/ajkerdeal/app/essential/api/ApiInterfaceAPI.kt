@@ -32,11 +32,11 @@ import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.http.*
 
-interface ApiInterface {
+interface ApiInterfaceAPI {
 
     companion object {
-        operator fun invoke(retrofit: Retrofit): ApiInterface {
-            return retrofit.create(ApiInterface::class.java)
+        operator fun invoke(retrofit: Retrofit): ApiInterfaceAPI {
+            return retrofit.create(ApiInterfaceAPI::class.java)
         }
     }
 
