@@ -3,9 +3,11 @@ package com.ajkerdeal.app.essential.printer.command;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.IntRange;
 
+import com.ajkerdeal.app.essential.R;
 import com.ajkerdeal.app.essential.printer.connectivity.aidl.AidlUtil;
 import com.ajkerdeal.app.essential.printer.connectivity.bluetooth.BluetoothUtil;
 import com.ajkerdeal.app.essential.printer.connectivity.utils.ESCUtil;
@@ -59,6 +61,7 @@ public class PrinterCommand {
                 AidlUtil.getInstance().initPrinter();
             }else {
                 Log.d(TAG, "PrinterCommand: "+"AIDL is disconnected" );
+                Toast.makeText(mContext, R.string.toast_2,Toast.LENGTH_LONG).show();
             }
         }
 

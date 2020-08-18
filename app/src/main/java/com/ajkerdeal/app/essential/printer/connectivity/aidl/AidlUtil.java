@@ -114,7 +114,7 @@ public class AidlUtil {
 
     public void setDarkness(int index) {
         if (woyouService == null) {
-            Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -134,7 +134,7 @@ public class AidlUtil {
      */
     public List<String> getPrinterInfo(PrinterCallback printerCallback) {
         if (woyouService == null) {
-            Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
             return null;
         }
 
@@ -187,7 +187,7 @@ public class AidlUtil {
      */
     public void printQr(String data, int modulesize, int errorlevel) {
         if (woyouService == null) {
-            Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -222,12 +222,12 @@ public class AidlUtil {
      */
     public void printBarCode(String data, int symbology, int height, int width, int textposition) {
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
             woyouService.printBarCode(data, symbology, height, width, textposition, null);
-            woyouService.lineWrap(3, null);
+            //woyouService.lineWrap(3, null);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -238,7 +238,7 @@ public class AidlUtil {
      */
     public void printText(String content, String typeface, float size, boolean isBold, boolean isUnderLine, int lineGap) {
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -265,7 +265,7 @@ public class AidlUtil {
 
     public void printText(String content, String typeface, float size, int lineGap){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -298,7 +298,7 @@ public class AidlUtil {
 
     public void setIsBold(boolean isBold){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -314,7 +314,7 @@ public class AidlUtil {
 
     public void setIsUnderline(boolean isUnderLine){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -331,7 +331,7 @@ public class AidlUtil {
 
     public void alignCenter(){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -343,7 +343,7 @@ public class AidlUtil {
 
     public void alignLeft(){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -355,7 +355,7 @@ public class AidlUtil {
 
     public void alignRight(){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -374,7 +374,7 @@ public class AidlUtil {
      */
     public void printBitmapCustom(Bitmap bitmap,int type){
         if (woyouService == null) {
-            Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -388,7 +388,7 @@ public class AidlUtil {
 
     public void printBitmap(Bitmap bitmap) {
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -405,7 +405,7 @@ public class AidlUtil {
      */
     public void printBitmap(Bitmap bitmap, int orientation) {
         if (woyouService == null) {
-            Toast.makeText(context,"Service has been disconnected!",Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,"Service has been disconnected!",Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -431,7 +431,7 @@ public class AidlUtil {
      */
     public void printTable(LinkedList<TableItem> list) {
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -451,7 +451,7 @@ public class AidlUtil {
      */
     public void printEmptyLine(int line){
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
         try {
@@ -464,7 +464,7 @@ public class AidlUtil {
 
     public void sendRawData(byte[] data) {
         if (woyouService == null) {
-            Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,R.string.toast_2,Toast.LENGTH_LONG).show();
             return;
         }
 

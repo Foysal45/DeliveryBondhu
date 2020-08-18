@@ -104,9 +104,7 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
         printerCommand.printText(collector)
         Timber.tag(tag).d(collector)
 
-
-        printerCommand.setLineGap(4)
-
+        printerCommand.printEmptyLine(4)
     }
 
     private fun addPaddingToString(inputString: String, chunkSize: Int, paddingDirection: Int): String? {
