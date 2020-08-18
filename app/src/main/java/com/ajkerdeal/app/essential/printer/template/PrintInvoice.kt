@@ -76,6 +76,7 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
             Timber.tag(tag).d(row)
             if (isPrintBarCode) {
                 printerCommand.printBarCode(data.couponId, 8, 100, 2, 2)
+                printerCommand.printEmptyLine(1)
                 Timber.tag(tag).d(s10)
                 Timber.tag(tag).d(s11)
                 Timber.tag(tag).d(s11)
