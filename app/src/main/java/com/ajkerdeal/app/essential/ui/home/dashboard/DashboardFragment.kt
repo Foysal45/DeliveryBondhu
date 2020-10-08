@@ -59,18 +59,21 @@ class DashboardFragment : Fragment() {
                     binding?.button2?.visibility = View.VISIBLE
                     binding?.button3?.visibility = View.VISIBLE
                     binding?.button4?.visibility = View.VISIBLE
+                    binding?.button5?.visibility = View.VISIBLE
                 }
                 1 -> {
                     binding?.button1?.visibility = View.VISIBLE
                     binding?.button2?.visibility = View.VISIBLE
                     binding?.button3?.visibility = View.VISIBLE
                     binding?.button4?.visibility = View.GONE
+                    binding?.button5?.visibility = View.VISIBLE
                 }
                 2 -> {
                     binding?.button1?.visibility = View.GONE
                     binding?.button2?.visibility = View.GONE
                     binding?.button3?.visibility = View.GONE
                     binding?.button4?.visibility = View.VISIBLE
+                    binding?.button5?.visibility = View.GONE
                 }
             }
             activeSwitch?.isChecked = !userStatus.isNowOffline
@@ -139,6 +142,14 @@ class DashboardFragment : Fragment() {
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
             }
         }
+        binding?.button5?.setOnClickListener {
+            if (isLocationPermission() && checkLocationEnable()) {
+                snackbar?.dismiss()
+                val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_RETURN)
+                findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
+            }
+        }
+
         binding?.button4?.setOnClickListener {
             if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()

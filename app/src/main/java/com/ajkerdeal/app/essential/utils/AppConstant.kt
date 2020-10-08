@@ -10,6 +10,7 @@ object AppConstant {
     const val SERVICE_TYPE_COLLECTION_DELIVERY = "collectionanddelivery"
     const val SERVICE_TYPE_COLLECTION = "collection"
     const val SERVICE_TYPE_DELIVERY = "delivery"
+    const val SERVICE_TYPE_RETURN = "return"
 
     const val LOCATION_REQUEST = 1000
     const val GPS_REQUEST = 1001

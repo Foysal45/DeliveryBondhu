@@ -45,7 +45,21 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 .apply(options)
                 .into(holder.binding.productImage)
 
-            holder.binding.productName.text = "${model.productTitle} (${model.couponId})"
+            holder.binding.productName.text = "${model.productTitle}"
+            holder.binding.productCode.text = "কোড: ${model.couponId}"
+            if (model.sizes.isNullOrEmpty()) {
+                holder.binding.productSize.visibility = View.GONE
+            } else {
+                holder.binding.productSize.visibility = View.VISIBLE
+                holder.binding.productSize.text = "সাইজ: ${model.sizes}"
+            }
+            if (model.colors.isNullOrEmpty()) {
+                holder.binding.productColor.visibility = View.GONE
+            } else {
+                holder.binding.productColor.visibility = View.VISIBLE
+                holder.binding.productColor.text = "কালার: ${model.colors}"
+            }
+            holder.binding.productDeliveryType.text = "টাইপ: ${model.deliveryType}"
 
             val total = model.productPrice * model.productQtn + model.deliveryCharge
             val banglaPrice = DigitConverter.toBanglaDigit(model.productPrice)
@@ -54,6 +68,8 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val banglaTotal = DigitConverter.toBanglaDigit(total)
             val price = "৳ $banglaPrice x $banglaQuantity $deliveryCharge = ৳ $banglaTotal"
             holder.binding.productPrice.text = price
+
+            holder.binding.productQuantity.text = "পরিমান: $banglaQuantity"
 
             if (position == dataList.lastIndex) {
                 holder.binding.separator.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.separator.context, R.color.white))

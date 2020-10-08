@@ -433,6 +433,9 @@ class OrderListFragment : Fragment() {
                 collectionFlag = 0
                 //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
+            AppConstant.SERVICE_TYPE_RETURN -> {
+                collectionFlag = 0
+            }
         }
     }
 
@@ -611,12 +614,12 @@ class OrderListFragment : Fragment() {
         }
 
         val printer = PrintInvoice(requireContext(), printModel)
-        if (dtStatus.contains("44,48")) { // Collection Status
+        printer.print(true)
+        /*if (dtStatus.contains("44,48")) { // Collection Status
             printer.print(true)
         } else {
             printer.print(false)
-        }
-
+        }*/
     }
 
     private fun showQRCode(model: OrderModel) {

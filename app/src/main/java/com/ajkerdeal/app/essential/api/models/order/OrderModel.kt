@@ -19,6 +19,12 @@ data class OrderModel(
     var bondhuCharge: Int = 0,
     @SerializedName("DeliveryCharge")
     var deliveryCharge: Int = 0,
+    @SerializedName("Colors")
+    var colors: String? = "",
+    @SerializedName("Sizes")
+    var sizes: String? = "",
+    @SerializedName("DeliveryType")
+    var deliveryType: String? = "",
 
     @SerializedName("Comments")
     var comments: String? = "",

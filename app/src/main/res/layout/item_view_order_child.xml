@@ -71,18 +71,112 @@
             tools:text="রাঁধুনী হলুদের গুঁড়া - ১০০০ গ্রাম (299706)" />
 
         <TextView
+            android:id="@+id/productCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/productName"
+            app:layout_constraintVertical_bias="0"
+            tools:text="কোড: DT-XXXXXX" />
+
+        <TextView
+            android:id="@+id/productQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/productCode"
+            app:layout_constraintTop_toBottomOf="@id/productName"
+            app:layout_constraintVertical_bias="0"
+            tools:text="পরিমান: ৯৯৯" />
+
+        <Space
+            android:id="@+id/space"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            app:layout_constraintBottom_toTopOf="@id/productPrice"
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/productCode"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            />
+
+
+        <TextView
+            android:id="@+id/productSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/productCode"
+            app:layout_constraintVertical_bias="0"
+            tools:text="Size-XXXL"
+            tools:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/productColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/productSize"
+            app:layout_constraintTop_toBottomOf="@id/productCode"
+            app:layout_constraintVertical_bias="0"
+            tools:text="Color: Black"
+            tools:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/productDeliveryType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/productColor"
+            app:layout_constraintTop_toBottomOf="@id/productCode"
+            app:layout_constraintVertical_bias="0"
+            tools:text="Type: Normal"
+            tools:visibility="visible"
+            />
+
+        <TextView
             android:id="@+id/productPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_from_product_image"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@id/orderStatus"
             app:layout_constraintStart_toEndOf="@id/barrier"
-            app:layout_constraintTop_toBottomOf="@id/productName"
+            app:layout_constraintTop_toBottomOf="@id/space"
             app:layout_constraintVertical_bias="0"
             tools:text="৳ ৩৭৩" />
 
