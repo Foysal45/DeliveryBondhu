@@ -149,6 +149,16 @@ object SessionManager {
             }
         }
 
+    var riderType: String
+        get() {
+            return pref.getString("riderType", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("riderType", value)
+            }
+        }
+
     var lastSyncedStamp: Long
         get() {
             return pref.getLong("lastSyncedStamp", 0)

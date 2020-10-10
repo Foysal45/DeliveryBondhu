@@ -21,5 +21,7 @@ data class OrderRequest(
     @SerializedName("type")
     var serviceType: String = "",
     @SerializedName("CustomType")
-    var customType: String = "no"
+    var customType: String = "no",
+    @SerializedName("RiderType")
+    var riderType: String = ""
 )

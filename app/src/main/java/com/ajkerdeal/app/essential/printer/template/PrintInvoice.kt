@@ -37,7 +37,7 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
         if (merchantName != null && !TextUtils.isEmpty(merchantName) && merchantName.length > 20) {
             merchantName = merchantName.substring(0, 19) + ".."
         }
-        merchantName = s5 + merchantName
+        val merchantNameHeader = s5 + merchantName
         val merchantPhone = s8 + model.merchantPhone
 
         var sum = 0
@@ -55,8 +55,8 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
         Timber.tag(tag).d(s4)
         printerCommand.printText(date)
         Timber.tag(tag).d(date)
-        printerCommand.printText(merchantName)
-        Timber.tag(tag).d(merchantName)
+        printerCommand.printText(merchantNameHeader)
+        Timber.tag(tag).d(merchantNameHeader)
         printerCommand.printText(merchantPhone)
         Timber.tag(tag).d(merchantPhone)
         printerCommand.printText(s9)
@@ -74,6 +74,8 @@ class PrintInvoice(private val context: Context, private val model: PrintModel) 
             val row = couponId + " --- " + quantity + "টি --- " + price + "৳"
             printerCommand.printText(row)
             Timber.tag(tag).d(row)
+            printerCommand.printText(merchantName)
+            Timber.tag(tag).d(merchantName)
             if (isPrintBarCode) {
                 printerCommand.printBarCode(data.couponId, 8, 100, 2, 2)
                 printerCommand.printEmptyLine(1)

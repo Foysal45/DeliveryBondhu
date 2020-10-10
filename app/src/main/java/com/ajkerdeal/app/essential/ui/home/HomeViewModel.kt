@@ -31,7 +31,7 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
 
     fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
 
-        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType)
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
         }

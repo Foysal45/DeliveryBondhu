@@ -104,6 +104,7 @@ class DashboardFragment : Fragment() {
                 .into(binding!!.userPic)
 
             SessionManager.userPic = profileImage ?: ""
+            SessionManager.riderType = userStatus.riderType
 
         })
 
