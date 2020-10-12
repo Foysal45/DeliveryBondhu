@@ -53,27 +53,27 @@ class DashboardFragment : Fragment() {
         binding?.lifecycleOwner = viewLifecycleOwner
 
         viewModel.updateUserStatus().observe(viewLifecycleOwner, Observer { userStatus ->
-            when(userStatus.userType) {
-                0 -> {
+            when(userStatus.riderType) {
+                "" -> {
                     binding?.button1?.visibility = View.VISIBLE
                     binding?.button2?.visibility = View.VISIBLE
                     binding?.button3?.visibility = View.VISIBLE
-                    binding?.button4?.visibility = View.VISIBLE
-                    binding?.button5?.visibility = View.VISIBLE
-                }
-                1 -> {
-                    binding?.button1?.visibility = View.VISIBLE
-                    binding?.button2?.visibility = View.VISIBLE
-                    binding?.button3?.visibility = View.VISIBLE
+                    binding?.button5?.visibility = View.GONE
                     binding?.button4?.visibility = View.GONE
-                    binding?.button5?.visibility = View.VISIBLE
                 }
-                2 -> {
+                "return" -> {
                     binding?.button1?.visibility = View.GONE
                     binding?.button2?.visibility = View.GONE
                     binding?.button3?.visibility = View.GONE
-                    binding?.button4?.visibility = View.VISIBLE
-                    binding?.button5?.visibility = View.GONE
+                    binding?.button5?.visibility = View.VISIBLE
+                    binding?.button4?.visibility = View.GONE
+                }
+                "all" -> {
+                    binding?.button1?.visibility = View.VISIBLE
+                    binding?.button2?.visibility = View.VISIBLE
+                    binding?.button3?.visibility = View.VISIBLE
+                    binding?.button5?.visibility = View.VISIBLE
+                    binding?.button4?.visibility = View.GONE
                 }
             }
             activeSwitch?.isChecked = !userStatus.isNowOffline

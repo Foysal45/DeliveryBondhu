@@ -28,5 +28,8 @@ data class StatusUpdateModel(
     @SerializedName("PODNumber")
     var pODNumber: String = "",
     @SerializedName("HubName")
-    var hubName: String = ""
+    var hubName: String = "",
+    @SerializedName("Type")
+    var type: String = ""
+
 ) : Parcelable

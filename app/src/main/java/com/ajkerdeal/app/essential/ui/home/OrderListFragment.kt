@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.*
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
@@ -30,9 +31,11 @@ import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
+import com.ajkerdeal.app.essential.services.ImageUploadWorker
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.esafirm.imagepicker.features.ImagePicker
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.zxing.BarcodeFormat
@@ -63,6 +66,9 @@ class OrderListFragment : Fragment() {
     private var customType: String = "no"
 
     private var serviceTye: String = ""
+
+    private var imageUploadMerchantId: String = ""
+    private var imageUploadOrderIdList: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -117,6 +123,7 @@ class OrderListFragment : Fragment() {
                     deliveryDate = orderModel.deliveryDate ?: ""
                     commentedBy = SessionManager.userId
                     pODNumber = orderModel.pODNumber ?: ""
+                    type = serviceTye
                 }
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
@@ -135,6 +142,7 @@ class OrderListFragment : Fragment() {
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
+                        type = serviceTye
                     }
                     requestBody.add(statusModel)
                     if (index == model.orderList?.lastIndex) {
@@ -206,6 +214,20 @@ class OrderListFragment : Fragment() {
         dataAdapter.onQRCodeClicked = { model: OrderModel ->
             showQRCode(model)
         }
+        dataAdapter.onUploadClicked = { model ->
+            imageUploadMerchantId = model.merchantId.toString()
+            imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+            addPictureDialog() {
+                when(it) {
+                    1 -> {
+                        pickImageFromCamera()
+                    }
+                    2 -> {
+                        pickImageFromGallery()
+                    }
+                }
+            }
+        }
 
         //viewModel.loadOrderOrSearch()
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
@@ -274,6 +296,7 @@ class OrderListFragment : Fragment() {
                         dataAdapter.isCollectionPointGroup = model.collectionFilter
                         dataAdapter.allowLocationAdd = model.allowLocationAdd
                         dataAdapter.allowPrint = model.allowPrint
+                        dataAdapter.allowImageUpload = model.allowImageUpload
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
@@ -662,4 +685,103 @@ class OrderListFragment : Fragment() {
             dialog.dismiss()
         }
     }
+
+    private fun addPictureDialog(listener: ((type: Int) -> Unit)? = null) {
+
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val layout = layoutInflater.inflate(R.layout.dialog_picker, null)
+        builder.setView(layout)
+        val takePhoto = layout.findViewById(R.id.action1) as LinearLayout
+        val fromGallery = layout.findViewById(R.id.action2) as LinearLayout
+        val dialog = builder.create()
+        takePhoto.setOnClickListener {
+            dialog.cancel()
+            listener?.invoke(1)
+        }
+        fromGallery.setOnClickListener {
+            dialog.cancel()
+            listener?.invoke(2)
+        }
+        dialog.show()
+    }
+
+    private fun pickImageFromCamera() {
+        ImagePicker.cameraOnly().start(this)
+    }
+
+    private fun pickImageFromGallery() {
+        ImagePicker.create(this)
+            .folderMode(true)
+            .toolbarFolderTitle("ফোল্ডার নির্বাচন করুন")
+            .toolbarImageTitle("ছবি নির্বাচন করুন")
+            .includeVideo(false)
+            .theme(R.style.ImagePickerTheme)
+            .limit(1)
+            //.language("bn")
+            .start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)){
+
+            val imageList = ImagePicker.getImages(data)
+            val pathList = imageList.map { it.path }
+            val imageUrl = pathList.first()
+            uploadImageDialog(imageUrl) { type ->
+                if (type == 1) {
+                    uploadFile(imageUrl)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun uploadImageDialog(imagePath: String, listener: ((type: Int) -> Unit)? = null) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val layout = layoutInflater.inflate(R.layout.dialog_image_upload, null)
+        builder.setView(layout)
+        val imageView: ImageView = layout.findViewById(R.id.image)
+        val action1: MaterialButton = layout.findViewById(R.id.action1)
+        val action2: MaterialButton = layout.findViewById(R.id.action2)
+        val dialog = builder.create()
+
+        Glide.with(imageView).load(imagePath).into(imageView)
+        action1.setOnClickListener {
+            listener?.invoke(1)
+            dialog.dismiss()
+        }
+        action2.setOnClickListener {
+            listener?.invoke(2)
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun uploadFile(imageUrl: String) {
+
+        binding?.progressBar?.visibility = View.VISIBLE
+        val data = Data.Builder()
+            .putString("merchantId", imageUploadMerchantId)
+            .putString("orderIds", imageUploadOrderIdList)
+            .putString("imageUrl", imageUrl)
+            .build()
+
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val request = OneTimeWorkRequestBuilder<ImageUploadWorker>().setConstraints(constraints).setInputData(data).build()
+        WorkManager.getInstance(requireContext()).beginUniqueWork("sync", ExistingWorkPolicy.KEEP, request).enqueue()
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(request.id).observe(viewLifecycleOwner, Observer { workInfo ->
+            if (workInfo != null){
+                val result = workInfo.outputData.getString("work_result")
+                context?.toast(result)
+                if (workInfo.state == WorkInfo.State.SUCCEEDED){
+                    //context?.toast("প্রোফাইল আপডেট হয়েছে")
+                    binding?.progressBar?.visibility = View.GONE
+                } else if (workInfo.state == WorkInfo.State.FAILED){
+                    //context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
+                    binding?.progressBar?.visibility = View.GONE
+                }
+            }
+        })
+    }
+
 }

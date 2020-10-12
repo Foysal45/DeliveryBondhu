@@ -97,6 +97,7 @@ class ParcelListFragment : Fragment() {
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
+                        type = serviceTye
                     }
                     requestBody.add(statusModel)
                 }
@@ -133,6 +134,7 @@ class ParcelListFragment : Fragment() {
                     deliveryDate = orderModel.deliveryDate ?: ""
                     commentedBy = SessionManager.userId
                     pODNumber = orderModel.pODNumber ?: ""
+                    type = serviceTye
                 }
                 requestBody.add(statusModel)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
@@ -153,6 +155,7 @@ class ParcelListFragment : Fragment() {
                         deliveryDate = orderModel.deliveryDate ?: ""
                         commentedBy = SessionManager.userId
                         pODNumber = orderModel.pODNumber ?: ""
+                        type = serviceTye
                     }
                     requestBody.add(statusModel)
                     if (index == (orderCustomer.orderList?.size!! - 1)) {

@@ -23,6 +23,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
+    var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?) -> Unit)? = null
 
     var isChildView: Boolean = false
@@ -30,6 +31,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionPointGroup: Int = -1
     var allowLocationAdd: Boolean = false
     var allowPrint: Boolean = false
+    var allowImageUpload: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -155,6 +157,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             } else {
                 holder.binding.printBtn.visibility = View.GONE
             }
+
+            if (allowImageUpload) {
+                holder.binding.uploadBtn.visibility = View.VISIBLE
+            } else {
+                holder.binding.uploadBtn.visibility = View.GONE
+            }
         }
     }
 
@@ -186,6 +194,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.printBtn.setOnClickListener {
                 onPrintClicked?.invoke(dataList[adapterPosition])
+            }
+
+            binding.uploadBtn.setOnClickListener {
+                onUploadClicked?.invoke(dataList[adapterPosition])
             }
 
             /*if (isCollectionPoint == 1) {

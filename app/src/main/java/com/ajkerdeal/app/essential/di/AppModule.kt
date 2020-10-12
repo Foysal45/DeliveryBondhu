@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.di
 
+import com.ajkerdeal.app.essential.api.ApiInterfaceADM
 import com.ajkerdeal.app.essential.api.ApiInterfaceANA
 import com.ajkerdeal.app.essential.api.ApiInterfaceAPI
 import com.ajkerdeal.app.essential.api.RetrofitUtils.createCache
@@ -28,10 +29,12 @@ val appModule = module {
 
     single(named("api")) { retrofitInstance(AppConstant.BASE_URL_API, get(), get(named("clientUpload"))) }
     single(named("ana")) { retrofitInstance(AppConstant.BASE_URL_ANA, get(), get(named("clientUpload"))) }
+    single(named("adm")) { retrofitInstance(AppConstant.BASE_URL_ADM, get(), get(named("clientUpload"))) }
     single { ApiInterfaceAPI(get(named("api"))) }
     single { ApiInterfaceANA(get(named("ana"))) }
+    single { ApiInterfaceADM(get(named("adm"))) }
 
-    single { AppRepository(get(), get()) }
+    single { AppRepository(get(), get(), get()) }
 
     single { AuthViewModel(get()) }
     single { HomeActivityViewModel(get()) }

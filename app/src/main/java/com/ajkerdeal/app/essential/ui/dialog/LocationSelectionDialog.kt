@@ -92,7 +92,9 @@ class LocationSelectionDialog : BottomSheetDialogFragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-                handler.removeCallbacks(workRunnable)
+                workRunnable?.let {
+                    handler.removeCallbacks(it)
+                }
                 workRunnable = Runnable {
                     val searchKey = p0.toString()
                     search(searchKey)

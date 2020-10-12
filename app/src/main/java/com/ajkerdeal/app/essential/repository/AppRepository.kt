@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.repository
 
+import com.ajkerdeal.app.essential.api.ApiInterfaceADM
 import com.ajkerdeal.app.essential.api.ApiInterfaceANA
 import com.ajkerdeal.app.essential.api.ApiInterfaceAPI
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
@@ -16,11 +17,12 @@ import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
+import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA) {
+class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA, private val apiInterfaceADM: ApiInterfaceADM) {
 
     suspend fun features() = apiInterfaceAPI.features()
 
@@ -65,8 +67,19 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun getDistrictList(id: Int) = apiInterfaceAPI.getDistrictList(id)
 
+    suspend fun updateDocumentUrl(requestBody: UpdateDocRequest) = apiInterfaceAPI.updateDocumentUrl(requestBody)
+
     //########################################### Analytics ###############################################//
 
     suspend fun logRiderLocation(requestBody: LocationLogRequest) = apiInterfaceANA.logRiderLocation(requestBody)
+
+
+    //########################################### ADM ###############################################//
+
+    suspend fun imageUpload(
+        imageUrl: RequestBody,
+        fileName: RequestBody,
+        file: MultipartBody.Part?
+    ) = apiInterfaceADM.imageUpload(imageUrl, fileName, file)
 
 }

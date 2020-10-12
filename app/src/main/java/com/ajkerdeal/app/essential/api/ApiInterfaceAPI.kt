@@ -24,6 +24,7 @@ import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateResponse
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
+import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -103,5 +104,8 @@ interface ApiInterfaceAPI {
 
     @GET("District/v3/LoadAllDistrictFromJson/{parentId}")
     suspend fun getDistrictList(@Path("parentId") distId: Int = 0): NetworkResponse<ResponseHeader<LocationResponse>, ErrorResponse>
+
+    @POST("api/SelfDelivery/UpdateDocumentUrl")
+    suspend fun updateDocumentUrl(@Body requestBody: UpdateDocRequest): NetworkResponse<ResponseHeader<Boolean>, ErrorResponse>
 
 }

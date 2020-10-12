@@ -37,7 +37,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/showLocation"
+                app:layout_constraintEnd_toStartOf="@id/actionLayout"
                 app:layout_constraintStart_toEndOf="@id/indicator"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Maleka Begum" />
@@ -53,62 +53,83 @@
                 android:paddingStart="5dp"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@id/phone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/indicator"
 
                 tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
 
             <LinearLayout
-                android:id="@+id/showLocation"
+                android:id="@+id/actionLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toStartOf="@id/printBtn"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:gravity="center"
-                android:layout_marginEnd="2dp"
                 >
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/cd"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_location"
-                    android:tint="@color/colorPrimary"
-                    />
-                <TextView
+
+
+
+                <LinearLayout
+                    android:id="@+id/showLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ম্যাপে দেখুন"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:gravity="center"
+                    android:layout_marginEnd="2dp"
+                    tools:ignore="UseCompoundDrawables">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/cd"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_location"
+                        android:tint="@color/colorPrimary"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ম্যাপে দেখুন"
+                        android:textColor="@color/text_primary"
+                        android:textSize="12sp"
+                        />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/uploadBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_file_upload"
+                    android:tint="@color/colorPrimary"
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     />
 
+                <ImageView
+                    android:id="@+id/printBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_print"
+                    android:tint="@color/colorPrimary"
+                     />
+
+                <ImageView
+                    android:id="@+id/phone"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_call"
+                     />
+
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/printBtn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/cd"
-                android:padding="4dp"
-                android:src="@drawable/ic_print"
-                android:tint="@color/colorPrimary"
-                app:layout_constraintEnd_toStartOf="@id/phone"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/phone"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/cd"
-                android:padding="4dp"
-                android:src="@drawable/ic_call"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/collectionMsg"
