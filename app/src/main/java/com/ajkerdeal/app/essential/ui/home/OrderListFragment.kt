@@ -613,6 +613,11 @@ class OrderListFragment : Fragment() {
 
     }*/
 
+    override fun onPause() {
+        hideKeyboard()
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         binding?.unbind()
         binding = null

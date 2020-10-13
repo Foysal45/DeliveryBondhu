@@ -390,7 +390,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     }
 
 
-    fun navHeaderData() {
+    private fun navHeaderData() {
         val navHeaderView = navView.getHeaderView(0)
         val parentHeader: ConstraintLayout = navHeaderView.findViewById(R.id.parent)
         val userPic: ImageView = navHeaderView.findViewById(R.id.userPic)
@@ -405,6 +405,11 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .into(userPic)
+
+        userPic.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+            navController.navigate(R.id.nav_profile)
+        }
     }
 
     fun availabilityState(status: Boolean) {

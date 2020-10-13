@@ -69,11 +69,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
     fun onResetPassword(view: View) {
         val mobile = resetMobile.value ?: ""
-        if (otpType == 1) {
-            checkMobile(mobile)
-        } else if (otpType == 2) {
-            sendOTP(mobile)
-        }
+        checkMobile(mobile)
     }
 
     fun onResetPasswordForm(view: View) {
@@ -317,16 +313,22 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
                             if (response.body.data?.deliveryUserId == 0) {
                                 deliveryUserId = 0
-                                val message = response.body.data?.message
-                                viewState.value = ViewState.ShowMessage(message)
+                                val message = "এই নম্বরটি দিয়ে রেজিস্ট্রেশন করা হয়নি"
+                                if (otpType == 2) { //Reg
+                                    sendOTP(mobile)
+                                } else {
+                                    viewState.value = ViewState.ShowMessage(message)
+                                }
+
                             } else {
                                 deliveryUserId = response.body.data?.deliveryUserId ?: 0
-                                val message = response.body.data?.message
-                                viewState.value = ViewState.ShowMessage(message)
+                                val message = "এই নম্বরটি দিয়ে ইতিমধ্যে রেজিস্ট্রেশন করা হয়েছে"
                                 //viewState.value = ViewState.NextState()
-
-                                //otpType = 1
-                                sendOTP(mobile)
+                                if (otpType == 1) {
+                                    sendOTP(mobile)
+                                } else {
+                                    viewState.value = ViewState.ShowMessage(message)
+                                }
                             }
                         //Timber.d("checkMobile $response")
 

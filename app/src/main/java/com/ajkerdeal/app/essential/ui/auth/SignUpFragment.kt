@@ -56,7 +56,7 @@ class SignUpFragment : Fragment() {
         })
 
         binding?.registration?.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().navigate(R.id.action_signUp_login)
         }
 
         binding?.districtET?.setOnClickListener {
