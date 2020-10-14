@@ -376,4 +376,9 @@ class ProfileFragment : Fragment() {
         super.onDestroyView()
     }
 
+    override fun onPause() {
+        super.onPause()
+        hideKeyboard()
+    }
+
 }

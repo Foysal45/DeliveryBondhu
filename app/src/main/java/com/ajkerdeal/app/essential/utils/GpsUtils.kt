@@ -12,6 +12,7 @@ import timber.log.Timber
 
 class GpsUtils(private val context: Context) {
 
+    private var isRequest: Boolean = false
     private val mSettingsClient: SettingsClient = LocationServices.getSettingsClient(context)
     private val mLocationSettingsRequest: LocationSettingsRequest
     private val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -32,12 +33,17 @@ class GpsUtils(private val context: Context) {
         } else {
             mSettingsClient.checkLocationSettings(mLocationSettingsRequest).addOnSuccessListener((context as Activity)) {
                 onGpsListener?.invoke(true)
+                Timber.d("GpsUtils location enable")
             }.addOnFailureListener(context) { e ->
                 when ((e as ApiException).statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
                         // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
-                        val rae = e as ResolvableApiException
-                        rae.startResolutionForResult(context, AppConstant.GPS_REQUEST)
+                        if (!isRequest) {
+                            isRequest = true
+                            val rae = e as ResolvableApiException
+                            rae.startResolutionForResult(context, AppConstant.GPS_REQUEST)
+                        }
+                        Timber.d("GpsUtils PendingIntent execute request")
                     } catch (sie: SendIntentException) {
                         Timber.d("GpsUtils PendingIntent unable to execute request")
                     }
