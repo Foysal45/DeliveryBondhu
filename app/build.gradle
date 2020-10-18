@@ -58,8 +58,9 @@ android {
             output.outputFileName = apkName
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 
 }

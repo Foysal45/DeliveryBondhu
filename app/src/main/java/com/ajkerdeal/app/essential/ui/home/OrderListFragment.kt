@@ -32,6 +32,7 @@ import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequ
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -626,28 +627,33 @@ class OrderListFragment : Fragment() {
 
     private fun printInvoice(model: OrderCustomer) {
 
-        val orderDataList: MutableList<PrintData> = mutableListOf()
-        model.orderList?.forEach {
-            orderDataList.add(
-                PrintData(it.couponId, it.productQtn, it.productPrice)
-            )
+        model.orderList?.let { list ->
+
+            val tag = PrintSelectionBottomSheet.tag
+            val dialog = PrintSelectionBottomSheet.newInstance(list)
+            dialog.show(childFragmentManager, tag)
+            dialog.onPrintClicked = { list ->
+                dialog.dismiss()
+
+                val orderDataList: MutableList<PrintData> = mutableListOf()
+                list.forEach {
+                    orderDataList.add(
+                        PrintData(it.couponId, it.productQtn, it.productPrice)
+                    )
+                }
+                val printModel: PrintModel = PrintModel().apply {
+                    userName = SessionManager.userName
+                    userPhone = SessionManager.mobile
+                    merchantName = model.name
+                    merchantPhone = model.mobileNumber
+                    dataList = orderDataList
+                }
+
+                val printer = PrintInvoice(requireContext(), printModel)
+                printer.print(true)
+            }
         }
 
-        val printModel = PrintModel().apply {
-            userName = SessionManager.userName
-            userPhone = SessionManager.mobile
-            merchantName = model.name
-            merchantPhone = model.mobileNumber
-            dataList = orderDataList
-        }
-
-        val printer = PrintInvoice(requireContext(), printModel)
-        printer.print(true)
-        /*if (dtStatus.contains("44,48")) { // Collection Status
-            printer.print(true)
-        } else {
-            printer.print(false)
-        }*/
     }
 
     private fun showQRCode(model: OrderModel) {
