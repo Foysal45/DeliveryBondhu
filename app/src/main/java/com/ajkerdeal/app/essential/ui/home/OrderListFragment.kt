@@ -39,6 +39,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.esafirm.imagepicker.features.ImagePicker
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import org.koin.android.ext.android.inject
@@ -747,13 +748,18 @@ class OrderListFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun uploadImageDialog(imagePath: String, listener: ((type: Int) -> Unit)? = null) {
+    private fun uploadImageDialog(imagePath: String, isShowOnly: Boolean = false, listener: ((type: Int) -> Unit)? = null) {
         val builder = MaterialAlertDialogBuilder(requireContext())
         val layout = layoutInflater.inflate(R.layout.dialog_image_upload, null)
         builder.setView(layout)
         val imageView: ImageView = layout.findViewById(R.id.image)
+        val title: TextView = layout.findViewById(R.id.title)
         val action1: MaterialButton = layout.findViewById(R.id.action1)
         val action2: MaterialButton = layout.findViewById(R.id.action2)
+        if (isShowOnly) {
+            title.text = ""
+            action1.visibility = View.GONE
+        }
         val dialog = builder.create()
 
         Glide.with(imageView).load(imagePath).into(imageView)
@@ -779,17 +785,25 @@ class OrderListFragment : Fragment() {
 
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val request = OneTimeWorkRequestBuilder<ImageUploadWorker>().setConstraints(constraints).setInputData(data).build()
-        WorkManager.getInstance(requireContext()).beginUniqueWork("sync", ExistingWorkPolicy.KEEP, request).enqueue()
+        WorkManager.getInstance(requireContext()).beginUniqueWork("uploadReturnPic", ExistingWorkPolicy.KEEP, request).enqueue()
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(request.id).observe(viewLifecycleOwner, Observer { workInfo ->
             if (workInfo != null){
                 val result = workInfo.outputData.getString("work_result")
-                context?.toast(result)
                 if (workInfo.state == WorkInfo.State.SUCCEEDED){
                     //context?.toast("প্রোফাইল আপডেট হয়েছে")
                     binding?.progressBar?.visibility = View.GONE
+                    val result = workInfo.outputData.getString("work_result")
+                    val serverImageUrl = workInfo.outputData.getString("serverImageUrl") ?: ""
+                    val msg = "$result\n$serverImageUrl"
+                    binding?.parent?.snackbar(msg,Snackbar.LENGTH_INDEFINITE, "View") {
+                        uploadImageDialog(serverImageUrl, true)
+                    }?.show()
                 } else if (workInfo.state == WorkInfo.State.FAILED){
                     //context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
                     binding?.progressBar?.visibility = View.GONE
+                    result?.let {
+                        binding?.parent?.snackbar(it)
+                    }
                 }
             }
         })

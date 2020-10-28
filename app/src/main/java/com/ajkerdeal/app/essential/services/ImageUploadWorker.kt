@@ -116,7 +116,11 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
             isWorkerDone = true
             completeProgress("Completed")
             notificationManager.cancel(notificationId)
-            val outputData = Data.Builder().putString("work_result", "$resultMsg").build()
+            val outputData = Data.Builder()
+                .putString("work_result", "$resultMsg")
+                .putString("serverImageUrl", serverImageUrl)
+                .build()
+            Timber.d("outputData resultMsg: $resultMsg serverImageUrl: $serverImageUrl")
             Result.success(outputData)
         } else {
             isWorkerDone = true
