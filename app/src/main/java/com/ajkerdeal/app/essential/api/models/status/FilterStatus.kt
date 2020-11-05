@@ -24,6 +24,6 @@ data class FilterStatus(
     var allowPrint: Boolean = false,
     @SerializedName("AllowImageUpload")
     var allowImageUpload: Boolean = false,
-    @SerializedName("isCollectionTimerShow")
+    @SerializedName("IsCollectionTimerShow")
     var isCollectionTimerShow: Boolean = false
 )
