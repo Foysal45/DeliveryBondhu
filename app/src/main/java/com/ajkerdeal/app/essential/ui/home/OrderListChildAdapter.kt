@@ -2,6 +2,7 @@ package com.ajkerdeal.app.essential.ui.home
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,10 @@ import com.ajkerdeal.app.essential.databinding.ItemViewOrderChildBinding
 import com.ajkerdeal.app.essential.utils.DigitConverter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,6 +30,11 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onCall: ((number: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
+
+    private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
+    private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+
+    var isCollectionTimerShow: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -139,71 +149,62 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.phoneShop.visibility = View.VISIBLE
             }
 
-            /*holder.binding.actionContainer.removeAllViews()
-            model.actions?.forEach {action ->
+            // Collection time
+            if (isCollectionTimerShow) {
+                collectionTimer(holder, model)
+            }
 
-                if (action.actionType == 1) {
+        }
+    }
 
-                    val theme = ContextThemeWrapper(holder.binding.actionContainer.context, R.style.ActionButtonPositive)
-                    val positiveBtn = MaterialButton(theme).apply {
-                        layoutParams = ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-                        text = action.actionMessage
-                        //icon = ContextCompat.getDrawable(holder.binding.actionContainer.context, R.drawable.ic_done)
-                        //backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionContainer.context, R.color.button_action_accept))
+    private fun collectionTimer(holder: ViewHolder, model: OrderModel) {
+        if (holder.countDownTimer != null) {
+            holder.countDownTimer?.cancel()
+        }
+        val endTime = model.collectionTimeSlot?.endTime ?: "00:00:00"
+        if (endTime != "00:00:00") {
+            try {
+                val endDate = sdf.parse("${sdf1.format(Date().time)} $endTime")
+                if (endDate != null) {
+                    val timeDifference = endDate.time - Date().time
+                    Timber.d("timeDifference $timeDifference ${endDate.time}")
+                    Timber.d("timeDifference $endTime")
+                    if (timeDifference > 0) {
+                        holder.binding.timerLayout.visibility = View.VISIBLE
+                        holder.countDownTimer = object: CountDownTimer(timeDifference,1000L) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished).toInt() % 24
+                                val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished).toInt() % 60
+                                val seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt() % 60
 
+                                val message = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                                holder.binding.timeText.text = DigitConverter.toBanglaDigit(message)
+                                if (hours < 1) {
+                                    holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.crimson))
+                                } else {
+                                    holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.colorPrimary))
+                                }
+                            }
+
+                            override fun onFinish() {
+                                holder.binding.timeText.text = "কালেকশন টাইম আউট"
+                            }
+                        }.start()
+                    } else {
+                        holder.binding.timerLayout.visibility = View.GONE
                     }
-                    positiveBtn.setOnClickListener {
-                        onActionClicked?.invoke(model)
-                    }
-                    holder.binding.actionContainer.addView(positiveBtn)
                 }
-
-                if (action.actionType == 2) {
-
-                    //val theme = ContextThemeWrapper(holder.binding.actionContainer.context, R.style.ActionButtonNegative)
-                    val negativeBtn = MaterialButton(holder.binding.actionContainer.context).apply {
-                        layoutParams = ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-                        text = action.actionMessage
-                        icon = ContextCompat.getDrawable(holder.binding.actionContainer.context, R.drawable.ic_close)
-                        val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionContainer.context, R.color.button_action_text_gry))
-                        iconTint = colorText
-                        setTextColor(colorText)
-                        backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionContainer.context, R.color.button_action_reject))
-                        textSize = 12.0f
-                    }
-                    negativeBtn.setOnClickListener {
-                        onActionClicked?.invoke(model)
-                    }
-                    holder.binding.actionContainer.addView(negativeBtn)
-
-
-                }
-
-                if (action.actionType == 3) {
-                    val positiveMsg = TextView(holder.binding.actionContainer.context, null, R.style.ActionMessagePositive).apply {
-                        text = action.actionMessage
-                        textSize = 12.0f
-                        val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionContainer.context, R.color.button_action_accept))
-                        setTextColor(colorText)
-                    }
-                    holder.binding.actionContainer.addView(positiveMsg)
-                }
-
-                if (action.actionType == 4) {
-                    val negativeMsg = TextView(holder.binding.actionContainer.context, null, R.style.ActionMessagePositive).apply {
-                        text = action.actionMessage
-                        textSize = 12.0f
-                        val colorText = ColorStateList.valueOf(ContextCompat.getColor(holder.binding.actionContainer.context, R.color.button_action_text_gry))
-                        setTextColor(colorText)
-                    }
-                    holder.binding.actionContainer.addView(negativeMsg)
-                }
-
-            }*/
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            holder.binding.timerLayout.visibility = View.GONE
         }
     }
 
     private inner class ViewHolder(val binding: ItemViewOrderChildBinding): RecyclerView.ViewHolder(binding.root) {
+
+        var countDownTimer: CountDownTimer? = null
 
         init {
 

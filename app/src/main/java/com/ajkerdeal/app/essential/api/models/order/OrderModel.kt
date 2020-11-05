@@ -47,6 +47,9 @@ data class OrderModel(
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),
 
+    @SerializedName("CollectionTimeSlot")
+    var collectionTimeSlot: CollectionTimeSlot? = CollectionTimeSlot(),
+
     @SerializedName("SourceInfo")
     var collectionSource: CollectionSource? = null
 )

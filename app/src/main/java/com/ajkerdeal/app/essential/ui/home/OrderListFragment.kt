@@ -299,6 +299,7 @@ class OrderListFragment : Fragment() {
                         dataAdapter.allowLocationAdd = model.allowLocationAdd
                         dataAdapter.allowPrint = model.allowPrint
                         dataAdapter.allowImageUpload = model.allowImageUpload
+                        dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE

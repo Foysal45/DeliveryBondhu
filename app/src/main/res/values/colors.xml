@@ -52,5 +52,6 @@
 
     <color name="action_icon_background">#E6322E7F</color>
     <color name="nav_header">#E6322E7F</color>
+    <color name="crimson">#DC143C</color>
 
 </resources>
