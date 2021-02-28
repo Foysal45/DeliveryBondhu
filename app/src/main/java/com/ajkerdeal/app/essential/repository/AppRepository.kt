@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.repository
 
+import com.ajkerdeal.app.essential.api.ApiInterfaceADCORE
 import com.ajkerdeal.app.essential.api.ApiInterfaceADM
 import com.ajkerdeal.app.essential.api.ApiInterfaceANA
 import com.ajkerdeal.app.essential.api.ApiInterfaceAPI
@@ -11,6 +12,8 @@ import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePassword
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.location_log.LocationLogRequest
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
@@ -22,7 +25,7 @@ import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA, private val apiInterfaceADM: ApiInterfaceADM) {
+class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA, private val apiInterfaceADM: ApiInterfaceADM, private val apiInterfaceADCORE: ApiInterfaceADCORE) {
 
     suspend fun features() = apiInterfaceAPI.features()
 
@@ -59,6 +62,8 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun updateMerchantLocation(requestBody: MerchantLocationRequest) = apiInterfaceAPI.updateMerchantLocation(requestBody)
 
+    suspend fun updateLocationUpdateRequestAD(requestBody: LocationUpdateRequestAD) = apiInterfaceAPI.updateLocationUpdateRequestAD(requestBody)
+
     suspend fun updateStatusChangeLocation(requestBody: StatusLocationRequest) = apiInterfaceAPI.updateStatusChangeLocation(requestBody)
 
     suspend fun loadOrderPodWiseList(requestBody: PodOrderRequest) = apiInterfaceAPI.loadOrderPodWiseList(requestBody)
@@ -81,5 +86,9 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
         fileName: RequestBody,
         file: MultipartBody.Part?
     ) = apiInterfaceADM.imageUpload(imageUrl, fileName, file)
+
+    //########################################### ADCORE ###############################################//
+
+    suspend fun updateLocationUpdateRequestDT(requestBody: LocationUpdateRequestDT) = apiInterfaceADCORE.updateLocationUpdateRequestDT(requestBody)
 
 }

@@ -30,6 +30,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
@@ -427,7 +429,6 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     }
 
     fun updateMerchantLocation(model: MerchantLocationRequest) {
-        //toast("Under Development lat: ${currentLocation?.latitude} lnt: ${currentLocation?.longitude}", Toast.LENGTH_SHORT)
 
         foregroundService?.recreateLocationRequest()
         Handler().postDelayed({
@@ -436,6 +437,50 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 model.latitude = currentLocation?.latitude.toString()
                 model.longitude = currentLocation?.longitude.toString()
                 viewModel.updateMerchantLocation(model).observe(this, Observer {
+                    if (it) {
+                        this.toast("সফলভাবে আপডেট হয়েছে")
+                    } else {
+                        this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                    }
+                })
+            } else {
+                this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+            }
+        }, 300L)
+
+    }
+
+    fun updateLocationAD(model: LocationUpdateRequestAD) {
+
+        foregroundService?.recreateLocationRequest()
+        Handler().postDelayed({
+            Timber.tag("LocationLog").d("location refreshed")
+            if (currentLocation != null) {
+                model.latitude = currentLocation?.latitude.toString()
+                model.Longitude = currentLocation?.longitude.toString()
+                viewModel.updateLocationAD(model).observe(this, Observer {
+                    if (it) {
+                        this.toast("সফলভাবে আপডেট হয়েছে")
+                    } else {
+                        this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                    }
+                })
+            } else {
+                this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+            }
+        }, 300L)
+
+    }
+
+    fun updateLocationDT(model: LocationUpdateRequestDT) {
+
+        foregroundService?.recreateLocationRequest()
+        Handler().postDelayed({
+            Timber.tag("LocationLog").d("location refreshed")
+            if (currentLocation != null) {
+                model.latitude = currentLocation?.latitude.toString()
+                model.longitude = currentLocation?.longitude.toString()
+                viewModel.updateLocationDT(model).observe(this, Observer {
                     if (it) {
                         this.toast("সফলভাবে আপডেট হয়েছে")
                     } else {

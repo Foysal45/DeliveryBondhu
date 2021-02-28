@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
+import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
@@ -194,11 +196,20 @@ class OrderListFragment : Fragment() {
             pictureDialog(orderModel)
         }
         dataAdapter.onLocationReport = { parentModel ->
+            Timber.d("parentDataModel ${parentModel}")
             if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
                 alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা", "না") {
                     if (it == Dialog.BUTTON_POSITIVE) {
                         val model = MerchantLocationRequest(parentModel.merchantId, parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
                         (activity as HomeActivity).updateMerchantLocation(model)
+                        if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")){
+                            val modelDT = LocationUpdateRequestDT(
+                                    parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, parentModel.merchantId, parentModel.address, parentModel.latitude, parentModel.longitude)
+                            (activity as HomeActivity).updateLocationDT(modelDT)
+                        }else{
+                            val modelAD = LocationUpdateRequestAD(parentModel.merchantId, parentModel.latitude, parentModel.longitude)
+                            (activity as HomeActivity).updateLocationAD(modelAD)
+                        }
                     }
                 }.show()
             } else {
