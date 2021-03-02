@@ -183,4 +183,5 @@ class HomeActivityViewModel(private val repository: AppRepository): ViewModel() 
         }
         return responseData
     }
+
 }

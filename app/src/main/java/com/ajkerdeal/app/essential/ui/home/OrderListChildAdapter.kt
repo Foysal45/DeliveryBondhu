@@ -11,9 +11,11 @@ import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.collection.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderChildBinding
+import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionAdapter
 import com.ajkerdeal.app.essential.utils.DigitConverter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -30,11 +32,13 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onCall: ((number: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
+    var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
 
     private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
     private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
     var isCollectionTimerShow: Boolean = false
+    var isWeightUpdateEnable: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -68,6 +72,9 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             } else {
                 holder.binding.productColor.visibility = View.VISIBLE
                 holder.binding.productColor.text = "কালার: ${model.colors}"
+            }
+            if(isWeightUpdateEnable){
+                holder.binding
             }
             holder.binding.productDeliveryType.text = "টাইপ: ${model.deliveryType}"
 
@@ -149,6 +156,12 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.phoneShop.visibility = View.VISIBLE
             }
 
+            if(isWeightUpdateEnable){
+                holder.binding.weightUpdateButton.visibility = View.VISIBLE
+            }else{
+                holder.binding.weightUpdateButton.visibility = View.GONE
+            }
+
             // Collection time
             if (isCollectionTimerShow) {
                 collectionTimer(holder, model)
@@ -156,6 +169,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         }
     }
+
 
     private fun collectionTimer(holder: ViewHolder, model: OrderModel) {
         if (holder.countDownTimer != null) {
@@ -219,6 +233,9 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.qrcodeBtn.setOnClickListener {
                 onQRCodeClicked?.invoke(dataList[adapterPosition])
             }
+            binding.weightUpdateButton.setOnClickListener {
+                onWeightUpdateClicked?.invoke(dataList[adapterPosition])
+            }
         }
 
     }
@@ -228,4 +245,5 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         dataList.addAll(list)
         notifyDataSetChanged()
     }
+
 }

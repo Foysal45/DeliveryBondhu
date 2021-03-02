@@ -161,3 +161,11 @@ fun isPackageInstalled(packageManager: PackageManager, packageName: String): Boo
         false
     }
 }
+
+fun isValidCoordinate(coordinate: String?): Boolean {
+    if (coordinate.isNullOrEmpty()) return false
+    if (coordinate.trim().isEmpty()) return false
+    if (coordinate == "0.0") return false
+    if (coordinate == "0") return false
+    return true
+}

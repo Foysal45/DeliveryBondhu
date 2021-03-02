@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
@@ -14,6 +15,7 @@ import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
+import com.ajkerdeal.app.essential.utils.isValidCoordinate
 
 class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -21,10 +23,13 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
+    var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
+    var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?) -> Unit)? = null
+    var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
 
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
@@ -33,6 +38,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var allowPrint: Boolean = false
     var allowImageUpload: Boolean = false
     var isCollectionTimerShow: Boolean = false
+    var isWeightUpdateEnable: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -103,6 +109,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             val dataAdapter = OrderListChildAdapter()
             dataAdapter.isCollectionTimerShow = isCollectionTimerShow
+            dataAdapter.isWeightUpdateEnable = isWeightUpdateEnable
             dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
             with(holder.binding.recyclerView) {
                 setHasFixedSize(false)
@@ -123,6 +130,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onQRCodeClicked = { model1 ->
                 onQRCodeClicked?.invoke(model1)
             }
+            dataAdapter.onWeightUpdateClicked = { model1 ->
+                onWeightUpdateClicked?.invoke(model1)
+            }
 
             if (model.mobileNumber.isNullOrEmpty()) {
                 holder.binding.phone.visibility = View.GONE
@@ -136,8 +146,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (isCollectionPointGroup == 1) {
-                val lat = model.latitude?.isNotEmpty() ?: false
-                val lng = model.longitude?.isNotEmpty() ?: false
+                val lat = isValidCoordinate(model.latitude)
+                val lng = isValidCoordinate(model.longitude)
                 if (lat && lng) {
                     holder.binding.showLocation.visibility = View.VISIBLE
                     holder.binding.addLocation.visibility = View.GONE
@@ -175,6 +185,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val state = dataList[adapterPosition].state
                 dataList[adapterPosition].state = !state
                 notifyItemChanged(adapterPosition)
+                onOrderListExpand?.invoke(dataList[adapterPosition], dataList[adapterPosition].state)
             }
 
             binding.phone.setOnClickListener {
@@ -191,7 +202,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.addLocation.setOnClickListener {
-                onLocationReport?.invoke(dataList[adapterPosition])
+                onLocationUpdate?.invoke(dataList[adapterPosition])
             }
 
             binding.printBtn.setOnClickListener {

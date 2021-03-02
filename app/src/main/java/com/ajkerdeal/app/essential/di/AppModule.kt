@@ -15,6 +15,7 @@ import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.ui.home.HomeViewModel
 import com.ajkerdeal.app.essential.ui.home.dashboard.DashboardViewModel
 import com.ajkerdeal.app.essential.ui.home.parcel.ParcelViewModel
+import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionViewModel
 import com.ajkerdeal.app.essential.ui.profile.ProfileViewModel
 import com.ajkerdeal.app.essential.utils.AppConstant
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -45,5 +46,6 @@ val appModule = module {
     viewModel { ProfileViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { ParcelViewModel(get()) }
+    viewModel { WeightSelectionViewModel(get()) }
 
 }

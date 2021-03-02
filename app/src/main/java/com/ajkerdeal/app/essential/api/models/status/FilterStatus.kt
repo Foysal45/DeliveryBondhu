@@ -25,5 +25,7 @@ data class FilterStatus(
     @SerializedName("AllowImageUpload")
     var allowImageUpload: Boolean = false,
     @SerializedName("IsCollectionTimerShow")
-    var isCollectionTimerShow: Boolean = false
+    var isCollectionTimerShow: Boolean = false,
+    @SerializedName("IsWeightUpdateEnable")
+    var isWeightUpdateEnable: Boolean = false
 )

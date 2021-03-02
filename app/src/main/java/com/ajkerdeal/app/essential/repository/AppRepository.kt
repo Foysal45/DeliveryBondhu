@@ -91,4 +91,6 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun updateLocationUpdateRequestDT(requestBody: LocationUpdateRequestDT) = apiInterfaceADCORE.updateLocationUpdateRequestDT(requestBody)
 
+    suspend fun fetchWeightRange() = apiInterfaceADCORE.fetchWeightRange()
+
 }

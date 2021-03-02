@@ -34,6 +34,7 @@ import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequ
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
@@ -195,30 +196,34 @@ class OrderListFragment : Fragment() {
         dataAdapter.onPictureClicked = { orderModel ->
             pictureDialog(orderModel)
         }
+        dataAdapter.onOrderListExpand = { parentModel, state ->
+            if (state) {
+                if (!isValidCoordinate(parentModel.latitude) || !isValidCoordinate(parentModel.longitude)) {
+                    if (!parentModel.isLocationUpdated) {
+                        updateMerchantLocation(parentModel)
+                        parentModel.isLocationUpdated = true
+                    }
+                }
+            }
+        }
+        dataAdapter.onLocationUpdate = { parentModel ->
+            alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা", "না") {
+                if (it == Dialog.BUTTON_POSITIVE) {
+                    updateMerchantLocation(parentModel)
+                }
+            }.show()
+        }
         dataAdapter.onLocationReport = { parentModel ->
             Timber.d("parentDataModel ${parentModel}")
-            if (parentModel.latitude.isNullOrEmpty() || parentModel.longitude.isNullOrEmpty()) {
-                alert("মার্চেন্টের লোকেশন সেট", "আপনি কি এখন ${parentModel.name} এর ঠিকানায় আছেন?", true, "হ্যা", "না") {
-                    if (it == Dialog.BUTTON_POSITIVE) {
-                        val model = MerchantLocationRequest(parentModel.merchantId, parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId)
-                        (activity as HomeActivity).updateMerchantLocation(model)
-                        if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")){
-                            val modelDT = LocationUpdateRequestDT(
-                                    parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, parentModel.merchantId, parentModel.address, parentModel.latitude, parentModel.longitude)
-                            (activity as HomeActivity).updateLocationDT(modelDT)
-                        }else{
-                            val modelAD = LocationUpdateRequestAD(parentModel.merchantId, parentModel.latitude, parentModel.longitude)
-                            (activity as HomeActivity).updateLocationAD(modelAD)
-                        }
-                    }
-                }.show()
-            } else {
+            if (isValidCoordinate(parentModel.latitude) && isValidCoordinate(parentModel.longitude)) {
                 val gmmIntentUri = Uri.parse("geo:${parentModel.latitude},${parentModel.longitude}?q=${parentModel.latitude},${parentModel.longitude}")
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.setPackage("com.google.android.apps.maps")
                 mapIntent.resolveActivity(requireContext().packageManager)?.let {
                     startActivity(mapIntent)
                 }
+            } else {
+                context?.toast("জিপিএস লোকেশন সঠিক নয়")
             }
         }
         dataAdapter.onPrintClicked = { model ->
@@ -226,6 +231,9 @@ class OrderListFragment : Fragment() {
         }
         dataAdapter.onQRCodeClicked = { model: OrderModel ->
             showQRCode(model)
+        }
+        dataAdapter.onWeightUpdateClicked = { model: OrderModel ->
+            goToWeightSelectionBottomSheet()
         }
         dataAdapter.onUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
@@ -311,6 +319,7 @@ class OrderListFragment : Fragment() {
                         dataAdapter.allowPrint = model.allowPrint
                         dataAdapter.allowImageUpload = model.allowImageUpload
                         dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
+                        dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
@@ -819,6 +828,33 @@ class OrderListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun updateMerchantLocation(parentModel: OrderCustomer) {
+        if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")){
+            val modelDT = LocationUpdateRequestDT(
+                    parentModel.collectAddressDistrictId,
+                    parentModel.collectAddressThanaId,
+                    0, parentModel.merchantId,
+                    parentModel.address, parentModel.latitude,
+                    parentModel.longitude
+            )
+            (activity as HomeActivity).updateLocationDT(modelDT)
+        }else{
+            val modelAD = LocationUpdateRequestAD(
+                    parentModel.merchantId,
+                    parentModel.latitude,
+                    parentModel.longitude
+            )
+            (activity as HomeActivity).updateLocationAD(modelAD)
+        }
+    }
+
+    //Weight Selection
+    private fun goToWeightSelectionBottomSheet(){
+        val tag = WeightSelectionBottomSheet.tag
+        val dialog = WeightSelectionBottomSheet.newInstance()
+        dialog.show(childFragmentManager, tag)
     }
 
 }

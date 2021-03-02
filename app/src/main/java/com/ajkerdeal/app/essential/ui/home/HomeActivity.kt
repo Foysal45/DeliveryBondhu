@@ -428,7 +428,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
     }
 
-    fun updateMerchantLocation(model: MerchantLocationRequest) {
+   /* fun updateMerchantLocation(model: MerchantLocationRequest) {
 
         foregroundService?.recreateLocationRequest()
         Handler().postDelayed({
@@ -448,7 +448,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
         }, 300L)
 
-    }
+    }*/
 
     fun updateLocationAD(model: LocationUpdateRequestAD) {
 

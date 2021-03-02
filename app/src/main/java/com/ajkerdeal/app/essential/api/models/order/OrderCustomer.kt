@@ -44,5 +44,6 @@ data class OrderCustomer(
     var customerMessageData: SourceMessageData? = null,
 
     // internal
-    var state: Boolean = false
+    var state: Boolean = false,
+    var isLocationUpdated: Boolean = false
 )

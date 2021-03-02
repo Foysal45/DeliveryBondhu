@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
 import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
+import com.ajkerdeal.app.essential.api.models.collection.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
