@@ -44,6 +44,8 @@ data class OrderModel(
     var collectionPointId: Int = 0,
     @SerializedName("CustomerId")
     var customerId: String? = "0",
+    @SerializedName("DeliveryRangeId")
+    var deliveryRangeId: Int? = 0,
     @SerializedName("Actions")
     var actions: List<Action>? = listOf(),
 

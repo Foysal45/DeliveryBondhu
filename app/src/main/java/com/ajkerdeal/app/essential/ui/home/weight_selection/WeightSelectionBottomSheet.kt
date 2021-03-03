@@ -76,7 +76,7 @@ class WeightSelectionBottomSheet(): BottomSheetDialogFragment() {
                 setHasFixedSize(false)
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = dataAdapter
-               // addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+                addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
             }
         }
 
@@ -87,6 +87,7 @@ class WeightSelectionBottomSheet(): BottomSheetDialogFragment() {
 
         dataAdapter.onItemClicked = { model->
             Timber.d("ClickedWeight ${model.weight}")
+            onActionClicked?.invoke(model.id!!)
         }
 
     }

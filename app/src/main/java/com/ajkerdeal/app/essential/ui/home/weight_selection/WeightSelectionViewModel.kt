@@ -3,7 +3,7 @@ package com.ajkerdeal.app.essential.ui.home.weight_selection
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ajkerdeal.app.essential.api.models.collection.WeightRangeDataModel
+import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive

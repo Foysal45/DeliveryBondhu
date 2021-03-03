@@ -3,7 +3,7 @@ package com.ajkerdeal.app.essential.ui.home.weight_selection
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ajkerdeal.app.essential.api.models.collection.WeightRangeDataModel
+import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.databinding.ItemViewWeightListBinding
 
 
@@ -24,7 +24,6 @@ class WeightSelectionAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val model = dataList[position]
 
             holder.binding.weightLists.text = model.weight
-
         }
     }
 
@@ -34,7 +33,6 @@ class WeightSelectionAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.root.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     onItemClicked?.invoke(dataList[adapterPosition])
-                    notifyDataSetChanged()
                 }
             }
         }

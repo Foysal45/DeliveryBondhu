@@ -11,11 +11,9 @@ import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.collection.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderChildBinding
-import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionAdapter
 import com.ajkerdeal.app.essential.utils.DigitConverter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -156,7 +154,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.phoneShop.visibility = View.VISIBLE
             }
 
-            if(isWeightUpdateEnable){
+            if(isWeightUpdateEnable && model.couponId.startsWith("DT-")){
                 holder.binding.weightUpdateButton.visibility = View.VISIBLE
             }else{
                 holder.binding.weightUpdateButton.visibility = View.GONE

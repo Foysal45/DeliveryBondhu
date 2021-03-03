@@ -31,6 +31,7 @@ import com.ajkerdeal.app.essential.api.models.print.PrintData
 import com.ajkerdeal.app.essential.api.models.print.PrintModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
+import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
@@ -232,8 +233,8 @@ class OrderListFragment : Fragment() {
         dataAdapter.onQRCodeClicked = { model: OrderModel ->
             showQRCode(model)
         }
-        dataAdapter.onWeightUpdateClicked = { model: OrderModel ->
-            goToWeightSelectionBottomSheet()
+        dataAdapter.onWeightUpdateClicked = { model1, model2 ->
+            goToWeightSelectionBottomSheet(model1, model2)
         }
         dataAdapter.onUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
@@ -845,16 +846,26 @@ class OrderListFragment : Fragment() {
                     parentModel.merchantId,
                     parentModel.latitude,
                     parentModel.longitude
+
             )
             (activity as HomeActivity).updateLocationAD(modelAD)
         }
     }
 
     //Weight Selection
-    private fun goToWeightSelectionBottomSheet(){
+    private fun goToWeightSelectionBottomSheet( model: OrderModel,  parentModel: OrderCustomer){
         val tag = WeightSelectionBottomSheet.tag
         val dialog = WeightSelectionBottomSheet.newInstance()
         dialog.show(childFragmentManager, tag)
+        dialog.onActionClicked = {  weightRangeId->
+            val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, weightRangeId, model.couponId, model.deliveryRangeId)
+            viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
+                if (isUpdatePrice) {
+                    Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
+                }
+            })
+            dialog.dismiss()
+        }
     }
 
 }

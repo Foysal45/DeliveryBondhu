@@ -14,7 +14,9 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
+import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
+import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionAdapter
 import com.ajkerdeal.app.essential.utils.isValidCoordinate
 
 class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -23,7 +25,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onActionClicked: ((model: OrderCustomer, actionModel: Action,  orderModel: OrderModel?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
-    var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
+    var onWeightUpdateClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
@@ -127,11 +129,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onPictureClicked = { model1 ->
                 onPictureClicked?.invoke(model1)
             }
+
             dataAdapter.onQRCodeClicked = { model1 ->
                 onQRCodeClicked?.invoke(model1)
             }
             dataAdapter.onWeightUpdateClicked = { model1 ->
-                onWeightUpdateClicked?.invoke(model1)
+                onWeightUpdateClicked?.invoke(model1, model)
             }
 
             if (model.mobileNumber.isNullOrEmpty()) {

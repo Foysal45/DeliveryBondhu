@@ -22,6 +22,7 @@ import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
+import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -92,5 +93,7 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun updateLocationUpdateRequestDT(requestBody: LocationUpdateRequestDT) = apiInterfaceADCORE.updateLocationUpdateRequestDT(requestBody)
 
     suspend fun fetchWeightRange() = apiInterfaceADCORE.fetchWeightRange()
+
+    suspend fun isUpdatePriceWithWeight(requestBody: UpdatePriceWithWeightRequest) = apiInterfaceADCORE.isUpdatePriceWithWeight(requestBody)
 
 }

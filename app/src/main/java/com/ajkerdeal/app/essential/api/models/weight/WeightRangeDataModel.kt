@@ -1,4 +1,4 @@
-package com.ajkerdeal.app.essential.api.models.collection
+package com.ajkerdeal.app.essential.api.models.weight
 
 import com.google.gson.annotations.SerializedName
 
