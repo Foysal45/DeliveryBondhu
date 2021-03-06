@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -76,7 +75,7 @@ class DashboardFragment : Fragment() {
                     binding?.button4?.visibility = View.GONE
                 }
             }
-            activeSwitch?.isChecked = !userStatus.isNowOffline
+            binding?.activeSwitch?.isChecked = !userStatus.isNowOffline
             (activity as HomeActivity).availabilityState(!userStatus.isNowOffline)
             availabilityState(!userStatus.isNowOffline)
 
@@ -110,17 +109,17 @@ class DashboardFragment : Fragment() {
 
         viewModelHomeActivity.isOfflineLive.observe(viewLifecycleOwner, Observer {
             Timber.d("viewModelHomeActivity isOfflineLive $it")
-            activeSwitch?.setOnCheckedChangeListener(null)
-            activeSwitch?.isChecked = !it
+            binding?.activeSwitch?.setOnCheckedChangeListener(null)
+            binding?.activeSwitch?.isChecked = !it
             availabilityState(!it)
         })
         viewModelHomeActivity.isGPS.observe(viewLifecycleOwner, Observer {
             isGPS = it
         })
 
-        userName?.text = SessionManager.userName
+        binding?.userName?.text = SessionManager.userName
         val sdf = SimpleDateFormat("dd MMM (EEEE)", Locale("bn","BD"))
-        dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
+        binding?.dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
             if (isLocationPermission() && checkLocationEnable()) {
@@ -255,16 +254,16 @@ class DashboardFragment : Fragment() {
 
 
     private fun availabilityState(status: Boolean) {
-        activeSwitch?.text = if (status) "Available" else "Not Available"
-        activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding?.activeSwitch?.text = if (status) "Available" else "Not Available"
+        binding?.activeSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 Timber.d("Checked")
                 viewModel.updateUserStatus("false", 1)
-                activeSwitch?.text = "Available"
+                binding?.activeSwitch?.text = "Available"
 
             } else {
                 viewModel.updateUserStatus("true", 1)
-                activeSwitch?.text = "Not Available"
+                binding?.activeSwitch?.text = "Not Available"
             }
             (activity as HomeActivity).availabilityState(isChecked)
         }

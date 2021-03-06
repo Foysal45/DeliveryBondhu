@@ -862,6 +862,15 @@ class OrderListFragment : Fragment() {
             viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
                 if (isUpdatePrice) {
                     Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
+                    viewModel.loadOrderOrSearch(
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = SearchType.Product,
+                        serviceType = serviceTye,
+                        customType = customType
+                    )
                 }
             })
             dialog.dismiss()

@@ -37,36 +37,36 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:contentDescription="@string/cd"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/ic_pay"
             android:visibility="gone"
-            tools:visibility="visible"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
         <ImageView
             android:id="@+id/qrcodeBtn"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:contentDescription="@string/cd"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/paymentType"
             android:src="@drawable/ic_qrcode"
-            app:tint="@color/colorPrimary"
             android:visibility="visible"
-            tools:visibility="visible"
-            />
+            app:layout_constraintEnd_toStartOf="@id/paymentType"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorPrimary"
+            tools:visibility="visible" />
 
-        <Button
+        <ImageView
             android:id="@+id/weightUpdateButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="ওজন আপডেট"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginTop="5dp"
-            android:textSize="12sp"
+            android:contentDescription="@string/cd"
+            android:src="@drawable/ic_weight"
             android:visibility="gone"
-            tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/qrcodeBtn"/>
+            app:layout_constraintTop_toBottomOf="@+id/qrcodeBtn"
+            app:tint="@color/colorPrimary"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/productName"
@@ -117,12 +117,11 @@
             android:id="@+id/space"
             android:layout_width="wrap_content"
             android:layout_height="18dp"
+            android:layout_marginStart="@dimen/margin_from_product_image"
+            android:layout_marginTop="4dp"
             app:layout_constraintBottom_toTopOf="@id/productPrice"
             app:layout_constraintStart_toEndOf="@id/barrier"
-            app:layout_constraintTop_toBottomOf="@id/productCode"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="@dimen/margin_from_product_image"
-            />
+            app:layout_constraintTop_toBottomOf="@id/productCode" />
 
 
         <TextView
@@ -139,8 +138,7 @@
             app:layout_constraintTop_toBottomOf="@id/productCode"
             app:layout_constraintVertical_bias="0"
             tools:text="Size-XXXL"
-            tools:visibility="visible"
-            />
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/productColor"
@@ -156,8 +154,7 @@
             app:layout_constraintTop_toBottomOf="@id/productCode"
             app:layout_constraintVertical_bias="0"
             tools:text="Color: Black"
-            tools:visibility="visible"
-            />
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/productDeliveryType"
@@ -173,8 +170,7 @@
             app:layout_constraintTop_toBottomOf="@id/productCode"
             app:layout_constraintVertical_bias="0"
             tools:text="Type: Normal"
-            tools:visibility="visible"
-            />
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/productPrice"
@@ -196,25 +192,24 @@
             android:id="@+id/timerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/productPrice"
             android:layout_marginTop="4dp"
+            android:orientation="horizontal"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            >
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/productPrice"
+            tools:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp"
                 android:text="কালেকশন টাইম:  "
-                />
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/timeText"
                 android:layout_width="wrap_content"
@@ -222,9 +217,8 @@
                 android:maxLines="1"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                tools:text="01:30:00"
                 android:textStyle="bold"
-                />
+                tools:text="01:30:00" />
 
         </LinearLayout>
 
@@ -235,6 +229,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_collection_point"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:paddingStart="8dp"
             android:paddingTop="4dp"
             android:paddingEnd="8dp"
@@ -242,8 +238,6 @@
             android:textColor="@color/text_primary"
             android:textSize="12sp"
             android:visibility="gone"
-            android:maxLines="1"
-            android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/timerLayout"
