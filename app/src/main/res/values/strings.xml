@@ -16,7 +16,7 @@
     <string name="bKash_account">বিকাশ একাউন্ট নম্বর *</string>
     <string name="alter_mobile_number">বিকল্প মোবাইল নম্বর</string>
     <string name="order_list">অর্ডার লিস্ট</string>
-    <string name="search_hint">নাম, ফোন নাম্বার</string>
+    <string name="search_hint">অর্ডার কোড/নাম</string>
     <string name="search_hint1">পিওডি, ফোন নাম্বার</string>
     <string name="filter_name_accepted">শুধু অ্যাকসেপ্টেড</string>
     <string name="development">Under Development</string>

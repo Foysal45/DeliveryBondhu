@@ -35,6 +35,11 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
+            is SearchType.Order -> requestBody.orderId = searchKey
+            is SearchType.None -> {
+                requestBody.orderId = "-1"
+                requestBody.productTitle = "-1"
+            }
         }
         viewState.value = ViewState.ProgressState(true, 1)
         viewModelScope.launch(Dispatchers.IO) {

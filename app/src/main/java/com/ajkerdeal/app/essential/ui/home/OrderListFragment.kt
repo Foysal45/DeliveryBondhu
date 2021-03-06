@@ -65,6 +65,8 @@ class OrderListFragment : Fragment() {
     private var firstCall: Int = 0
 
     private var searchKey: String = "-1"
+    private var searchType: SearchType = SearchType.None
+
     private var filterStatus: String = "-1"
     private var dtStatus: String = "-1"
     private var collectionFlag: Int = 1
@@ -331,7 +333,7 @@ class OrderListFragment : Fragment() {
                                 statusId = filterStatus,
                                 dtStatusId = dtStatus,
                                 searchKey = searchKey,
-                                type = SearchType.Product,
+                                type = searchType,
                                 serviceType = serviceTye,
                                 customType = customType
                             )
@@ -379,7 +381,7 @@ class OrderListFragment : Fragment() {
 
         binding!!.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
-            searchKey = binding!!.appBarLayout.searchET.text.toString()
+            searchKey = binding?.appBarLayout?.searchET?.text?.toString()?.trim() ?: ""
             if (searchKey.isNotEmpty()) {
                 binding!!.appBarLayout.chipsGroup.visibility = View.VISIBLE
                 binding!!.appBarLayout.searchKey.text = searchKey
@@ -388,18 +390,29 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.searchET.text.clear()
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType)
+                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
                 }
                 binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
                     binding!!.appBarLayout.searchKey.performClick()
                 }
                 binding!!.appBarLayout.countTV.text = "০টি"
+                searchType = if (searchKey.startsWith("DT-", true)) {
+                    SearchType.Order
+                } else {
+                    val isOrderCodeSize = searchKey.length < 11
+                    val orderCode = searchKey.toIntOrNull() ?: 0
+                    if (isOrderCodeSize && orderCode > 0) {
+                        SearchType.Order
+                    } else {
+                        SearchType.Product
+                    }
+                }
                 viewModel.loadOrderOrSearch(
                     flag = collectionFlag,
                     statusId = filterStatus,
                     dtStatusId = dtStatus,
                     searchKey = searchKey,
-                    type = SearchType.Product,
+                    type = searchType,
                     serviceType = serviceTye,
                     customType = customType
                 )
@@ -416,7 +429,7 @@ class OrderListFragment : Fragment() {
                 statusId = filterStatus,
                 dtStatusId = dtStatus,
                 searchKey = searchKey,
-                type = SearchType.Product,
+                type = searchType,
                 serviceType = serviceTye,
                 customType = customType
             )
@@ -444,7 +457,7 @@ class OrderListFragment : Fragment() {
                             dtStatusId = dtStatus,
                             flag = collectionFlag,
                             searchKey = searchKey,
-                            type = SearchType.Product,
+                            type = searchType,
                             serviceType = serviceTye,
                             customType = customType
                         )
@@ -497,7 +510,7 @@ class OrderListFragment : Fragment() {
                     statusId = filterStatus,
                     dtStatusId = dtStatus,
                     searchKey = searchKey,
-                    type = SearchType.Product,
+                    type = searchType,
                     serviceType = serviceTye,
                     customType = customType
                 )
@@ -540,7 +553,7 @@ class OrderListFragment : Fragment() {
                 statusId = filterStatus,
                 dtStatusId = dtStatus,
                 searchKey = searchKey,
-                type = SearchType.Product,
+                type = searchType,
                 serviceType = serviceTye,
                 customType = customType
             )
@@ -867,7 +880,7 @@ class OrderListFragment : Fragment() {
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
                         searchKey = searchKey,
-                        type = SearchType.Product,
+                        type = searchType,
                         serviceType = serviceTye,
                         customType = customType
                     )
