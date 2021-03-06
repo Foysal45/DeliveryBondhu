@@ -270,7 +270,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
             withContext(Dispatchers.Main) {
                 when (response) {
                     is NetworkResponse.Success -> {
-                        locationModel.value = response.body.data
+                        locationModel.value = response.body.data!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
@@ -543,7 +543,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
                 when (response) {
                     is NetworkResponse.Success -> {
-                        responseBody.value = response.body.data
+                        responseBody.value = response.body.data!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"

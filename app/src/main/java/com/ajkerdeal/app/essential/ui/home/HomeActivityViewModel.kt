@@ -41,7 +41,7 @@ class HomeActivityViewModel(private val repository: AppRepository): ViewModel() 
                 //viewState.value = ViewState.ProgressState(false)
                 when (response) {
                     is NetworkResponse.Success -> {
-                        responseData.value = response.body.data
+                        responseData.value = response.body.data!!
                         isOfflineLive.value = response.body.data?.isNowOffline
                         SessionManager.isOffline = response.body.data?.isNowOffline ?: false
                     }

@@ -129,7 +129,7 @@ class ParcelViewModel(private val repository: AppRepository): ViewModel() {
             withContext(Dispatchers.Main) {
                 when (response) {
                     is NetworkResponse.Success -> {
-                        filterStatusList.value = response.body.data
+                        filterStatusList.value = response.body.data!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"

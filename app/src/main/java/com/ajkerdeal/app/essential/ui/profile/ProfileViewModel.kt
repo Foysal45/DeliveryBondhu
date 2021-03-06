@@ -30,7 +30,7 @@ class ProfileViewModel(private val repository: AppRepository): ViewModel() {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
                     is NetworkResponse.Success -> {
-                        responseData.value = response.body.data
+                        responseData.value = response.body.data!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
@@ -89,7 +89,7 @@ class ProfileViewModel(private val repository: AppRepository): ViewModel() {
             withContext(Dispatchers.Main) {
                 when (response) {
                     is NetworkResponse.Success -> {
-                        locationModel.value = response.body.data
+                        locationModel.value = response.body.data!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"

@@ -29,7 +29,7 @@ class DashboardViewModel(private var repository: AppRepository): ViewModel() {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
                     is NetworkResponse.Success -> {
-                        responseData.value = response.body.data
+                        responseData.value = response.body.data!!
                         SessionManager.isOffline = response.body.data?.isNowOffline ?: false
                     }
                     is NetworkResponse.ServerError -> {

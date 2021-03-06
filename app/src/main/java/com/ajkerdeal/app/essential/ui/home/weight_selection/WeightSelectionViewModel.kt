@@ -26,7 +26,7 @@ class WeightSelectionViewModel(private val repository: AppRepository) : ViewMode
                 //viewState.value = ViewState.ProgressState(false)
                 when (response) {
                     is NetworkResponse.Success -> {
-                        responseData.value = response.body.model
+                        responseData.value = response.body.model!!
                     }
                     is NetworkResponse.ServerError -> {
                         val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
