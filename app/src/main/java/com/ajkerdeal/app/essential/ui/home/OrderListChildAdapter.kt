@@ -108,6 +108,13 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
 
+            if (model.priorityService > 0){
+                holder.binding.priorityShowLayout.visibility = View.VISIBLE
+                holder.binding.priorityAmountText.text = model.priorityService.toString()
+            }else{
+                holder.binding.priorityShowLayout.visibility = View.GONE
+            }
+
             if (model.collectionSource != null) {
                 if (model.collectionSource!!.sourceMessageData != null) {
                     val source = model.collectionSource!!.sourceMessageData
