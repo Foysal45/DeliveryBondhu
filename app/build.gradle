@@ -16,8 +16,8 @@ android {
         applicationId "com.ajkerdeal.app.essential"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 6 // Google play 1
-        versionName "2.3.0" // Google play 2.1.0
+        versionCode 7 // Google play 6
+        versionName "2.3.1-debug" // Google play 2.3.0
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
