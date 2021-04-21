@@ -59,6 +59,8 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun loadOrderList(requestBody: OrderRequest) = apiInterfaceAPI.loadOrderList(requestBody)
 
+    suspend fun loadOrderListAD(requestBody: OrderRequest) = apiInterfaceAPI.loadOrderListAD(requestBody)
+
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterfaceAPI.updateStatus(requestBody)
 
     suspend fun updateMerchantLocation(requestBody: MerchantLocationRequest) = apiInterfaceAPI.updateMerchantLocation(requestBody)

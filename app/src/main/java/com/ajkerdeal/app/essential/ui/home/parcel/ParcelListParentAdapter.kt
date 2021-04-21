@@ -19,7 +19,7 @@ import com.ajkerdeal.app.essential.utils.DigitConverter
 class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataList: MutableList<PodWiseData> = mutableListOf()
-    var onCall: ((number: String?) -> Unit)? = null
+    var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onActionClicked: ((model: PodWiseData, orderCustomer: OrderCustomer, actionModel: Action, orderModel: OrderModel?) -> Unit)? = null
     var onActionClickedParent: ((model: PodWiseData, actionModel: Action) -> Unit)? = null
     var onActionClickedCustomer: ((model: PodWiseData, orderCustomer: OrderCustomer, actionModel: Action) -> Unit)? = null
@@ -104,8 +104,8 @@ class ParcelListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
                 dataAdapter.onActionClicked = { orderCustomer: OrderCustomer, actionModel, orderModel ->
                     onActionClicked?.invoke(model, orderCustomer, actionModel, orderModel)
                 }
-                dataAdapter.onCall = { number ->
-                    onCall?.invoke(number)
+                dataAdapter.onCall = { number, altNumber ->
+                    onCall?.invoke(number, altNumber)
                 }
                 dataAdapter.onPictureClicked = { model ->
                     onPictureClicked?.invoke(model)

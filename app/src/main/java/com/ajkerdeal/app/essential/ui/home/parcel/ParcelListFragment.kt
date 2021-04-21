@@ -67,15 +67,9 @@ class ParcelListFragment : Fragment() {
             layoutManager = layoutManagerLinear
             adapter = dataAdapter
         }
-        dataAdapter.onCall = { number: String? ->
+        dataAdapter.onCall = { number: String?, altNumber:String? ->
 
-            try {
-                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            } catch (e: Exception) {
-                requireContext().toast("Could not find an activity to place the call")
-            }
+            goToCallOption(number!!)
         }
         dataAdapter.onPictureClicked = {orderModel ->
             pictureDialog(orderModel)
@@ -374,6 +368,16 @@ class ParcelListFragment : Fragment() {
         dialog.show()
         close.setOnClickListener {
             dialog.dismiss()
+        }
+    }
+
+    private fun goToCallOption(number: String){
+        try {
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        } catch (e: Exception) {
+            requireContext().toast("Could not find an activity to place the call")
         }
     }
 

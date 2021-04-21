@@ -88,6 +88,9 @@ interface ApiInterfaceAPI {
     @POST("api/SelfDelivery/LoadOrderNew")
     suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
 
+    @POST("api/SelfDelivery/LoadOrderNewForAD")
+    suspend fun loadOrderListAD(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
+
     @POST("api/SelfDelivery/LoadOrderPodWise")
     suspend fun loadOrderPodWiseList(@Body requestBody: PodOrderRequest): NetworkResponse<ResponseHeader<PodOrderResponse>, ErrorResponse>
 

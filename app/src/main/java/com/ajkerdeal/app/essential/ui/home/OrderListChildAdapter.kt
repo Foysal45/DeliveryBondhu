@@ -27,7 +27,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val dataList: MutableList<OrderModel> = mutableListOf()
     private val options = RequestOptions().placeholder(R.drawable.ic_logo_essentials)
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
-    var onCall: ((number: String?) -> Unit)? = null
+    var onCall: ((number: String?, alternativeNumber: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
@@ -229,7 +229,8 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.phoneShop.setOnClickListener {
                 val mobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
-                onCall?.invoke(mobile)
+                val alternativeMobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
+                onCall?.invoke(mobile, alternativeMobile)
             }
 
             binding.productImage.setOnClickListener {

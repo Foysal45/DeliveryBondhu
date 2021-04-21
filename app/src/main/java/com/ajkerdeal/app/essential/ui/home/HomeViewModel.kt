@@ -89,6 +89,65 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
+    fun loadOrderOrSearchAD(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
+
+        val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
+        when (type) {
+            is SearchType.Product -> requestBody.productTitle = searchKey
+            is SearchType.Order -> requestBody.orderId = searchKey
+            is SearchType.None -> {
+                requestBody.orderId = "-1"
+                requestBody.productTitle = "-1"
+            }
+        }
+        viewState.value = ViewState.ProgressState(true, 1)
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.loadOrderListAD(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false, 1)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        //Timber.d("${response.body}")
+                        if (response.body != null) {
+                            if (response.body.data != null) {
+                                if (response.body.data?.customerOrderList.isNullOrEmpty()) {
+                                    viewState.value = ViewState.EmptyViewState()
+                                } else {
+                                    if (index == 0) {
+                                        Timber.d("Init data loaded")
+                                        pagingState.value = PagingModel(true, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                    } else {
+                                        pagingState.value = PagingModel(false, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                    }
+                                }
+                            } else {
+                                viewState.value = ViewState.EmptyViewState()
+                            }
+                        } else {
+                            viewState.value = ViewState.EmptyViewState()
+                        }
+
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+
+        }
+    }
+
     fun updateOrderStatus(requestBody: MutableList<StatusUpdateModel>): LiveData<Boolean> {
 
         //val requestBody: MutableList<StatusUpdateModel> = mutableListOf()

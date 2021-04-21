@@ -44,6 +44,7 @@ import com.esafirm.imagepicker.features.ImagePicker
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import org.koin.android.ext.android.inject
@@ -64,6 +65,9 @@ class OrderListFragment : Fragment() {
     private var totalCount: Int = 0
     private var firstCall: Int = 0
 
+    //tab selected
+    private var tabLayoutSelected: Int = 0
+
     private var searchKey: String = "-1"
     private var searchType: SearchType = SearchType.None
 
@@ -77,6 +81,8 @@ class OrderListFragment : Fragment() {
 
     private var imageUploadMerchantId: String = ""
     private var imageUploadOrderIdList: String = ""
+
+    private var isUnavailableShow = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_order_list, container, false)
@@ -98,19 +104,23 @@ class OrderListFragment : Fragment() {
             layoutManager = layoutManagerLinear
             adapter = dataAdapter
         }
-        dataAdapter.onCall = { number: String? ->
-
-            try {
-                val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
-                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                if (zoiperAvailable) {
-                    intent.setPackage("com.zoiper.android.app")
+        dataAdapter.onCall = { number: String?, altNumber: String? ->
+            if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()){
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("কোন নাম্বার এ কল করতে চান")
+                val numberLists = arrayOf(number, altNumber)
+                builder.setItems(numberLists) { _, which ->
+                    when (which) {
+                        0 -> { goToCallOption(numberLists[0]) }
+                        1 -> {goToCallOption(numberLists[1])}
+                    }
                 }
-                startActivity(intent)
-            } catch (e: Exception) {
-                requireContext().toast("Could not find an activity to place the call")
+                val dialog = builder.create()
+                dialog.show()
+            }else{
+                goToCallOption(number!!)
             }
+
         }
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
@@ -323,20 +333,34 @@ class OrderListFragment : Fragment() {
                         dataAdapter.allowImageUpload = model.allowImageUpload
                         dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
                         dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
+                        isUnavailableShow  = model.isUnavailableShow
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
                         } else {
                             binding!!.emptyView.visibility = View.GONE
-                            viewModel.loadOrderOrSearch(
-                                flag = collectionFlag,
-                                statusId = filterStatus,
-                                dtStatusId = dtStatus,
-                                searchKey = searchKey,
-                                type = searchType,
-                                serviceType = serviceTye,
-                                customType = customType
-                            )
+                            if (isOrderFromDT()){
+                                viewModel.loadOrderOrSearch(
+                                        flag = collectionFlag,
+                                        statusId = filterStatus,
+                                        dtStatusId = dtStatus,
+                                        searchKey = searchKey,
+                                        type = searchType,
+                                        serviceType = serviceTye,
+                                        customType = customType
+                                )
+                            }else{
+                                viewModel.loadOrderOrSearchAD(
+                                        flag = collectionFlag,
+                                        statusId = filterStatus,
+                                        dtStatusId = dtStatus,
+                                        searchKey = searchKey,
+                                        type = searchType,
+                                        serviceType = serviceTye,
+                                        customType = customType
+                                )
+                            }
+
                         }
 
                     }
@@ -379,6 +403,54 @@ class OrderListFragment : Fragment() {
             }
         })
 
+        binding?.appBarLayout?.tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> {
+                        tabLayoutSelected = 0
+                        if (SessionManager.isOffline && isUnavailableShow) {
+                            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
+                            binding!!.emptyView.visibility = View.VISIBLE
+                        } else {
+                            binding!!.emptyView.visibility = View.GONE
+                            Timber.d("loadOrderOrSearch called from swipe refresh")
+                            viewModel.loadOrderOrSearchAD(
+                                    flag = collectionFlag,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
+                            )
+
+                        }
+                    }
+                    1 -> {
+                        tabLayoutSelected = 1
+                        if (SessionManager.isOffline && isUnavailableShow) {
+                            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
+                            binding!!.emptyView.visibility = View.VISIBLE
+                        } else {
+                            binding!!.emptyView.visibility = View.GONE
+                            Timber.d("loadOrderOrSearch called from swipe refresh")
+                                viewModel.loadOrderOrSearch(
+                                        flag = collectionFlag,
+                                        statusId = filterStatus,
+                                        dtStatusId = dtStatus,
+                                        searchKey = searchKey,
+                                        type = searchType,
+                                        serviceType = serviceTye,
+                                        customType = customType
+                                )
+                        }
+                    }
+                }
+            }
+        })
+
         binding!!.appBarLayout.searchBtn.setOnClickListener {
             hideKeyboard()
             searchKey = binding?.appBarLayout?.searchET?.text?.toString()?.trim() ?: ""
@@ -390,7 +462,11 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.searchET.text.clear()
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
-                    viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                    if (isOrderFromDT()){
+                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                    }else{
+                        viewModel.loadOrderOrSearchAD(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                    }
                 }
                 binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
                     binding!!.appBarLayout.searchKey.performClick()
@@ -407,15 +483,28 @@ class OrderListFragment : Fragment() {
                         SearchType.Product
                     }
                 }
-                viewModel.loadOrderOrSearch(
-                    flag = collectionFlag,
-                    statusId = filterStatus,
-                    dtStatusId = dtStatus,
-                    searchKey = searchKey,
-                    type = searchType,
-                    serviceType = serviceTye,
-                    customType = customType
-                )
+                if (isOrderFromDT()){
+                    viewModel.loadOrderOrSearch(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }else{
+                    viewModel.loadOrderOrSearchAD(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }
+
             }
             //requireContext().toast(getString(R.string.development))
         }
@@ -424,15 +513,28 @@ class OrderListFragment : Fragment() {
             binding!!.swipeRefresh.isRefreshing = false
             if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
-            viewModel.loadOrderOrSearch(
-                flag = collectionFlag,
-                statusId = filterStatus,
-                dtStatusId = dtStatus,
-                searchKey = searchKey,
-                type = searchType,
-                serviceType = serviceTye,
-                customType = customType
-            )
+            if (isOrderFromDT()){
+                viewModel.loadOrderOrSearch(
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
+                )
+            }else{
+                viewModel.loadOrderOrSearchAD(
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
+                )
+            }
+
             /*binding!!.searchET.text.clear()
             if (binding!!.chipsGroup.visibility == View.VISIBLE) {
                 binding!!.chipsGroup.visibility = View.GONE
@@ -450,17 +552,32 @@ class OrderListFragment : Fragment() {
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
-                        viewModel.loadOrderOrSearch(
-                            firstCall,
-                            20,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            flag = collectionFlag,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
-                        )
+                        if (isOrderFromDT()){
+                            viewModel.loadOrderOrSearch(
+                                    firstCall,
+                                    20,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    flag = collectionFlag,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
+                            )
+                        }else{
+                            viewModel.loadOrderOrSearchAD(
+                                    firstCall,
+                                    20,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    flag = collectionFlag,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
+                            )
+                        }
+
                     }
                 }
             }
@@ -505,15 +622,28 @@ class OrderListFragment : Fragment() {
                 if (!message.isNullOrEmpty()) {
                     orderDialog(message)
                 }
-                viewModel.loadOrderOrSearch(
-                    flag = collectionFlag,
-                    statusId = filterStatus,
-                    dtStatusId = dtStatus,
-                    searchKey = searchKey,
-                    type = searchType,
-                    serviceType = serviceTye,
-                    customType = customType
-                )
+                if (isOrderFromDT()){
+                    viewModel.loadOrderOrSearch(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }else{
+                    viewModel.loadOrderOrSearchAD(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }
+
             }
         })
     }
@@ -545,18 +675,50 @@ class OrderListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        //Timber.d("onStart called")
-        if (filterStatus != "-1") {
-            Timber.d("loadOrderOrSearch called from onStart")
-            viewModel.loadOrderOrSearch(
-                flag = collectionFlag,
-                statusId = filterStatus,
-                dtStatusId = dtStatus,
-                searchKey = searchKey,
-                type = searchType,
-                serviceType = serviceTye,
-                customType = customType
-            )
+        Timber.d("onStart called")
+        if (SessionManager.isOffline && isUnavailableShow) {
+            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
+            binding!!.emptyView.visibility = View.VISIBLE
+        } else {
+            if (filterStatus != "-1") {
+                //Timber.d("loadOrderOrSearch called from onStart")
+                if (isOrderFromDT()){
+                    viewModel.loadOrderOrSearch(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }else{
+                    viewModel.loadOrderOrSearchAD(
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
+                    )
+                }
+
+            }
+        }
+    }
+
+    fun goToCallOption(number: String){
+        try {
+            val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (zoiperAvailable) {
+                intent.setPackage("com.zoiper.android.app")
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            requireContext().toast("Could not find an activity to place the call")
         }
     }
 
@@ -844,6 +1006,10 @@ class OrderListFragment : Fragment() {
         })
     }
 
+    private fun isOrderFromDT(): Boolean{
+        return tabLayoutSelected == 1
+    }
+
     private fun updateMerchantLocation(parentModel: OrderCustomer) {
         if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")){
             val modelDT = LocationUpdateRequestDT(
@@ -875,15 +1041,28 @@ class OrderListFragment : Fragment() {
             viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
                 if (isUpdatePrice) {
                     Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
-                    viewModel.loadOrderOrSearch(
-                        flag = collectionFlag,
-                        statusId = filterStatus,
-                        dtStatusId = dtStatus,
-                        searchKey = searchKey,
-                        type = searchType,
-                        serviceType = serviceTye,
-                        customType = customType
-                    )
+                    if (isOrderFromDT()){
+                        viewModel.loadOrderOrSearch(
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
+                        )
+                    }else{
+                        viewModel.loadOrderOrSearchAD(
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
+                        )
+                    }
+
                 }
             })
             dialog.dismiss()

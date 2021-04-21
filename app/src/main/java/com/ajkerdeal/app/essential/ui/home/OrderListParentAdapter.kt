@@ -30,7 +30,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
-    var onCall: ((number: String?) -> Unit)? = null
+    var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
 
     var isChildView: Boolean = false
@@ -123,8 +123,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onActionClicked = { orderModel, actionModel ->
                 onActionClicked?.invoke(model,actionModel, orderModel)
             }
-            dataAdapter.onCall = { number ->
-                onCall?.invoke(number)
+            dataAdapter.onCall = { number, altNumber ->
+                onCall?.invoke(number, altNumber)
             }
             dataAdapter.onPictureClicked = { model1 ->
                 onPictureClicked?.invoke(model1)
@@ -191,7 +191,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.phone.setOnClickListener {
-                onCall?.invoke(dataList[adapterPosition].mobileNumber)
+                onCall?.invoke(dataList[adapterPosition].mobileNumber, dataList[adapterPosition].mobileNumber)
             }
 
             if (isChildView) {
