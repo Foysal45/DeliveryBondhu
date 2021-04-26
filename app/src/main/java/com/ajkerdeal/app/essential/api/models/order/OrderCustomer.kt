@@ -4,43 +4,43 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class OrderCustomer(
-    @SerializedName("Id")
+    @SerializedName("id")
     var id: String = "0",
-    @SerializedName("Name")
+    @SerializedName("name")
     var name: String? = "",
-    @SerializedName("District")
+    @SerializedName("district")
     var district: String? = "",
-    @SerializedName("MobileNumber")
+    @SerializedName("mobileNumber")
     var mobileNumber: String? = "",
-    @SerializedName("Address")
+    @SerializedName("address")
     var address: String? = "",
-    @SerializedName("DeliveryCommission")
+    @SerializedName("deliveryCommission")
     var deliveryCommission: Int = 0,
-    @SerializedName("TotalOrder")
+    @SerializedName("totalOrder")
     var totalOrder: Int = 0,
-    @SerializedName("TotalPayment")
+    @SerializedName("totalPayment")
     var totalPayment: Int = 0,
-    @SerializedName("BondhuCharge")
+    @SerializedName("bondhuCharge")
     var bondhuCharge: Int = 0,
 
-    @SerializedName("Latitude")
+    @SerializedName("latitude")
     var latitude: String? = "",
-    @SerializedName("Longitude")
+    @SerializedName("longitude")
     var longitude: String? = "",
-    @SerializedName("CollectAddressDistrictId")
+    @SerializedName("collectAddressDistrictId")
     var collectAddressDistrictId: Int = 0,
-    @SerializedName("CollectAddressThanaId")
+    @SerializedName("collectAddressThanaId")
     var collectAddressThanaId: Int = 0,
-    @SerializedName("MerchantId")
+    @SerializedName("merchantId")
     var merchantId: Int = 0,
 
-    @SerializedName("Actions")
+    @SerializedName("actions")
     var actions: List<Action>? = listOf(),
-    @SerializedName("SourceInfo")
+    @SerializedName("sourceInfo")
     var collectionSource: CollectionSource? = null,
-    @SerializedName("CustomerOrderDataModel")
+    @SerializedName("customerOrderDataModel")
     var orderList: List<OrderModel>? = listOf(),
-    @SerializedName("CustomerMessageData")
+    @SerializedName("customerMessageData")
     var customerMessageData: SourceMessageData? = null,
 
     // internal

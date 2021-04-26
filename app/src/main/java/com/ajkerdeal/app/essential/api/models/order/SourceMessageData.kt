@@ -4,12 +4,12 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class SourceMessageData(
-    @SerializedName("Message")
+    @SerializedName("message")
     var message: String? = "",
-    @SerializedName("Instructions")
+    @SerializedName("instructions")
     var instructions: String? = "",
-    @SerializedName("Status")
+    @SerializedName("status")
     var status: String? = "",
-    @SerializedName("IsPay")
+    @SerializedName("isPay")
     var isPay: Int = 0
 )

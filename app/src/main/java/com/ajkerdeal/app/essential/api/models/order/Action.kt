@@ -4,22 +4,22 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class Action(
-    @SerializedName("ActionType")
+    @SerializedName("actionType")
     var actionType: Int = 0,
-    @SerializedName("ActionMessage")
+    @SerializedName("actionMessage")
     var actionMessage: String? = "",
-    @SerializedName("UpdateStatus")
+    @SerializedName("updateStatus")
     var updateStatus: Int = 0,
-    @SerializedName("StatusMessage")
+    @SerializedName("statusMessage")
     var statusMessage: String? = "",
-    @SerializedName("ColorCode")
+    @SerializedName("colorCode")
     var colorCode: String = "#FFFFFF",
-    @SerializedName("CollectionPointAvailable")
+    @SerializedName("collectionPointAvailable")
     var collectionPointAvailable: Int = 0,
-    @SerializedName("Icon")
+    @SerializedName("icon")
     var icon: String? = "",
-    @SerializedName("IsPaymentType")
+    @SerializedName("isPaymentType")
     var isPaymentType: Int = 0,
-    @SerializedName("PopUpDialog")
+    @SerializedName("popUpDialog")
     var popUpDialogType: Int = 0
 )

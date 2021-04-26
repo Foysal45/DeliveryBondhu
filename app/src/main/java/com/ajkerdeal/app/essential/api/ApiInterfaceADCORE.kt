@@ -5,6 +5,8 @@ import com.ajkerdeal.app.essential.api.models.GenericResponse
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
+import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
 import okhttp3.RequestBody
@@ -29,5 +31,8 @@ interface ApiInterfaceADCORE {
 
     @POST("api/Update/UpdatePriceWithWeight")
     suspend fun isUpdatePriceWithWeight(@Body requestBody: UpdatePriceWithWeightRequest): NetworkResponse<GenericResponse<Int>, ErrorResponse>
+
+    @POST("api/Fetch/LoadOrderForBondhuApp")
+    suspend fun loadOrderListDT(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
 
 }

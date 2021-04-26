@@ -4,14 +4,14 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class CollectionSource(
-    @SerializedName("SourcePersonName")
+    @SerializedName("sourcePersonName")
     var sourcePersonName: String? = "",
-    @SerializedName("SourceAddress")
+    @SerializedName("sourceAddress")
     var sourceAddress: String? = "",
-    @SerializedName("SourceMobile")
+    @SerializedName("sourceMobile")
     var sourceMobile: String? = "",
-    @SerializedName("SourceDealPrice")
+    @SerializedName("sourceDealPrice")
     var sourceDealPrice: Int? = 0,
-    @SerializedName("SourceMessageData")
+    @SerializedName("sourceMessageData")
     var sourceMessageData: SourceMessageData? = null
 )

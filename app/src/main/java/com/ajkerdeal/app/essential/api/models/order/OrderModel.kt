@@ -3,57 +3,63 @@ package com.ajkerdeal.app.essential.api.models.order
 import com.google.gson.annotations.SerializedName
 
 data class OrderModel(
-    @SerializedName("CouponId")
+    @SerializedName("couponId")
     var couponId: String = "",
-    @SerializedName("ProductTitle")
+    @SerializedName("productTitle")
     var productTitle: String? = "",
-    @SerializedName("ProductPrice")
+    @SerializedName("productPrice")
     var productPrice: Int = 0,
-    @SerializedName("ProductQtn")
+    @SerializedName("productQtn")
     var productQtn: Int = 0,
-    @SerializedName("ImageUrl")
+    @SerializedName("imageUrl")
     var imageUrl: String? = "",
-    @SerializedName("StatusId")
+    @SerializedName("statusId")
     var statusId: Int = 0,
-    @SerializedName("BondhuCharge")
+    @SerializedName("bondhuCharge")
     var bondhuCharge: Int = 0,
-    @SerializedName("DeliveryCharge")
+    @SerializedName("deliveryCharge")
     var deliveryCharge: Int = 0,
-    @SerializedName("Colors")
+    @SerializedName("colors")
     var colors: String? = "",
-    @SerializedName("Sizes")
+    @SerializedName("sizes")
     var sizes: String? = "",
-    @SerializedName("DeliveryType")
+    @SerializedName("deliveryType")
     var deliveryType: String? = "",
 
-    @SerializedName("Comments")
+    @SerializedName("comments")
     var comments: String? = "",
-    @SerializedName("OrderDate")
+    @SerializedName("isDone")
+    var isDone: Int? = 0,
+    @SerializedName("hubName")
+    var hubName: String? = "",
+    @SerializedName("orderDate")
     var orderDate: String? = "",
-    @SerializedName("MerchantId")
+    @SerializedName("merchantId")
     var merchantId: Int = 0,
-    @SerializedName("DealId")
+    @SerializedName("dealId")
     var dealId: String = "0",
-    @SerializedName("DeliveryDate")
+    @SerializedName("deliveryDate")
     var deliveryDate: String? = "",
-    @SerializedName("CommentedBy")
+    @SerializedName("commentedBy")
     var commentedBy: Int = 0,
-    @SerializedName("PODNumber")
+    @SerializedName("podNumber")
     var pODNumber: String? = "",
-    @SerializedName("CollectionPointId")
+    @SerializedName("collectionPointId")
     var collectionPointId: Int = 0,
-    @SerializedName("CustomerId")
+    @SerializedName("customerId")
     var customerId: String? = "0",
-    @SerializedName("DeliveryRangeId")
+    @SerializedName("deliveryRangeId")
     var deliveryRangeId: Int = 0,
-    @SerializedName("PriorityService")
+    @SerializedName("weightRangeId")
+    var weightRangeId: Int = 0,
+    @SerializedName("priorityService")
     var priorityService: Int = 0,
-    @SerializedName("Actions")
+    @SerializedName("actions")
     var actions: List<Action>? = listOf(),
 
-    @SerializedName("CollectionTimeSlot")
+    @SerializedName("collectionTimeSlot")
     var collectionTimeSlot: CollectionTimeSlot? = CollectionTimeSlot(),
 
-    @SerializedName("SourceInfo")
+    @SerializedName("sourceInfo")
     var collectionSource: CollectionSource? = null
 )

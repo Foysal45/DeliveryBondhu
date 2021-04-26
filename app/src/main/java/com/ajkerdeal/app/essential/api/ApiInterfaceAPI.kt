@@ -1,6 +1,7 @@
 package com.ajkerdeal.app.essential.api
 
 import com.ajkerdeal.app.essential.api.models.ErrorResponse
+import com.ajkerdeal.app.essential.api.models.GenericResponse
 import com.ajkerdeal.app.essential.api.models.ResponseHeader
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
@@ -85,11 +86,12 @@ interface ApiInterfaceAPI {
     @GET("api/SelfDelivery/LoadStatusNew/{serviceType}")
     suspend fun loadFilterStatus(@Path("serviceType") serviceType: String): NetworkResponse<ResponseHeader<MutableList<FilterStatus>>, ErrorResponse>
 
+    /*//Load All order of AD and DT
     @POST("api/SelfDelivery/LoadOrderNew")
-    suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
+    suspend fun loadOrderList(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>*/
 
     @POST("api/SelfDelivery/LoadOrderNewForAD")
-    suspend fun loadOrderListAD(@Body requestBody: OrderRequest): NetworkResponse<ResponseHeader<OrderResponse>, ErrorResponse>
+    suspend fun loadOrderListAD(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
 
     @POST("api/SelfDelivery/LoadOrderPodWise")
     suspend fun loadOrderPodWiseList(@Body requestBody: PodOrderRequest): NetworkResponse<ResponseHeader<PodOrderResponse>, ErrorResponse>

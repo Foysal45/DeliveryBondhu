@@ -30,7 +30,7 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
     val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearch(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
+    fun loadOrderOrSearchDT(index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
 
         val requestBody = OrderRequest(SessionManager.userId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
         when (type) {
@@ -43,22 +43,22 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
         viewState.value = ViewState.ProgressState(true, 1)
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.loadOrderList(requestBody)
+            val response = repository.loadOrderListDT(requestBody)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false, 1)
                 when (response) {
                     is NetworkResponse.Success -> {
                         //Timber.d("${response.body}")
                         if (response.body != null) {
-                            if (response.body.data != null) {
-                                if (response.body.data?.customerOrderList.isNullOrEmpty()) {
+                            if (response.body.model != null) {
+                                if (response.body.model.customerOrderList.isNullOrEmpty()) {
                                     viewState.value = ViewState.EmptyViewState()
                                 } else {
                                     if (index == 0) {
-                                        Timber.d("Init data loaded")
-                                        pagingState.value = PagingModel(true, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                        Timber.d(" ")
+                                        pagingState.value = PagingModel(true, response.body.model.totalCount, response.body.model.customerOrderList!!.toMutableList())
                                     } else {
-                                        pagingState.value = PagingModel(false, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(false, response.body.model.totalCount, response.body.model.customerOrderList!!.toMutableList())
                                     }
                                 }
                             } else {
@@ -109,15 +109,15 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                     is NetworkResponse.Success -> {
                         //Timber.d("${response.body}")
                         if (response.body != null) {
-                            if (response.body.data != null) {
-                                if (response.body.data?.customerOrderList.isNullOrEmpty()) {
+                            if (response.body.model != null) {
+                                if (response.body.model.customerOrderList.isNullOrEmpty()) {
                                     viewState.value = ViewState.EmptyViewState()
                                 } else {
                                     if (index == 0) {
                                         Timber.d("Init data loaded")
-                                        pagingState.value = PagingModel(true, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(true, response.body.model.totalCount, response.body.model.customerOrderList!!.toMutableList())
                                     } else {
-                                        pagingState.value = PagingModel(false, response.body.data!!.totalCount, response.body.data!!.customerOrderList!!.toMutableList())
+                                        pagingState.value = PagingModel(false, response.body.model.totalCount, response.body.model.customerOrderList!!.toMutableList())
                                     }
                                 }
                             } else {

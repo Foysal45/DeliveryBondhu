@@ -57,8 +57,6 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun loadFilterStatus(serviceType: String) = apiInterfaceAPI.loadFilterStatus(serviceType)
 
-    suspend fun loadOrderList(requestBody: OrderRequest) = apiInterfaceAPI.loadOrderList(requestBody)
-
     suspend fun loadOrderListAD(requestBody: OrderRequest) = apiInterfaceAPI.loadOrderListAD(requestBody)
 
     suspend fun orderStatusUpdate(requestBody: List<StatusUpdateModel>) = apiInterfaceAPI.updateStatus(requestBody)
@@ -97,5 +95,7 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun fetchWeightRange() = apiInterfaceADCORE.fetchWeightRange()
 
     suspend fun isUpdatePriceWithWeight(requestBody: UpdatePriceWithWeightRequest) = apiInterfaceADCORE.isUpdatePriceWithWeight(requestBody)
+
+    suspend fun loadOrderListDT(requestBody: OrderRequest) = apiInterfaceADCORE.loadOrderListDT(requestBody)
 
 }

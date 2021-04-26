@@ -340,7 +340,7 @@ class OrderListFragment : Fragment() {
                         } else {
                             binding!!.emptyView.visibility = View.GONE
                             if (isOrderFromDT()){
-                                viewModel.loadOrderOrSearch(
+                                viewModel.loadOrderOrSearchDT(
                                         flag = collectionFlag,
                                         statusId = filterStatus,
                                         dtStatusId = dtStatus,
@@ -436,7 +436,7 @@ class OrderListFragment : Fragment() {
                         } else {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
-                                viewModel.loadOrderOrSearch(
+                                viewModel.loadOrderOrSearchDT(
                                         flag = collectionFlag,
                                         statusId = filterStatus,
                                         dtStatusId = dtStatus,
@@ -463,7 +463,7 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
                     if (isOrderFromDT()){
-                        viewModel.loadOrderOrSearch(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                        viewModel.loadOrderOrSearchDT(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
                     }else{
                         viewModel.loadOrderOrSearchAD(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
                     }
@@ -484,7 +484,7 @@ class OrderListFragment : Fragment() {
                     }
                 }
                 if (isOrderFromDT()){
-                    viewModel.loadOrderOrSearch(
+                    viewModel.loadOrderOrSearchDT(
                             flag = collectionFlag,
                             statusId = filterStatus,
                             dtStatusId = dtStatus,
@@ -514,7 +514,7 @@ class OrderListFragment : Fragment() {
             if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
             if (isOrderFromDT()){
-                viewModel.loadOrderOrSearch(
+                viewModel.loadOrderOrSearchDT(
                         flag = collectionFlag,
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
@@ -553,7 +553,7 @@ class OrderListFragment : Fragment() {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
                         if (isOrderFromDT()){
-                            viewModel.loadOrderOrSearch(
+                            viewModel.loadOrderOrSearchDT(
                                     firstCall,
                                     20,
                                     statusId = filterStatus,
@@ -623,7 +623,7 @@ class OrderListFragment : Fragment() {
                     orderDialog(message)
                 }
                 if (isOrderFromDT()){
-                    viewModel.loadOrderOrSearch(
+                    viewModel.loadOrderOrSearchDT(
                             flag = collectionFlag,
                             statusId = filterStatus,
                             dtStatusId = dtStatus,
@@ -683,7 +683,7 @@ class OrderListFragment : Fragment() {
             if (filterStatus != "-1") {
                 //Timber.d("loadOrderOrSearch called from onStart")
                 if (isOrderFromDT()){
-                    viewModel.loadOrderOrSearch(
+                    viewModel.loadOrderOrSearchDT(
                             flag = collectionFlag,
                             statusId = filterStatus,
                             dtStatusId = dtStatus,
@@ -1042,7 +1042,7 @@ class OrderListFragment : Fragment() {
                 if (isUpdatePrice) {
                     Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
                     if (isOrderFromDT()){
-                        viewModel.loadOrderOrSearch(
+                        viewModel.loadOrderOrSearchDT(
                                 flag = collectionFlag,
                                 statusId = filterStatus,
                                 dtStatusId = dtStatus,
