@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentLoginBinding
 import com.ajkerdeal.app.essential.ui.webview.ChromeCustomTabBrowser
@@ -16,6 +17,7 @@ import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -33,19 +35,26 @@ class LoginFragment : Fragment() {
         }.root
     }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding?.lifecycleOwner = viewLifecycleOwner
         binding?.viewModel = viewModel
 
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val token = task.result?.token
-                viewModel.firebaseToken.value = token ?: ""
-                Timber.d("FirebaseToken:\n${token}")
+        if (BuildConfig.DEBUG) {
+            viewModel.userId.value = "01715269261"
+            viewModel.password.value = "123"
+        }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.d("Fetching FCM registration token failed ${task.exception}")
+                return@addOnCompleteListener
             }
+            val token = task.result
+            Timber.d("FirebaseToken $token")
+            viewModel.firebaseToken.value = token ?: ""
+            Timber.d("FirebaseToken:\n${token}")
         }
 
         viewModel.features().observe(viewLifecycleOwner, Observer {
