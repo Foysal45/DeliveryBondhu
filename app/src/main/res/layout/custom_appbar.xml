@@ -170,12 +170,12 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="আজকেরডিল"
+                    android:text="ডেলিভারি টাইগার"
                     />
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ডেলিভারি টাইগার" />
+                    android:text="আজকেরডিল"/>
             </com.google.android.material.tabs.TabLayout>
 
             <View

@@ -416,7 +416,7 @@ class OrderListFragment : Fragment() {
                         } else {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
-                            viewModel.loadOrderOrSearchAD(
+                            viewModel.loadOrderOrSearchDT(
                                     flag = collectionFlag,
                                     statusId = filterStatus,
                                     dtStatusId = dtStatus,
@@ -425,7 +425,6 @@ class OrderListFragment : Fragment() {
                                     serviceType = serviceTye,
                                     customType = customType
                             )
-
                         }
                     }
                     1 -> {
@@ -436,15 +435,16 @@ class OrderListFragment : Fragment() {
                         } else {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
-                                viewModel.loadOrderOrSearchDT(
-                                        flag = collectionFlag,
-                                        statusId = filterStatus,
-                                        dtStatusId = dtStatus,
-                                        searchKey = searchKey,
-                                        type = searchType,
-                                        serviceType = serviceTye,
-                                        customType = customType
-                                )
+                            viewModel.loadOrderOrSearchAD(
+                                    flag = collectionFlag,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
+                            )
+
                         }
                     }
                 }
@@ -1007,7 +1007,7 @@ class OrderListFragment : Fragment() {
     }
 
     private fun isOrderFromDT(): Boolean{
-        return tabLayoutSelected == 1
+        return tabLayoutSelected == 0
     }
 
     private fun updateMerchantLocation(parentModel: OrderCustomer) {
