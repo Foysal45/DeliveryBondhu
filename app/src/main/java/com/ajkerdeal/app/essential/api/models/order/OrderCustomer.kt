@@ -12,6 +12,8 @@ data class OrderCustomer(
     var district: String? = "",
     @SerializedName("mobileNumber")
     var mobileNumber: String? = "",
+    @SerializedName("alterMobile")
+    var alterMobile: String? = "",
     @SerializedName("address")
     var address: String? = "",
     @SerializedName("deliveryCommission")

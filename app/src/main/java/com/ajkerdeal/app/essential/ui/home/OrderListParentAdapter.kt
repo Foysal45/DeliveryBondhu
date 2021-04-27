@@ -184,14 +184,14 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         init {
             binding.parent.setOnClickListener {
-                val state = dataList[adapterPosition].state
-                dataList[adapterPosition].state = !state
-                notifyItemChanged(adapterPosition)
-                onOrderListExpand?.invoke(dataList[adapterPosition], dataList[adapterPosition].state)
+                val state = dataList[absoluteAdapterPosition].state
+                dataList[absoluteAdapterPosition].state = !state
+                notifyItemChanged(absoluteAdapterPosition)
+                onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
             }
 
             binding.phone.setOnClickListener {
-                onCall?.invoke(dataList[adapterPosition].mobileNumber, dataList[adapterPosition].mobileNumber)
+                onCall?.invoke(dataList[absoluteAdapterPosition].mobileNumber, dataList[absoluteAdapterPosition].alterMobile)
             }
 
             if (isChildView) {
@@ -200,19 +200,19 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.showLocation.setOnClickListener {
-                onLocationReport?.invoke(dataList[adapterPosition])
+                onLocationReport?.invoke(dataList[absoluteAdapterPosition])
             }
 
             binding.addLocation.setOnClickListener {
-                onLocationUpdate?.invoke(dataList[adapterPosition])
+                onLocationUpdate?.invoke(dataList[absoluteAdapterPosition])
             }
 
             binding.printBtn.setOnClickListener {
-                onPrintClicked?.invoke(dataList[adapterPosition])
+                onPrintClicked?.invoke(dataList[absoluteAdapterPosition])
             }
 
             binding.uploadBtn.setOnClickListener {
-                onUploadClicked?.invoke(dataList[adapterPosition])
+                onUploadClicked?.invoke(dataList[absoluteAdapterPosition])
             }
 
             /*if (isCollectionPoint == 1) {
