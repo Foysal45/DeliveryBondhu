@@ -32,7 +32,7 @@ interface ApiInterfaceADCORE {
     @POST("api/Update/UpdatePriceWithWeight")
     suspend fun isUpdatePriceWithWeight(@Body requestBody: UpdatePriceWithWeightRequest): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
-    @POST("api/Fetch/LoadOrderForBondhuApp")
+    @POST("api/Bondhu/LoadOrderForBondhuApp")
     suspend fun loadOrderListDT(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
 
 }
