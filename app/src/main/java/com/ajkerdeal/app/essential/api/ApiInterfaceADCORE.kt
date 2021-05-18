@@ -7,13 +7,14 @@ import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequ
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
+import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
-import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface ApiInterfaceADCORE {
 
@@ -34,5 +35,8 @@ interface ApiInterfaceADCORE {
 
     @POST("api/Bondhu/LoadOrderForBondhuApp")
     suspend fun loadOrderListDT(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
+
+    @PUT("/api/Bondhu/UpdateBondhuOrder")
+    suspend fun updateStatusDT(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
 }

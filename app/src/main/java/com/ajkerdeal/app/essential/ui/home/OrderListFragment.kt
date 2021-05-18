@@ -29,6 +29,7 @@ import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.print.PrintData
 import com.ajkerdeal.app.essential.api.models.print.PrintModel
+import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
@@ -614,6 +615,38 @@ class OrderListFragment : Fragment() {
                 collectionFlag = 0
             }
         }
+    }
+
+    private fun updateStatusDT(requestBody: MutableList<DTStatusUpdateModel>, message: String?) {
+        viewModel.updateOrderStatusDT(requestBody).observe(viewLifecycleOwner, Observer {
+            if (it) {
+                if (!message.isNullOrEmpty()) {
+                    orderDialog(message)
+                }
+                if (isOrderFromDT()){
+                    viewModel.loadOrderOrSearchDT(
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
+                    )
+                }else{
+                    viewModel.loadOrderOrSearchAD(
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
+                    )
+                }
+
+            }
+        })
     }
 
     private fun updateStatus(requestBody: MutableList<StatusUpdateModel>, message: String?) {

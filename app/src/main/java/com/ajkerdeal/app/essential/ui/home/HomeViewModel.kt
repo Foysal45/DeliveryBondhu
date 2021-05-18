@@ -9,6 +9,7 @@ import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
@@ -163,6 +164,50 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                 when (response) {
                     is NetworkResponse.Success -> {
                         if (response.body.isSuccess) {
+                            //val message = "স্টেটাস আপডেট হয়েছে"
+                            val message = response.body.message
+                            viewState.value = ViewState.ShowMessage(message)
+                            //loadOrderOrSearch()
+                            responseLive.value = true
+                        } else {
+                            viewState.value = ViewState.ShowMessage(response.body.message)
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+
+        }
+        return responseLive
+    }
+
+    fun updateOrderStatusDT(requestBody: MutableList<DTStatusUpdateModel>): LiveData<Boolean> {
+
+        //val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
+        //val model = StatusUpdateModel()
+        //requestBody.add(model)
+        val responseLive = MutableLiveData<Boolean>()
+
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.updateStatusDT(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        if (response.body.model) {
                             //val message = "স্টেটাস আপডেট হয়েছে"
                             val message = response.body.message
                             viewState.value = ViewState.ShowMessage(message)

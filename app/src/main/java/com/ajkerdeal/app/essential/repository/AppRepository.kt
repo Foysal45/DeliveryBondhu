@@ -18,6 +18,7 @@ import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationR
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
+import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
@@ -97,5 +98,7 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun isUpdatePriceWithWeight(requestBody: UpdatePriceWithWeightRequest) = apiInterfaceADCORE.isUpdatePriceWithWeight(requestBody)
 
     suspend fun loadOrderListDT(requestBody: OrderRequest) = apiInterfaceADCORE.loadOrderListDT(requestBody)
+
+    suspend fun updateStatusDT(requestBody: List<DTStatusUpdateModel>) = apiInterfaceADCORE.updateStatusDT(requestBody)
 
 }
