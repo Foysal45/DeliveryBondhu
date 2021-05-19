@@ -50,7 +50,6 @@ import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -120,9 +119,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         FirebaseMessaging.getInstance().subscribeToTopic("BondhuTopic").addOnSuccessListener {
             Timber.d("Firebase subscribeToTopic: BondhuTopic")
         }
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val token = task.result?.token
+                val token = task.result
                 SessionManager.firebaseToken = token ?: ""
                 Timber.d("FirebaseToken:\n${token}")
             }

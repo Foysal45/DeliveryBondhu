@@ -126,6 +126,7 @@ class OrderListFragment : Fragment() {
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
+            val requestBodyDT: MutableList<DTStatusUpdateModel> = mutableListOf()
             var instructions: String? = null
             var bondhuCharge = 0
             var couponIds: String = ""
@@ -144,7 +145,14 @@ class OrderListFragment : Fragment() {
                     pODNumber = orderModel.pODNumber ?: ""
                     type = serviceTye
                 }
+                val statusModelDT = DTStatusUpdateModel(
+                    SessionManager.userId,
+                    orderModel.couponId,
+                    actionModel.updateStatus,
+                    actionModel.statusMessage ?: ""
+                )
                 requestBody.add(statusModel)
+                requestBodyDT.add(statusModelDT)
                 instructions = orderModel.collectionSource?.sourceMessageData?.instructions
                 bondhuCharge = orderModel.bondhuCharge
                 couponIds = orderModel.couponId
@@ -163,7 +171,14 @@ class OrderListFragment : Fragment() {
                         pODNumber = orderModel.pODNumber ?: ""
                         type = serviceTye
                     }
+                    val statusModelDT = DTStatusUpdateModel(
+                        SessionManager.userId,
+                        orderModel.couponId,
+                        actionModel.updateStatus,
+                        actionModel.statusMessage ?: ""
+                    )
                     requestBody.add(statusModel)
+                    requestBodyDT.add(statusModelDT)
                     if (index == model.orderList?.lastIndex) {
                         couponIds += orderModel.couponId
                     } else {
@@ -190,19 +205,31 @@ class OrderListFragment : Fragment() {
                             requestModel.confirmation = "no"
                         }
                         (activity as HomeActivity).updateStatusLocation(requestModel)
-                        updateStatus(requestBody, instructions)
+                        if (isOrderFromDT()) {
+                            updateStatusDT(requestBodyDT, instructions)
+                        } else {
+                            updateStatus(requestBody, instructions)
+                        }
                     }.show()
                 }
                 actionModel.popUpDialogType == 2 -> {
                     alert("কনফার্ম করুন", "আপনি কি এই পরিবর্তন সম্পর্কে নিশ্চিত?", true, "হ্যাঁ", "না") {
                         if (it == AlertDialog.BUTTON_POSITIVE) {
-                            updateStatus(requestBody, instructions)
+                            if (isOrderFromDT()) {
+                                updateStatusDT(requestBodyDT, instructions)
+                            } else {
+                                updateStatus(requestBody, instructions)
+                            }
                         }
                     }.show()
                 }
                 // update status
                 else -> {
-                    updateStatus(requestBody, instructions)
+                    if (isOrderFromDT()) {
+                        updateStatusDT(requestBodyDT, instructions)
+                    } else {
+                        updateStatus(requestBody, instructions)
+                    }
                 }
             }
 
@@ -741,7 +768,7 @@ class OrderListFragment : Fragment() {
         }
     }
 
-    fun goToCallOption(number: String){
+    private fun goToCallOption(number: String){
         try {
             val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))

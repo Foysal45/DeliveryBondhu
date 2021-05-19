@@ -16,7 +16,6 @@ import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.android.ext.android.inject
 import timber.log.Timber

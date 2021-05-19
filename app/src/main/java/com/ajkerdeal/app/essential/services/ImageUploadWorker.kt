@@ -19,13 +19,15 @@ import id.zelory.compressor.Compressor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+@KoinApiExtension
 class ImageUploadWorker(private val context: Context, private val parameters: WorkerParameters): CoroutineWorker(context, parameters), KoinComponent, ProgressRequestBody.UploadCallback {
 
     private val repository: AppRepository by inject()
