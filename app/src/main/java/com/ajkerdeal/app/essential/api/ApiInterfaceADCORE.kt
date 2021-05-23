@@ -2,6 +2,9 @@ package com.ajkerdeal.app.essential.api
 
 import com.ajkerdeal.app.essential.api.models.ErrorResponse
 import com.ajkerdeal.app.essential.api.models.GenericResponse
+import com.ajkerdeal.app.essential.api.models.ResponseHeader
+import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
+import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
@@ -23,6 +26,9 @@ interface ApiInterfaceADCORE {
             return retrofit.create(ApiInterfaceADCORE::class.java)
         }
     }
+
+    @POST("api/Bondhu/DeliveryManRegistration")
+    suspend fun deliveryManRegistration(@Body requestBody: SignUpRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
     @POST("api/Update/UpdatePickupLocationsForLatLong")
     suspend fun updateLocationUpdateRequestDT(@Body requestBody: LocationUpdateRequestDT): NetworkResponse<GenericResponse<LocationUpdateResponseDT>, ErrorResponse>

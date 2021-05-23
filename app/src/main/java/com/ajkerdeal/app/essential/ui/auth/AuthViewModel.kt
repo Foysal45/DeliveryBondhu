@@ -160,7 +160,10 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.signUpUser(SignUpRequest(name.value?.trim(), userId1.value?.trim(), alterPhoneNumber.value?.trim(), bKashAccountNumber.value?.trim() , password1.value?.trim(), address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value))
+
+            val requestBody = SignUpRequest(name.value?.trim(), userId1.value?.trim(), alterPhoneNumber.value?.trim(), bKashAccountNumber.value?.trim() , password1.value?.trim(), address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value)
+            val response = repository.signUpUser(requestBody)
+            val response1 = repository.deliveryManRegistration(requestBody)
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
@@ -197,7 +200,6 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 }.exhaustive
                 viewState.value = ViewState.NONE
             }
-
         }
 
     }

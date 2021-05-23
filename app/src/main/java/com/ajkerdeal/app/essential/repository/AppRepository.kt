@@ -35,6 +35,8 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun signUpUser(requestBody: SignUpRequest) = apiInterfaceAPI.signUp(requestBody)
 
+    suspend fun deliveryManRegistration(requestBody: SignUpRequest) = apiInterfaceADCORE.deliveryManRegistration(requestBody)
+
     suspend fun checkMobileNumber(requestBody: CheckMobileRequest) = apiInterfaceAPI.checkMobileNumber(requestBody)
 
     suspend fun sendOTP(requestBody: OTPSendRequest) = apiInterfaceAPI.sendOTP(requestBody)
