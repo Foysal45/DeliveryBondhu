@@ -46,8 +46,8 @@ interface ApiInterfaceAPI {
     @GET("api/SelfDelivery/features")
     suspend fun features(): NetworkResponse<ResponseHeader<FeatureData>, ErrorResponse>
 
-    @POST("api/SelfDelivery/Login")
-    suspend fun login(@Body requestBody: LoginRequest): NetworkResponse<ResponseHeader<LoginResponse>, ErrorResponse>
+    @POST("api/SelfDelivery/LoginNew")
+    suspend fun login(@Body requestBody: LoginRequest): NetworkResponse<GenericResponse<LoginResponse>, ErrorResponse>
 
     @POST("api/SelfDelivery/SignUp")
     suspend fun signUp(@Body requestBody: SignUpRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>

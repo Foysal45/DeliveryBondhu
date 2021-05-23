@@ -33,6 +33,8 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun authUser(requestBody: LoginRequest) = apiInterfaceAPI.login(requestBody)
 
+    suspend fun dtLogin(requestBody: LoginRequest) = apiInterfaceADCORE.dtLogin(requestBody)
+
     suspend fun signUpUser(requestBody: SignUpRequest) = apiInterfaceAPI.signUp(requestBody)
 
     suspend fun deliveryManRegistration(requestBody: SignUpRequest) = apiInterfaceADCORE.deliveryManRegistration(requestBody)

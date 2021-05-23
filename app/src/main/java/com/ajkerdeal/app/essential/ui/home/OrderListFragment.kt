@@ -84,19 +84,19 @@ class OrderListFragment : Fragment() {
     private var imageUploadOrderIdList: String = ""
 
     private var isUnavailableShow = false
+    private var userId: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //return inflater.inflate(R.layout.fragment_order_list, container, false)
         return FragmentOrderListBinding.inflate(inflater, container, false).also {
             binding = it
         }.root
     }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         serviceTye = arguments?.getString("serviceType", "collectionanddelivery") ?: "collectionanddelivery"
+        userId = SessionManager.dtUserId // DT user id first tab DT
 
         val dataAdapter = OrderListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
@@ -369,23 +369,23 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.GONE
                             if (isOrderFromDT()){
                                 viewModel.loadOrderOrSearchDT(
-                                        flag = collectionFlag,
-                                        statusId = filterStatus,
-                                        dtStatusId = dtStatus,
-                                        searchKey = searchKey,
-                                        type = searchType,
-                                        serviceType = serviceTye,
-                                        customType = customType
+                                    flag = collectionFlag,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
                                 )
                             }else{
                                 viewModel.loadOrderOrSearchAD(
-                                        flag = collectionFlag,
-                                        statusId = filterStatus,
-                                        dtStatusId = dtStatus,
-                                        searchKey = searchKey,
-                                        type = searchType,
-                                        serviceType = serviceTye,
-                                        customType = customType
+                                    flag = collectionFlag,
+                                    statusId = filterStatus,
+                                    dtStatusId = dtStatus,
+                                    searchKey = searchKey,
+                                    type = searchType,
+                                    serviceType = serviceTye,
+                                    customType = customType
                                 )
                             }
 
@@ -438,6 +438,7 @@ class OrderListFragment : Fragment() {
                 when (tab?.position) {
                     0 -> {
                         tabLayoutSelected = 0
+                        userId = SessionManager.dtUserId // DT user id
                         if (SessionManager.isOffline && isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
@@ -445,18 +446,19 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
                             viewModel.loadOrderOrSearchDT(
-                                    flag = collectionFlag,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
                             )
                         }
                     }
                     1 -> {
                         tabLayoutSelected = 1
+                        userId = SessionManager.userId // AD user id
                         if (SessionManager.isOffline && isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
@@ -464,13 +466,13 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
                             viewModel.loadOrderOrSearchAD(
-                                    flag = collectionFlag,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
                             )
 
                         }
@@ -513,23 +515,23 @@ class OrderListFragment : Fragment() {
                 }
                 if (isOrderFromDT()){
                     viewModel.loadOrderOrSearchDT(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
                 }else{
                     viewModel.loadOrderOrSearchAD(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
                 }
 
@@ -543,23 +545,23 @@ class OrderListFragment : Fragment() {
             Timber.d("loadOrderOrSearch called from swipe refresh")
             if (isOrderFromDT()){
                 viewModel.loadOrderOrSearchDT(
-                        flag = collectionFlag,
-                        statusId = filterStatus,
-                        dtStatusId = dtStatus,
-                        searchKey = searchKey,
-                        type = searchType,
-                        serviceType = serviceTye,
-                        customType = customType
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType
                 )
             }else{
                 viewModel.loadOrderOrSearchAD(
-                        flag = collectionFlag,
-                        statusId = filterStatus,
-                        dtStatusId = dtStatus,
-                        searchKey = searchKey,
-                        type = searchType,
-                        serviceType = serviceTye,
-                        customType = customType
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType
                 )
             }
 
@@ -582,27 +584,27 @@ class OrderListFragment : Fragment() {
                         Timber.d("loadOrderOrSearch called from lazy loading")
                         if (isOrderFromDT()){
                             viewModel.loadOrderOrSearchDT(
-                                    firstCall,
-                                    20,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    flag = collectionFlag,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
+                                firstCall,
+                                20,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                flag = collectionFlag,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
                             )
                         }else{
                             viewModel.loadOrderOrSearchAD(
-                                    firstCall,
-                                    20,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    flag = collectionFlag,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
+                                firstCall,
+                                20,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                flag = collectionFlag,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType
                             )
                         }
 

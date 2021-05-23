@@ -90,20 +90,20 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
 
-            val response = repository.authUser(LoginRequest(userId.value?.trim(), password.value?.trim(), firebaseToken.value))
+            val requestBody = LoginRequest(userId.value?.trim(), password.value?.trim(), firebaseToken.value)
+            val response = repository.authUser(requestBody)
+            val response1 = repository.dtLogin(requestBody)
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
-
-                        val data = response.body.data
+                        val data = response.body.model
                         if (data != null && data.deliveryUserId != 0) {
 
                             SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,data.bkashMobileNumber)
                             SessionManager.userPic = data.profileImage ?: ""
                             userId.value = ""
                             password.value = ""
-                            viewState.value = ViewState.NextState()
                         } else {
                             viewState.setValue(ViewState.ShowMessage(data?.message))
                         }
@@ -124,9 +124,35 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                     }
                 }.exhaustive
 
-                viewState.value = ViewState.NONE
+                when (response1) {
+                    is NetworkResponse.Success -> {
+                        val data = response1.body.model
+                        if (data != null && data.deliveryUserId != 0) {
+                            SessionManager.dtUserId = data.deliveryUserId
+                            viewState.value = ViewState.NextState()
+                        } else {
+                            viewState.setValue(ViewState.ShowMessage(data?.message))
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.setValue(ViewState.ShowMessage(message))
 
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.setValue(ViewState.ShowMessage(message))
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response1.error)
+                    }
+                }.exhaustive
+
+                viewState.value = ViewState.NONE
             }
+
         }
 
     }

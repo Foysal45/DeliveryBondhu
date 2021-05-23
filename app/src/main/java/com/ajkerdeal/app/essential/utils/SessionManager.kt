@@ -129,6 +129,16 @@ object SessionManager {
             }
         }
 
+    var dtUserId: Int
+        get() {
+            return pref.getInt("dtUserId", 0)
+        }
+        set(value) {
+            pref.edit {
+                putInt("dtUserId", value)
+            }
+        }
+
     var userName: String
         get() {
             return pref.getString("username", "")!!

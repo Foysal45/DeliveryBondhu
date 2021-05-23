@@ -4,16 +4,16 @@ package com.ajkerdeal.app.essential.api.models.auth
 import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
-    @SerializedName("DeliveryUserId")
+    @SerializedName("deliveryUserId")
     var deliveryUserId: Int = 0,
-    @SerializedName("MobileNumber")
+    @SerializedName("mobileNumber")
     var mobileNumber: String? = "",
-    @SerializedName("BkashMobileNumber")
+    @SerializedName("bkashMobileNumber")
     var bkashMobileNumber: String? = "",
-    @SerializedName("ProfileImage")
+    @SerializedName("profileImage")
     var profileImage: String? = "",
-    @SerializedName("DeliveryUserName")
+    @SerializedName("deliveryUserName")
     var deliveryUserName: String? = "",
-    @SerializedName("Message")
+    @SerializedName("message")
     var message: String? = ""
 )
