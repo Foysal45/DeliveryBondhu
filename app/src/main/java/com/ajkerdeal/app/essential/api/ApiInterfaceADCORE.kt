@@ -33,7 +33,7 @@ interface ApiInterfaceADCORE {
     suspend fun dtLogin(@Body requestBody: LoginRequest): NetworkResponse<GenericResponse<LoginResponse>, ErrorResponse>
 
     @POST("api/Bondhu/DeliveryManRegistration")
-    suspend fun deliveryManRegistration(@Body requestBody: SignUpRequest): NetworkResponse<GenericResponse<SignUpResponse>, ErrorResponse>
+    suspend fun deliveryManRegistration(@Body requestBody: SignUpRequest): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
     @POST("api/Update/UpdatePickupLocationsForLatLong")
     suspend fun updateLocationUpdateRequestDT(@Body requestBody: LocationUpdateRequestDT): NetworkResponse<GenericResponse<LocationUpdateResponseDT>, ErrorResponse>

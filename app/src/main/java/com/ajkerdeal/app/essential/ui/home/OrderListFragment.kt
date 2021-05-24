@@ -97,6 +97,8 @@ class OrderListFragment : Fragment() {
 
         serviceTye = arguments?.getString("serviceType", "collectionanddelivery") ?: "collectionanddelivery"
         userId = SessionManager.dtUserId // DT user id first tab DT
+        Timber.d("userIdDT ${SessionManager.dtUserId}")
+        Timber.d("userIdAD ${SessionManager.userId}")
 
         val dataAdapter = OrderListParentAdapter()
         val layoutManagerLinear = LinearLayoutManager(requireContext())
@@ -106,19 +108,23 @@ class OrderListFragment : Fragment() {
             adapter = dataAdapter
         }
         dataAdapter.onCall = { number: String?, altNumber: String? ->
-            if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()){
+            if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()) {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("কোন নাম্বার এ কল করতে চান")
                 val numberLists = arrayOf(number, altNumber)
                 builder.setItems(numberLists) { _, which ->
                     when (which) {
-                        0 -> { goToCallOption(numberLists[0]) }
-                        1 -> {goToCallOption(numberLists[1])}
+                        0 -> {
+                            goToCallOption(numberLists[0])
+                        }
+                        1 -> {
+                            goToCallOption(numberLists[1])
+                        }
                     }
                 }
                 val dialog = builder.create()
                 dialog.show()
-            }else{
+            } else {
                 goToCallOption(number!!)
             }
 
@@ -141,12 +147,12 @@ class OrderListFragment : Fragment() {
                     dealId = orderModel.dealId.toIntOrNull() ?: 0
                     customerId = orderModel.customerId?.toIntOrNull() ?: 0
                     deliveryDate = orderModel.deliveryDate ?: ""
-                    commentedBy = SessionManager.userId
+                    commentedBy = userId
                     pODNumber = orderModel.pODNumber ?: ""
                     type = serviceTye
                 }
                 val statusModelDT = DTStatusUpdateModel(
-                    SessionManager.userId,
+                    userId,
                     orderModel.couponId,
                     actionModel.updateStatus,
                     actionModel.statusMessage ?: ""
@@ -167,12 +173,12 @@ class OrderListFragment : Fragment() {
                         dealId = orderModel.dealId.toIntOrNull() ?: 0
                         customerId = orderModel.customerId?.toIntOrNull() ?: 0
                         deliveryDate = orderModel.deliveryDate ?: ""
-                        commentedBy = SessionManager.userId
+                        commentedBy = userId
                         pODNumber = orderModel.pODNumber ?: ""
                         type = serviceTye
                     }
                     val statusModelDT = DTStatusUpdateModel(
-                        SessionManager.userId,
+                        userId,
                         orderModel.couponId,
                         actionModel.updateStatus,
                         actionModel.statusMessage ?: ""
@@ -198,7 +204,7 @@ class OrderListFragment : Fragment() {
                 // Show popup dialog first the update status
                 actionModel.popUpDialogType == 1 -> {
                     alert("কনফার্ম করুন", "আপনি কি মার্চেন্টের কাছে গিয়েছেন?", true, "হ্যাঁ", "না") {
-                        val requestModel = StatusLocationRequest(model.merchantId, SessionManager.userId)
+                        val requestModel = StatusLocationRequest(model.merchantId, userId)
                         if (it == AlertDialog.BUTTON_POSITIVE) {
                             requestModel.confirmation = "yes"
                         } else {
@@ -280,7 +286,7 @@ class OrderListFragment : Fragment() {
             imageUploadMerchantId = model.merchantId.toString()
             imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
             addPictureDialog() {
-                when(it) {
+                when (it) {
                     1 -> {
                         pickImageFromCamera()
                     }
@@ -361,14 +367,15 @@ class OrderListFragment : Fragment() {
                         dataAdapter.allowImageUpload = model.allowImageUpload
                         dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
                         dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
-                        isUnavailableShow  = model.isUnavailableShow
+                        isUnavailableShow = model.isUnavailableShow
                         if (SessionManager.isOffline && model.isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
                             binding!!.emptyView.visibility = View.VISIBLE
                         } else {
                             binding!!.emptyView.visibility = View.GONE
-                            if (isOrderFromDT()){
+                            if (isOrderFromDT()) {
                                 viewModel.loadOrderOrSearchDT(
+                                    userId,
                                     flag = collectionFlag,
                                     statusId = filterStatus,
                                     dtStatusId = dtStatus,
@@ -377,8 +384,9 @@ class OrderListFragment : Fragment() {
                                     serviceType = serviceTye,
                                     customType = customType
                                 )
-                            }else{
+                            } else {
                                 viewModel.loadOrderOrSearchAD(
+                                    userId,
                                     flag = collectionFlag,
                                     statusId = filterStatus,
                                     dtStatusId = dtStatus,
@@ -446,6 +454,7 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
                             viewModel.loadOrderOrSearchDT(
+                                userId,
                                 flag = collectionFlag,
                                 statusId = filterStatus,
                                 dtStatusId = dtStatus,
@@ -466,6 +475,7 @@ class OrderListFragment : Fragment() {
                             binding!!.emptyView.visibility = View.GONE
                             Timber.d("loadOrderOrSearch called from swipe refresh")
                             viewModel.loadOrderOrSearchAD(
+                                userId,
                                 flag = collectionFlag,
                                 statusId = filterStatus,
                                 dtStatusId = dtStatus,
@@ -492,10 +502,10 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.searchET.text.clear()
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
-                    if (isOrderFromDT()){
-                        viewModel.loadOrderOrSearchDT(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
-                    }else{
-                        viewModel.loadOrderOrSearchAD(flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                    if (isOrderFromDT()) {
+                        viewModel.loadOrderOrSearchDT(userId, flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                    } else {
+                        viewModel.loadOrderOrSearchAD(userId, flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
                     }
                 }
                 binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
@@ -513,8 +523,9 @@ class OrderListFragment : Fragment() {
                         SearchType.Product
                     }
                 }
-                if (isOrderFromDT()){
+                if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
+                        userId,
                         flag = collectionFlag,
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
@@ -523,8 +534,9 @@ class OrderListFragment : Fragment() {
                         serviceType = serviceTye,
                         customType = customType
                     )
-                }else{
+                } else {
                     viewModel.loadOrderOrSearchAD(
+                        userId,
                         flag = collectionFlag,
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
@@ -543,8 +555,9 @@ class OrderListFragment : Fragment() {
             binding!!.swipeRefresh.isRefreshing = false
             if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
-            if (isOrderFromDT()){
+            if (isOrderFromDT()) {
                 viewModel.loadOrderOrSearchDT(
+                    userId,
                     flag = collectionFlag,
                     statusId = filterStatus,
                     dtStatusId = dtStatus,
@@ -553,8 +566,9 @@ class OrderListFragment : Fragment() {
                     serviceType = serviceTye,
                     customType = customType
                 )
-            }else{
+            } else {
                 viewModel.loadOrderOrSearchAD(
+                    userId,
                     flag = collectionFlag,
                     statusId = filterStatus,
                     dtStatusId = dtStatus,
@@ -582,8 +596,9 @@ class OrderListFragment : Fragment() {
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
                         Timber.d("loadOrderOrSearch called from lazy loading")
-                        if (isOrderFromDT()){
+                        if (isOrderFromDT()) {
                             viewModel.loadOrderOrSearchDT(
+                                userId,
                                 firstCall,
                                 20,
                                 statusId = filterStatus,
@@ -594,8 +609,9 @@ class OrderListFragment : Fragment() {
                                 serviceType = serviceTye,
                                 customType = customType
                             )
-                        }else{
+                        } else {
                             viewModel.loadOrderOrSearchAD(
+                                userId,
                                 firstCall,
                                 20,
                                 statusId = filterStatus,
@@ -652,8 +668,9 @@ class OrderListFragment : Fragment() {
                 if (!message.isNullOrEmpty()) {
                     orderDialog(message)
                 }
-                if (isOrderFromDT()){
+                if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
+                        userId,
                         flag = collectionFlag,
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
@@ -662,8 +679,9 @@ class OrderListFragment : Fragment() {
                         serviceType = serviceTye,
                         customType = customType
                     )
-                }else{
+                } else {
                     viewModel.loadOrderOrSearchAD(
+                        userId,
                         flag = collectionFlag,
                         statusId = filterStatus,
                         dtStatusId = dtStatus,
@@ -684,25 +702,27 @@ class OrderListFragment : Fragment() {
                 if (!message.isNullOrEmpty()) {
                     orderDialog(message)
                 }
-                if (isOrderFromDT()){
+                if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        userId,
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
-                }else{
+                } else {
                     viewModel.loadOrderOrSearchAD(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        userId,
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
                 }
 
@@ -744,25 +764,27 @@ class OrderListFragment : Fragment() {
         } else {
             if (filterStatus != "-1") {
                 //Timber.d("loadOrderOrSearch called from onStart")
-                if (isOrderFromDT()){
+                if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        userId,
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
-                }else{
+                } else {
                     viewModel.loadOrderOrSearchAD(
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType
+                        userId,
+                        flag = collectionFlag,
+                        statusId = filterStatus,
+                        dtStatusId = dtStatus,
+                        searchKey = searchKey,
+                        type = searchType,
+                        serviceType = serviceTye,
+                        customType = customType
                     )
                 }
 
@@ -770,7 +792,7 @@ class OrderListFragment : Fragment() {
         }
     }
 
-    private fun goToCallOption(number: String){
+    private fun goToCallOption(number: String) {
         try {
             val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
@@ -993,7 +1015,7 @@ class OrderListFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data)){
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
 
             val imageList = ImagePicker.getImages(data)
             val pathList = imageList.map { it.path }
@@ -1046,18 +1068,18 @@ class OrderListFragment : Fragment() {
         val request = OneTimeWorkRequestBuilder<ImageUploadWorker>().setConstraints(constraints).setInputData(data).build()
         WorkManager.getInstance(requireContext()).beginUniqueWork("uploadReturnPic", ExistingWorkPolicy.KEEP, request).enqueue()
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(request.id).observe(viewLifecycleOwner, Observer { workInfo ->
-            if (workInfo != null){
+            if (workInfo != null) {
                 val result = workInfo.outputData.getString("work_result")
-                if (workInfo.state == WorkInfo.State.SUCCEEDED){
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                     //context?.toast("প্রোফাইল আপডেট হয়েছে")
                     binding?.progressBar?.visibility = View.GONE
                     val result = workInfo.outputData.getString("work_result")
                     val serverImageUrl = workInfo.outputData.getString("serverImageUrl") ?: ""
                     val msg = "$result\n$serverImageUrl"
-                    binding?.parent?.snackbar(msg,Snackbar.LENGTH_INDEFINITE, "View") {
+                    binding?.parent?.snackbar(msg, Snackbar.LENGTH_INDEFINITE, "View") {
                         uploadImageDialog(serverImageUrl, true)
                     }?.show()
-                } else if (workInfo.state == WorkInfo.State.FAILED){
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
                     //context?.toast("কোথাও কোনো সমস্যা হচ্ছে")
                     binding?.progressBar?.visibility = View.GONE
                     result?.let {
@@ -1068,25 +1090,25 @@ class OrderListFragment : Fragment() {
         })
     }
 
-    private fun isOrderFromDT(): Boolean{
+    private fun isOrderFromDT(): Boolean {
         return tabLayoutSelected == 0
     }
 
     private fun updateMerchantLocation(parentModel: OrderCustomer) {
-        if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")){
+        if (parentModel.orderList?.first()?.couponId!!.startsWith("DT-")) {
             val modelDT = LocationUpdateRequestDT(
-                    parentModel.collectAddressDistrictId,
-                    parentModel.collectAddressThanaId,
-                    0, parentModel.merchantId,
-                    parentModel.address, parentModel.latitude,
-                    parentModel.longitude
+                parentModel.collectAddressDistrictId,
+                parentModel.collectAddressThanaId,
+                0, parentModel.merchantId,
+                parentModel.address, parentModel.latitude,
+                parentModel.longitude
             )
             (activity as HomeActivity).updateLocationDT(modelDT)
-        }else{
+        } else {
             val modelAD = LocationUpdateRequestAD(
-                    parentModel.merchantId,
-                    parentModel.latitude,
-                    parentModel.longitude
+                parentModel.merchantId,
+                parentModel.latitude,
+                parentModel.longitude
 
             )
             (activity as HomeActivity).updateLocationAD(modelAD)
@@ -1094,34 +1116,36 @@ class OrderListFragment : Fragment() {
     }
 
     //Weight Selection
-    private fun goToWeightSelectionBottomSheet( model: OrderModel,  parentModel: OrderCustomer){
+    private fun goToWeightSelectionBottomSheet(model: OrderModel, parentModel: OrderCustomer) {
         val tag = WeightSelectionBottomSheet.tag
         val dialog = WeightSelectionBottomSheet.newInstance()
         dialog.show(childFragmentManager, tag)
-        dialog.onActionClicked = {  weightRangeId->
+        dialog.onActionClicked = { weightRangeId ->
             val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, weightRangeId, model.couponId, model.deliveryRangeId)
             viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
                 if (isUpdatePrice) {
                     Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
-                    if (isOrderFromDT()){
+                    if (isOrderFromDT()) {
                         viewModel.loadOrderOrSearchDT(
-                                flag = collectionFlag,
-                                statusId = filterStatus,
-                                dtStatusId = dtStatus,
-                                searchKey = searchKey,
-                                type = searchType,
-                                serviceType = serviceTye,
-                                customType = customType
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
                         )
-                    }else{
+                    } else {
                         viewModel.loadOrderOrSearchAD(
-                                flag = collectionFlag,
-                                statusId = filterStatus,
-                                dtStatusId = dtStatus,
-                                searchKey = searchKey,
-                                type = searchType,
-                                serviceType = serviceTye,
-                                customType = customType
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType
                         )
                     }
 
