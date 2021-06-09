@@ -28,8 +28,8 @@ data class SignUpRequest(
     var thanaName: String? = "",
     @SerializedName("Version")
     var version: String? = "",
-    @SerializedName("OrderFrom")
-    var orderFrom: String? = "android",
+    @SerializedName("RegistrationFrom")
+    var registrationFrom: String? = "android",
     @SerializedName("IsActive")
     var isActive: Int = 0
 )
