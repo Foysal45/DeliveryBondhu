@@ -3,6 +3,7 @@ package com.ajkerdeal.app.essential.utils
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -168,4 +169,44 @@ fun isValidCoordinate(coordinate: String?): Boolean {
     if (coordinate == "0.0") return false
     if (coordinate == "0") return false
     return true
+}
+
+fun Activity.appVersion(): String {
+    return try {
+        val pInfo: PackageInfo = packageManager.getPackageInfo(packageName, 0)
+        pInfo.versionName
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+}
+
+fun Fragment.appVersion(): String {
+    return try {
+        val pInfo: PackageInfo? = this.context?.packageManager?.getPackageInfo(this.context?.packageName ?: "", 0)
+        pInfo?.versionName ?: ""
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+}
+
+fun Activity.appVersionCode(): Int {
+    return try {
+        val pInfo: PackageInfo = packageManager.getPackageInfo(packageName, 0)
+        pInfo.versionCode
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
+}
+
+fun Fragment.appVersionCode(): Int {
+    return try {
+        val pInfo: PackageInfo? = this.context?.packageManager?.getPackageInfo(this.context?.packageName ?: "", 0)
+        pInfo?.versionCode ?: 0
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
 }

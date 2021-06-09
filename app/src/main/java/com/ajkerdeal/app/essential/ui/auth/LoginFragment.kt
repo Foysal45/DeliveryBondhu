@@ -13,6 +13,7 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentLoginBinding
 import com.ajkerdeal.app.essential.ui.webview.ChromeCustomTabBrowser
 import com.ajkerdeal.app.essential.utils.ViewState
+import com.ajkerdeal.app.essential.utils.appVersion
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
@@ -55,6 +56,8 @@ class LoginFragment : Fragment() {
             viewModel.firebaseToken.value = token ?: ""
             Timber.d("FirebaseToken:\n${token}")
         }
+
+        viewModel.appVersion.value = appVersion()
 
         viewModel.features().observe(viewLifecycleOwner, Observer {
 
