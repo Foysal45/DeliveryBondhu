@@ -236,6 +236,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
             val message = "আপনার নাম লিখুন"
             viewState.value = ViewState.ShowMessage(message)
             viewState.value = ViewState.NONE
+            return false
         }
 
         if (userId1.value?.trim().isNullOrEmpty() || userId1.value?.length != 11) {

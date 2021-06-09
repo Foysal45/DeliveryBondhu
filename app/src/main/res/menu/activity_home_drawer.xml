@@ -17,6 +17,11 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_account"
             android:title="প্রোফাইল" />
+
+        <item
+            android:id="@+id/nav_bar_code_scanner"
+            android:icon="@drawable/ic_package"
+            android:title="কুইক অর্ডার" />
         <item
             android:id="@+id/nav_policy"
             android:icon="@drawable/ic_policy"

@@ -44,6 +44,10 @@
         <item>সকল</item>
     </string-array>
 
+    <string-array name="spinner_array_collection_location">
+        <item>Select Item</item>
+    </string-array>
+
     <!-- printer -->
     <string name="toast_1">Transaction print,use the AIDL mode!</string>
     <string name="toast_2">No printing service found</string>
