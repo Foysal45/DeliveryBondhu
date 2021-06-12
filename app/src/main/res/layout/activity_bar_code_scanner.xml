@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
-    tools:context=".ui.bar_code_scanner.BarCodeScannerActivity">
+    tools:context=".ui.quick_order_scan.BarCodeScannerActivity">
 
     <TextView
         android:id="@+id/invoiceTitle"

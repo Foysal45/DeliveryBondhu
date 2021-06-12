@@ -38,7 +38,6 @@ import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.fcm.FCMData
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
-import com.ajkerdeal.app.essential.ui.bar_code_scanner.BarCodeScannerActivity
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -180,7 +179,8 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         menuItem?.isChecked = true
                     }
                     R.id.nav_bar_code_scanner -> {
-                        startActivity(Intent(this@HomeActivity, BarCodeScannerActivity::class.java))
+                        navController.navigate(R.id.nav_bar_code_scanner)
+                        //startActivity(Intent(this@HomeActivity, BarCodeScannerActivity::class.java))
                     }
                     R.id.nav_policy -> {
 
