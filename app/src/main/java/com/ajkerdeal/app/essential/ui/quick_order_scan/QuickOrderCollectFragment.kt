@@ -76,6 +76,8 @@ class QuickOrderCollectFragment : Fragment() {
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
                 dialog.onLocationPicked = { position, value ->
                     binding?.district?.setText(value)
+                    binding?.thana?.setText("")
+                    binding?.area?.setText("")
                     if (position in 0..districtModelList.size) {
                         districtId = districtModelList[position].districtId
                     }
@@ -100,10 +102,32 @@ class QuickOrderCollectFragment : Fragment() {
                     dialog.onLocationPicked = { position, value ->
                         thanaName = value
                         binding?.thana?.setText(value)
+                        binding?.area?.setText("")
                         if (position in 0..thanaModelList.size) {
-                            val model = thanaModelList[position]
+                            thanaId = thanaModelList[position].districtId
 
                         }
+                    }
+                    binding!!.thana.isEnabled = true
+                })
+            }
+        }
+
+        binding!!.area.setOnClickListener {
+
+            if (thanaId == 0) {
+                context?.toast("থানা নির্বাচন করুন")
+            } else {
+                binding!!.thana.isEnabled = false
+                viewModel.loadAllDistrictsById(thanaId).observe(viewLifecycleOwner, Observer { response ->
+
+                    val areaModelList = response
+                    val areaNameList = areaModelList?.map { it.districtBng }
+
+                    val dialog = LocationSelectionDialog.newInstance(areaNameList as MutableList<String>)
+                    dialog.show(childFragmentManager, LocationSelectionDialog.tag)
+                    dialog.onLocationPicked = { position, value ->
+                        binding?.area?.setText(value)
                     }
                     binding!!.thana.isEnabled = true
                 })
@@ -137,7 +161,7 @@ class QuickOrderCollectFragment : Fragment() {
         val permission1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
         val permission2 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return when {
-            permission1 == PackageManager.PERMISSION_GRANTED /*&& permission2 == PackageManager.PERMISSION_GRANTED*/ -> {
+            permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED -> {
                 true
             }
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {

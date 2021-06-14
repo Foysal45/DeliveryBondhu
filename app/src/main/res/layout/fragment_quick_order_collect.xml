@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.quick_order_scan.QuickOrderCollectFragment">
 
+    <ImageView
+        android:id="@+id/invoicePic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cd"
+        android:src="@drawable/ic_banner_place"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/districtLayout"
+        android:layout_margin="16dp"
+        />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/districtLayout"
         android:layout_width="match_parent"
@@ -18,7 +31,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invoicePic"
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/district"
@@ -36,7 +49,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/workingThanaLayout"
+        android:id="@+id/thanaLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="থানা নির্বাচন করুন"
@@ -50,6 +63,34 @@
         >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/thana"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="none|textNoSuggestions"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:textSize="14sp"
+            android:textColor="@color/black_80"
+            tools:text="Narayanganj Sadar"
+            android:importantForAutofill="no"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/areaLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="এরিয়া নির্বাচন করুন"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/thanaLayout"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionNext"
