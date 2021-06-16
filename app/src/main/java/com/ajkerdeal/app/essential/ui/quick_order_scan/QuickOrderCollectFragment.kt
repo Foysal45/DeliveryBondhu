@@ -14,10 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
@@ -28,12 +26,9 @@ import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.esafirm.imagepicker.features.ImagePicker
-import com.esafirm.imagepicker.model.Image
-import com.theartofdev.edmodo.cropper.CropImage
+import com.github.dhaval2404.imagepicker.ImagePicker
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import java.io.File
 
 class QuickOrderCollectFragment : Fragment() {
 
@@ -45,7 +40,7 @@ class QuickOrderCollectFragment : Fragment() {
     private var districtName = ""
     private var thanaName = ""
     private var quickOrderId = ""
-    private var quickOrderInfoImgUrl = ""
+    private var quickOrderInfoImgUrl: String? = ""
 
     companion object {
         fun newInstance(): QuickOrderCollectFragment = QuickOrderCollectFragment().apply {}
@@ -168,7 +163,7 @@ class QuickOrderCollectFragment : Fragment() {
     private fun isValidOrderId(orderId: String){
         viewModel.checkIsQuickOrder(orderId).observe(viewLifecycleOwner, Observer {
             if (it){
-                viewModel.uploadProfilePhoto(orderId, requireContext(), quickOrderInfoImgUrl).observe(viewLifecycleOwner, Observer {
+                viewModel.uploadProfilePhoto(orderId, requireContext(), quickOrderInfoImgUrl ?: "").observe(viewLifecycleOwner, Observer {
                     if (it){
                         context?.toast("image updated")
                     }
@@ -191,6 +186,12 @@ class QuickOrderCollectFragment : Fragment() {
 
         if (district.isNullOrEmpty()) {
             val message = "Please Select District"
+            context?.toast(message)
+            return false
+        }
+
+        if (quickOrderInfoImgUrl.isNullOrEmpty()) {
+            val message = "Please Captured Image"
             context?.toast(message)
             return false
         }
@@ -218,12 +219,13 @@ class QuickOrderCollectFragment : Fragment() {
         if (!isStoragePermissions()) {
             return
         }
-        try {
-            ImagePicker.cameraOnly().start(this)
-        } catch (e: Exception) {
-            Timber.d(e)
-            context?.toast("No Application found to handle this action")
-        }
+        ImagePicker.with(this)
+            .cameraOnly()
+            .crop(1.5f,1f)
+            .compress(512)
+            .createIntent { intent ->
+                startForQuickOrderImageResult.launch(intent)
+            }
     }
 
     private fun isStoragePermissions(): Boolean {
@@ -297,6 +299,30 @@ class QuickOrderCollectFragment : Fragment() {
         }
     }
 
+    private val startForQuickOrderImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val resultCode = result.resultCode
+        val data = result.data
+        if (resultCode == Activity.RESULT_OK) {
+            val uri = data?.data!!
+            Timber.d("ImageLog Image Uri->  $uri")
+            quickOrderInfoImgUrl = uri.path
+            Timber.d("ImageLog Image Uri Path-> $quickOrderInfoImgUrl")
+            binding?.invoicePic?.let {  view->
+                Glide.with(view)
+                    .load(uri)
+                    .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(view)
+            }
+
+
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            context?.toast(ImagePicker.getError(data))
+        }
+    }
+
+
     private val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         var isCameraGranted: Boolean = false
         var isStorageGranted: Boolean = false
@@ -310,68 +336,6 @@ class QuickOrderCollectFragment : Fragment() {
         }
         if (isCameraGranted /*&& isStorageGranted*/) {
             scanBarcode()
-        }
-    }
-
-/*    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            val image: Image? = ImagePicker.getFirstImageOrNull(data)
-
-            image?.path?.let {
-                Timber.d("ImageLog ImagePickerPath: $it")
-                val uri = FileProvider.getUriForFile(requireContext(), "com.ajkerdeal.app.essential.fileprovider", File(it))
-                Timber.d("ImageLog ImagePickerUri: $uri")
-                val actualPath = FileUtils(requireContext()).getPath(uri)
-                Timber.d("FilePath: $actualPath")
-                quickOrderInfoImgUrl = actualPath
-
-                binding?.invoicePic?.let { view ->
-                    Glide.with(view)
-                        .load(actualPath)
-                        .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(false)
-                        .into(view)
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }*/
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val imageCaptureResult = ImagePicker.shouldHandle(requestCode, resultCode, data)
-         if (imageCaptureResult){
-            val image: Image? = ImagePicker.getFirstImageOrNull(data)
-            image?.path?.let {
-                Timber.d("ImageLog ImagePickerPath: $it")
-
-                val uri = FileProvider.getUriForFile(requireContext(), "com.ajkerdeal.app.essential.fileprovider", File(it))
-                Timber.d("ImageLog ImagePickerUri: $requestCode, $uri")
-                //quickOrderInfoImgUrl = actualPath
-
-                val builder = CropImage.activity()
-                builder.start( requireActivity())
-            }
-        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == AppCompatActivity.RESULT_OK) {
-                val uri = result.uri
-                Timber.d("ImageLog cropPhotoURI $uri")
-                binding?.invoicePic?.let { view ->
-                    Glide.with(view)
-                        .load(uri)
-                        .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .into(view)
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val msg = result.error
-                Timber.d("Error $msg")
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

@@ -60,12 +60,4 @@ interface ApiInterfaceADCORE {
     @PUT("/api/QuickOrder/UpdateOrderInfoForApp")
     suspend fun updateQuickOrder(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
-    @Multipart
-    @POST("Image/ImageUploadForFile")
-    suspend fun uploadQuickOrderInfoPhoto(
-        @Part("ImageUrl") ImageUrl: RequestBody,
-        @Part("FileName") FileName: RequestBody,
-        @Part file: MultipartBody.Part? = null
-    ) : NetworkResponse<Boolean, ErrorResponse>
-
 }

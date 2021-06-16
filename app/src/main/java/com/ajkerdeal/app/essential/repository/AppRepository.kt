@@ -110,8 +110,4 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun checkIsQuickOrder(id: String) = apiInterfaceADCORE.checkIsQuickOrder(id)
 
-    suspend fun uploadQuickOrderInfoPhoto(imageUrl: RequestBody, fileName: RequestBody, file: MultipartBody.Part? = null) = apiInterfaceADCORE.uploadQuickOrderInfoPhoto(imageUrl, fileName, file)
-
-
-
 }

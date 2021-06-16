@@ -99,10 +99,10 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
             Timber.d("ImageLog ImageFilePath: $file")
             val compressedFile = Compressor.compress(context, file)
             val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
-            val part = MultipartBody.Part.createFormData("img", "${orderId}.jpg", requestFile)
+            val part = MultipartBody.Part.createFormData("", "${orderId}.jpg", requestFile)
             val imageUrl = "images/dt/orderrequest".toRequestBody()
             val fileName = "${orderId}.jpg".toRequestBody()
-            val response = repository.uploadQuickOrderInfoPhoto(imageUrl, fileName, part)
+            val response = repository.imageUpload(imageUrl, fileName, part)
 
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false)
