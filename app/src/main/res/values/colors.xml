@@ -58,4 +58,9 @@
     <color name="crimson">#DC143C</color>
     <color name="red">#E84545</color>
 
+    <color name="ucrop_color_statusbar">@color/colorPrimaryDark</color>
+    <color name="ucrop_color_toolbar">@color/colorPrimary</color>
+    <color name="ucrop_color_toolbar_widget">@color/white</color>
+    <color name="ucrop_color_blaze_orange">#fff</color>
+    <color name="ucrop_color_widget_active">@color/colorPrimary</color>
 </resources>

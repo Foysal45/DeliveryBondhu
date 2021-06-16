@@ -1,6 +1,7 @@
 package com.ajkerdeal.app.essential.ui.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -13,6 +14,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
@@ -40,8 +42,9 @@ import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBotto
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.esafirm.imagepicker.features.ImagePicker
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -999,22 +1002,42 @@ class OrderListFragment : Fragment() {
     }
 
     private fun pickImageFromCamera() {
-        ImagePicker.cameraOnly().start(this)
+        ImagePicker.with(this)
+            .cameraOnly()
+            .cropSquare()
+            .compress(512)
+            .createIntent { intent ->
+                startForProfileImageResult.launch(intent)
+            }
     }
 
     private fun pickImageFromGallery() {
-        ImagePicker.create(this)
-            .folderMode(true)
-            .toolbarFolderTitle("ফোল্ডার নির্বাচন করুন")
-            .toolbarImageTitle("ছবি নির্বাচন করুন")
-            .includeVideo(false)
-            .theme(R.style.ImagePickerTheme)
-            .limit(1)
-            //.language("bn")
-            .start()
+        ImagePicker.with(this)
+            .galleryOnly()
+            .cropSquare()
+            .compress(512)
+            .createIntent { intent ->
+                startForProfileImageResult.launch(intent)
+            }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    private val startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val resultCode = result.resultCode
+        val data = result.data
+        if (resultCode == Activity.RESULT_OK) {
+            val uri = data?.data!!
+            val imageUrl = uri.path!!
+            uploadImageDialog(imageUrl) { type ->
+                if (type == 1) {
+                    uploadFile(imageUrl)
+                }
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            context?.toast(ImagePicker.getError(data))
+        }
+    }
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
 
             val imageList = ImagePicker.getImages(data)
@@ -1027,7 +1050,7 @@ class OrderListFragment : Fragment() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
-    }
+    }*/
 
     private fun uploadImageDialog(imagePath: String, isShowOnly: Boolean = false, listener: ((type: Int) -> Unit)? = null) {
         val builder = MaterialAlertDialogBuilder(requireContext())

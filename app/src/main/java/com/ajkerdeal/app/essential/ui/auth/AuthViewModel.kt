@@ -48,6 +48,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     val resetMobile = MutableLiveData<String>("")
     val otpCode = MutableLiveData<String>("")
     val firebaseToken = MutableLiveData<String>("")
+    val appVersion = MutableLiveData<String>("")
     var deliveryUserId: Int = 0
 
     // Reset Password Form
@@ -187,7 +188,15 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
 
-            val requestBody = SignUpRequest(name.value?.trim(), userId1.value?.trim(), alterPhoneNumber.value?.trim(), bKashAccountNumber.value?.trim() , password1.value?.trim(), address.value, districtId.value ?: 0, thanaId.value ?: 0, postCode.value ?: 0, districtName.value, thanaName.value)
+            val requestBody = SignUpRequest(name.value?.trim(), userId1.value?.trim(),
+                alterPhoneNumber.value?.trim(), bKashAccountNumber.value?.trim() ,
+                password1.value?.trim(), address.value,
+                districtId.value ?: 0,
+                thanaId.value ?: 0,
+                postCode.value ?: 0,
+                districtName.value, thanaName.value,
+                appVersion.value
+            )
             val response = repository.signUpUser(requestBody)
             val response1 = repository.deliveryManRegistration(requestBody)
             withContext(Dispatchers.Main) {

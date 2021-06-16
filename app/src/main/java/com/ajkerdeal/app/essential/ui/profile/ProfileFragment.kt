@@ -1,9 +1,11 @@
 package com.ajkerdeal.app.essential.ui.profile
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,10 +24,9 @@ import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.esafirm.imagepicker.features.ImagePicker
-import com.esafirm.imagepicker.model.Image
+import com.github.dhaval2404.imagepicker.ImagePicker
+
 import com.google.gson.Gson
-import com.theartofdev.edmodo.cropper.CropImage
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.File
@@ -59,9 +60,8 @@ class ProfileFragment : Fragment() {
         }.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding!!.lifecycleOwner = viewLifecycleOwner
         viewModel.loadProfile().observe(viewLifecycleOwner, Observer { model ->
 
@@ -159,16 +159,35 @@ class ProfileFragment : Fragment() {
 
         binding!!.userPic.setOnClickListener {
             contentType = 0
-            ImagePicker.cameraOnly().start(this)
-            //dispatchTakePictureIntent()
+            ImagePicker.with(this)
+                .cameraOnly()
+                .cropSquare()
+                .compress(512)
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
         }
         binding!!.NIDPic.setOnClickListener {
             contentType = 1
-            ImagePicker.cameraOnly().start(this)
+            //ImagePicker.cameraOnly().start(this)
+            ImagePicker.with(this)
+                .cameraOnly()
+                .crop(1.5f,1f)
+                .compress(512)
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
         }
         binding!!.drivingPic.setOnClickListener {
             contentType = 2
-            ImagePicker.cameraOnly().start(this)
+            //ImagePicker.cameraOnly().start(this)
+            ImagePicker.with(this)
+                .cameraOnly()
+                .crop(1.5f,1f)
+                .compress(512)
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
         }
 
         binding!!.saveBtn.setOnClickListener {
@@ -284,14 +303,62 @@ class ProfileFragment : Fragment() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    private val startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val resultCode = result.resultCode
+            val data = result.data
+            if (resultCode == Activity.RESULT_OK) {
+                val uri = data?.data!!
+                when (contentType) {
+                    0 -> {
+                        profileUri = uri.path
+                        Glide.with(this)
+                            .load(uri)
+                            .apply(RequestOptions().circleCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(binding!!.userPic)
+
+
+                        updateProfile()
+                    }
+                    1 -> {
+                        nidUri = uri.path
+                        Glide.with(this)
+                            .load(uri)
+                            .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(binding!!.NIDPic)
+
+                        updateProfile()
+                    }
+                    2 -> {
+                        drivingUri = uri.path
+                        Glide.with(this)
+                            .load(uri)
+                            .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(binding!!.drivingPic)
+
+                        updateProfile()
+                    }
+                }
+
+
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                context?.toast(ImagePicker.getError(data))
+            }
+        }
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             val image: Image? = ImagePicker.getFirstImageOrNull(data)
             image?.path?.let {
                 Timber.d("ImageLog ImagePickerPath: $it")
-                /*MediaScannerConnection.scanFile(requireContext(), arrayOf(it), null) { path, uri ->
+                *//*MediaScannerConnection.scanFile(requireContext(), arrayOf(it), null) { path, uri ->
                     Timber.d("uri: $uri")
-                }*/
+                }*//*
                 val uri = FileProvider.getUriForFile(requireContext(), "com.ajkerdeal.app.essential.fileprovider", File(it))
                 Timber.d("ImageLog ImagePickerUri: $uri")
 
@@ -352,7 +419,7 @@ class ProfileFragment : Fragment() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
-    }
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_profile, menu)
