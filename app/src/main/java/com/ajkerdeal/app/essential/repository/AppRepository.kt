@@ -105,6 +105,13 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun updateStatusDT(requestBody: List<DTStatusUpdateModel>) = apiInterfaceADCORE.updateStatusDT(requestBody)
 
+    //Quick Order
     suspend fun loadAllDistrictsById(id: Int) = apiInterfaceADCORE.loadAllDistrictsById(id)
+
+    suspend fun checkIsQuickOrder(id: String) = apiInterfaceADCORE.checkIsQuickOrder(id)
+
+    suspend fun uploadQuickOrderInfoPhoto(imageUrl: RequestBody, fileName: RequestBody, file: MultipartBody.Part? = null) = apiInterfaceADCORE.uploadQuickOrderInfoPhoto(imageUrl, fileName, file)
+
+
 
 }

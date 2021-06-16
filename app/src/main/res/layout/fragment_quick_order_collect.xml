@@ -7,102 +7,162 @@
     android:layout_height="match_parent"
     tools:context=".ui.quick_order_scan.QuickOrderCollectFragment">
 
+    <TextView
+        android:id="@+id/scanResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="3dp"
+        android:text="DT-001"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <ImageView
         android:id="@+id/invoicePic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/cd"
         android:src="@drawable/ic_banner_place"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanResult"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/districtLayout"
         android:layout_margin="16dp"
         />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/districtLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="জেলা নির্বাচন করুন"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/invoicePic"
         >
-        <com.google.android.material.textfield.TextInputEditText
+
+        <EditText
             android:id="@+id/district"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="none|textNoSuggestions"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_round_corners"
             android:focusable="false"
-            android:cursorVisible="false"
-            android:textSize="14sp"
-            android:textColor="@color/black_80"
-            tools:text="Narayanganj"
+            android:hint="জেলা নির্বাচন করুন"
             android:importantForAutofill="no"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/black_80"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
             />
-    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/cd"
+            app:layout_constraintEnd_toEndOf="@id/district"
+            app:layout_constraintTop_toTopOf="@id/district"
+            app:layout_constraintBottom_toBottomOf="@id/district"
+            app:tint="@color/black_50"
+            app:srcCompat="@drawable/ic_arrow_drop_down"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/thanaLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="থানা নির্বাচন করুন"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/districtLayout"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/districtLayout"
         >
-        <com.google.android.material.textfield.TextInputEditText
+
+        <EditText
             android:id="@+id/thana"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="none|textNoSuggestions"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_round_corners"
             android:focusable="false"
-            android:cursorVisible="false"
-            android:textSize="14sp"
-            android:textColor="@color/black_80"
-            tools:text="Narayanganj Sadar"
+            android:hint="থানা নির্বাচন করুন"
             android:importantForAutofill="no"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/black_80"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
             />
-    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/cd"
+            app:layout_constraintEnd_toEndOf="@id/thana"
+            app:layout_constraintTop_toTopOf="@id/thana"
+            app:layout_constraintBottom_toBottomOf="@id/thana"
+            app:tint="@color/black_50"
+            app:srcCompat="@drawable/ic_arrow_drop_down"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/areaLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="এরিয়া নির্বাচন করুন"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/thanaLayout"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        >
-        <com.google.android.material.textfield.TextInputEditText
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thanaLayout">
+
+        <EditText
             android:id="@+id/area"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="none|textNoSuggestions"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_round_corners"
             android:focusable="false"
-            android:cursorVisible="false"
-            android:textSize="14sp"
-            android:textColor="@color/black_80"
-            tools:text="Narayanganj Sadar"
+            android:hint="এরিয়া নির্বাচন করুন"
             android:importantForAutofill="no"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/black_80"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent"
             />
-    </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@string/cd"
+            app:layout_constraintEnd_toEndOf="@id/area"
+            app:layout_constraintTop_toTopOf="@id/area"
+            app:layout_constraintBottom_toBottomOf="@id/area"
+            app:tint="@color/black_50"
+            app:srcCompat="@drawable/ic_arrow_drop_down"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/emptyView"

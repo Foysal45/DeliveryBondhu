@@ -16,6 +16,8 @@ import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.http.*
 
@@ -50,5 +52,20 @@ interface ApiInterfaceADCORE {
 
     @PUT("/api/Bondhu/UpdateBondhuOrder")
     suspend fun updateStatusDT(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
+    //Quick Order
+    @GET("api/QuickOrder/CheckIsQuickOrder/{orderId}")
+    suspend fun checkIsQuickOrder(@Path("orderId") orderId: String): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
+    @PUT("/api/QuickOrder/UpdateOrderInfoForApp")
+    suspend fun updateQuickOrder(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
+    @Multipart
+    @POST("Image/ImageUploadForFile")
+    suspend fun uploadQuickOrderInfoPhoto(
+        @Part("ImageUrl") ImageUrl: RequestBody,
+        @Part("FileName") FileName: RequestBody,
+        @Part file: MultipartBody.Part? = null
+    ) : NetworkResponse<Boolean, ErrorResponse>
 
 }
