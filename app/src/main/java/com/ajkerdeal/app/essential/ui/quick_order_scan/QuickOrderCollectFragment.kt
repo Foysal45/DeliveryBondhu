@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
 import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
@@ -29,12 +30,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+import java.util.*
 
 class QuickOrderCollectFragment : Fragment() {
 
     private var binding: FragmentQuickOrderCollectBinding? = null
     private val viewModel: QuickOrderViewModel by inject()
 
+    private var scannedOrderID = ""
+    private var quickOrderRequestID = 0
     private var districtId = 0
     private var thanaId = 0
     private var districtName = ""
@@ -56,12 +60,7 @@ class QuickOrderCollectFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        init()
         initListener()
-    }
-
-    private fun init() {
-
     }
 
     private fun initListener() {
@@ -77,7 +76,7 @@ class QuickOrderCollectFragment : Fragment() {
         }
 
         binding?.updateBtn?.setOnClickListener {
-            placeOrder()
+            startPlaceOrderProcess()
         }
 
         binding!!.district.setOnClickListener {
@@ -152,7 +151,7 @@ class QuickOrderCollectFragment : Fragment() {
 
     }
 
-    private fun placeOrder() {
+    private fun startPlaceOrderProcess() {
         if (!validation()){
             return
         }
@@ -166,11 +165,38 @@ class QuickOrderCollectFragment : Fragment() {
                 viewModel.uploadProfilePhoto(orderId, requireContext(), quickOrderInfoImgUrl ?: "").observe(viewLifecycleOwner, Observer {
                     if (it){
                         context?.toast("image updated")
+                        placeOrder()
                     }
                 })
             }else{
                 context?.toast("Invalid Order Id")
             }
+        })
+    }
+
+    private fun placeOrder(){
+        val requestBody = QuickOrderRequest(
+            scannedOrderID,
+            quickOrderRequestID,
+            1,
+            44,
+            14,
+            10026,
+            0,
+            0,
+            0,
+            18,
+            5,
+            "3 kg - 4 kg",
+            "Sador Express 48 hours ৩",
+            "alltoall",
+            125.0,
+            5,
+            "https://static.ajkerdeal.com/images/dt/orderrequest/${scannedOrderID.lowercase(Locale.US)}.jpg"
+        )
+
+        viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {
+            context?.toast("Order SuccessFull")
         })
     }
 
@@ -209,6 +235,8 @@ class QuickOrderCollectFragment : Fragment() {
             val scannedData = result.data?.getStringExtra("data") ?: return@registerForActivityResult
             if (isCheckPermission()){
                 pickUpImage()
+                scannedOrderID = scannedData
+                quickOrderRequestID = scannedData.replace("DT-", "").toInt()
                 binding?.scanResult?.text = scannedData
             }
 

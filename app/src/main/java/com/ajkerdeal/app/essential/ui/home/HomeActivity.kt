@@ -180,7 +180,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     }
                     R.id.nav_bar_code_scanner -> {
                         navController.navigate(R.id.nav_bar_code_scanner)
-                        //startActivity(Intent(this@HomeActivity, BarCodeScannerActivity::class.java))
+                    }
+                    R.id.nav_quick_order_lists -> {
+                        navController.navigate(R.id.nav_quick_order_lists)
                     }
                     R.id.nav_policy -> {
 

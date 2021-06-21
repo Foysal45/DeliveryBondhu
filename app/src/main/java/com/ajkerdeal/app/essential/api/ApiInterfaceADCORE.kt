@@ -2,22 +2,22 @@ package com.ajkerdeal.app.essential.api
 
 import com.ajkerdeal.app.essential.api.models.ErrorResponse
 import com.ajkerdeal.app.essential.api.models.GenericResponse
-import com.ajkerdeal.app.essential.api.models.ResponseHeader
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
-import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
+import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
+import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
+import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderListRequesst
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.http.*
 
@@ -58,6 +58,9 @@ interface ApiInterfaceADCORE {
     suspend fun checkIsQuickOrder(@Path("orderId") orderId: String): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
     @PUT("/api/QuickOrder/UpdateOrderInfoForApp")
-    suspend fun updateQuickOrder(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+    suspend fun updateQuickOrder(@Body requestBody: QuickOrderRequest): NetworkResponse<GenericResponse<QuickOrderResponse>, ErrorResponse>
+
+    @POST("api/Bondhu/GetQuickOrders")
+    suspend fun getQuickOrders(@Body requestBody: QuickOrderListRequesst): NetworkResponse<GenericResponse<List<QuickOrderList>>, ErrorResponse>
 
 }

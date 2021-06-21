@@ -23,6 +23,10 @@
             android:icon="@drawable/ic_package"
             android:title="কুইক অর্ডার" />
         <item
+            android:id="@+id/nav_quick_order_lists"
+            android:icon="@drawable/ic_package"
+            android:title="কুইক অর্ডার লিস্ট" />
+        <item
             android:id="@+id/nav_policy"
             android:icon="@drawable/ic_policy"
             android:title="প্রাইভেসি পলিসি" />

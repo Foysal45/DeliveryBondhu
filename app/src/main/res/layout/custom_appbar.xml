@@ -163,19 +163,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/chipsGroup"
                 app:layout_constraintBottom_toTopOf="@+id/countLayout"
+                app:layout_constraintTop_toBottomOf="@+id/chipsGroup"
                 app:tabTextAppearance="@style/TabLayoutTextStyle"
                 tools:visibility="visible">
+
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ডেলিভারি টাইগার"
-                    />
+                    android:text="ডেলিভারি টাইগার" />
+
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="আজকেরডিল"/>
+                    android:text="আজকেরডিল" />
             </com.google.android.material.tabs.TabLayout>
 
             <View

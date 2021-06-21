@@ -18,6 +18,8 @@ import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationR
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
+import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderListRequesst
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
@@ -109,5 +111,9 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun loadAllDistrictsById(id: Int) = apiInterfaceADCORE.loadAllDistrictsById(id)
 
     suspend fun checkIsQuickOrder(id: String) = apiInterfaceADCORE.checkIsQuickOrder(id)
+
+    suspend fun updateQuickOrder(requestBody: QuickOrderRequest) = apiInterfaceADCORE.updateQuickOrder(requestBody)
+
+    suspend fun getQuickOrders(requestBody: QuickOrderListRequesst) = apiInterfaceADCORE.getQuickOrders(requestBody)
 
 }
