@@ -3,7 +3,7 @@ package com.ajkerdeal.app.essential.api.models.quick_order
 
 import com.google.gson.annotations.SerializedName
 
-data class QuickOrderRequest(
+data class QuickOrderUpdateRequest(
     @SerializedName("courierOrdersId")
     var courierOrdersId: String? = "",
     @SerializedName("orderRequestId")

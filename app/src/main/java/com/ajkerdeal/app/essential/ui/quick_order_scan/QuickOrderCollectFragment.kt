@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
 import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
@@ -208,7 +208,7 @@ class QuickOrderCollectFragment : Fragment() {
     }
 
     private fun placeOrder(){
-        val requestBody = QuickOrderRequest(
+        val requestBody = QuickOrderUpdateRequest(
             scannedOrderID,
             quickOrderRequestID,
             1,

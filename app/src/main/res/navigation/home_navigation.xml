@@ -100,9 +100,9 @@
 
     <fragment
         android:id="@+id/nav_quick_order_lists"
-        android:name="com.ajkerdeal.app.essential.ui.quick_order_lists.QuickOrderListsShowFragment"
+        android:name="com.ajkerdeal.app.essential.ui.quick_order_lists.QuickOrderListFragment"
         android:label="কুইক অর্ডার"
-        tools:layout="@layout/fragment_quick_order_lists_show"
+        tools:layout="@layout/fragment_quick_order_list"
         />
 
 </navigation>
