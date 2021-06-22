@@ -1,5 +1,6 @@
 package com.ajkerdeal.app.essential.ui.quick_order_lists
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderListBinding
 import com.ajkerdeal.app.essential.ui.quick_order_scan.QuickOrderViewModel
 import com.ajkerdeal.app.essential.utils.*
@@ -23,6 +25,7 @@ class QuickOrderListFragment : Fragment() {
     private val viewModel: QuickOrderViewModel by inject()
 
     private var selectedOrderStatus: Int = 0
+    private var dialog: ProgressDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentQuickOrderListBinding.inflate(inflater, container, false).also {
@@ -34,8 +37,8 @@ class QuickOrderListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        initClickLister()
         fetchFilterData()
+        initClickLister()
     }
 
     private fun initView(){
@@ -64,12 +67,53 @@ class QuickOrderListFragment : Fragment() {
     }
 
     private fun initClickLister(){
+
+        dataAdapter.onActionClicked = { model, actionModel, orderModel ->
+
+            val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
+            val requestModel = QuickOrderStatusUpdateRequest(
+                orderModel?.orderRequestId ?: 0,
+                SessionManager.dtUserId,
+                actionModel.statusUpdate
+            )
+            requestBody.add(requestModel)
+
+            updateOrderStatus(requestBody)
+
+        }
+
         binding?.swipeRefresh?.setOnRefreshListener {
             binding?.swipeRefresh?.isRefreshing = false
             if (SessionManager.isOffline) return@setOnRefreshListener
             Timber.d("loadOrderOrSearch called from swipe refresh")
             fetchOrderData(selectedOrderStatus)
         }
+
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                is ViewState.ShowMessage -> {
+                    requireContext().toast(state.message)
+                }
+                is ViewState.KeyboardState -> {
+                    hideKeyboard()
+                }
+                is ViewState.ProgressState -> {
+                    if (state.type == 1) {
+                        if (state.isShow) {
+                            if (dialog == null) {
+                                dialog = progressDialog()
+                            }
+                            dialog?.show()
+                        } else {
+                            dialog?.dismiss()
+                        }
+                    } else if (state.type == 0) {
+                        binding?.progressBar?.isVisible = state.isShow
+                    }
+                }
+
+            }
+        })
 
     }
 
@@ -103,6 +147,17 @@ class QuickOrderListFragment : Fragment() {
         } else {
             viewModel.getQuickOrders(QuickOrderRequest(SessionManager.dtUserId, orderStatus))
         }
+    }
+
+    private fun updateOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) {
+
+        viewModel.updateQuickOrderStatus(requestBody).observe(viewLifecycleOwner, Observer { flag ->
+            if (flag) {
+                context?.toast("Order updated")
+                fetchOrderData(selectedOrderStatus)
+            }
+        })
+
     }
 
     override fun onPause() {

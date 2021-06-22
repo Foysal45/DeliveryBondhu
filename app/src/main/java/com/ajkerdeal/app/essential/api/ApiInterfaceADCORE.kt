@@ -18,6 +18,7 @@ import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.Delive
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatus
+import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -71,5 +72,8 @@ interface ApiInterfaceADCORE {
 
     @GET("api/Bondhu/GetQuickOrderStatus")
     suspend fun fetchQuickOrderStatus(): NetworkResponse<GenericResponse<List<QuickOrderStatus>>, ErrorResponse>
+
+    @PUT("api/Bondhu/UpdateOrderRequests")
+    suspend fun updateQuickOrderStatus(@Body requestBody: List<QuickOrderStatusUpdateRequest>): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
 }

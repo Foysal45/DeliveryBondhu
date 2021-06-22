@@ -11,6 +11,7 @@ import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_requ
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.OrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.databinding.ItemViewQuickOrderParentBinding
+
 import timber.log.Timber
 
 class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

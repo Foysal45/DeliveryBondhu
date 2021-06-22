@@ -21,6 +21,7 @@ import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
@@ -29,6 +30,7 @@ import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 
 class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA, private val apiInterfaceADM: ApiInterfaceADM, private val apiInterfaceADCORE: ApiInterfaceADCORE) {
 
@@ -120,5 +122,7 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun getDeliveryCharge(requestBody: DeliveryChargeRequest) = apiInterfaceADCORE.getDeliveryCharge(requestBody)
 
     suspend fun fetchQuickOrderStatus() = apiInterfaceADCORE.fetchQuickOrderStatus()
+
+    suspend fun updateQuickOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) = apiInterfaceADCORE.updateQuickOrderStatus(requestBody)
 
 }

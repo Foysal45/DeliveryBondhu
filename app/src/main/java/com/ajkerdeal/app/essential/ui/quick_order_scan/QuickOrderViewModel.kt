@@ -15,6 +15,7 @@ import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.Delive
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatus
+import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive
@@ -41,38 +42,6 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
             val response = repository.fetchQuickOrderStatus()
-            withContext(Dispatchers.Main) {
-                viewState.value = ViewState.ProgressState(false)
-                when (response) {
-                    is NetworkResponse.Success -> {
-                        responseData.value = response.body.model
-                    }
-                    is NetworkResponse.ServerError -> {
-                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
-                        viewState.value = ViewState.ShowMessage(message)
-                    }
-                    is NetworkResponse.NetworkError -> {
-                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
-                        viewState.value = ViewState.ShowMessage(message)
-                    }
-                    is NetworkResponse.UnknownError -> {
-                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                        viewState.value = ViewState.ShowMessage(message)
-                        Timber.d(response.error)
-                    }
-                }.exhaustive
-            }
-        }
-        return responseData
-
-    }
-
-    fun updateQuickOrder(requestBody: QuickOrderUpdateRequest): LiveData<QuickOrderResponse> {
-
-        val responseData: MutableLiveData<QuickOrderResponse> = MutableLiveData()
-        viewState.value = ViewState.ProgressState(true)
-        viewModelScope.launch(Dispatchers.IO){
-            val response = repository.updateQuickOrder(requestBody)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
@@ -126,6 +95,67 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
                 }.exhaustive
             }
         }
+    }
+
+    fun updateQuickOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>): LiveData<Boolean> {
+        val responseData: MutableLiveData<Boolean> = MutableLiveData()
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO){
+            val response = repository.updateQuickOrderStatus(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        responseData.value = response.body.model > 0
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+        }
+        return responseData
+    }
+
+    fun updateQuickOrder(requestBody: QuickOrderUpdateRequest): LiveData<QuickOrderResponse> {
+
+        val responseData: MutableLiveData<QuickOrderResponse> = MutableLiveData()
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO){
+            val response = repository.updateQuickOrder(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        responseData.value = response.body.model
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+            }
+        }
+        return responseData
     }
 
     fun loadAllDistrictsById(id: Int): LiveData<List<DistrictThanaAreaDataModel>> {
