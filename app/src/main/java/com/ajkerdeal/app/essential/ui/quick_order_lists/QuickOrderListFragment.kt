@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
@@ -70,16 +72,30 @@ class QuickOrderListFragment : Fragment() {
 
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
-            val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
-            val requestModel = QuickOrderStatusUpdateRequest(
-                orderModel?.orderRequestId ?: 0,
-                SessionManager.dtUserId,
-                actionModel.statusUpdate
-            )
-            requestBody.add(requestModel)
-
-            updateOrderStatus(requestBody)
-
+            when (actionModel.statusUpdate) {
+                // Collect
+                44 -> {
+                    val bundle = bundleOf(
+                        "orderRequestId" to (orderModel?.orderRequestId ?: 0),
+                        "collectionTimeSlotId" to (orderModel?.collectionTimeSlotId ?: 0),
+                        "courierUserId" to (model.courierUserId),
+                        "collectionDistrictId" to model.districtsViewModel.districtId,
+                        "collectionThanaId" to model.districtsViewModel.thanaId,
+                        "status" to actionModel.statusUpdate
+                    )
+                    findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
+                }
+                else -> {
+                    val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
+                    val requestModel = QuickOrderStatusUpdateRequest(
+                        orderModel?.orderRequestId ?: 0,
+                        SessionManager.dtUserId,
+                        actionModel.statusUpdate
+                    )
+                    requestBody.add(requestModel)
+                    updateOrderStatus(requestBody)
+                }
+            }
         }
 
         binding?.swipeRefresh?.setOnRefreshListener {

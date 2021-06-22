@@ -92,17 +92,23 @@
         />
 
     <fragment
+        android:id="@+id/nav_quick_order_lists"
+        android:name="com.ajkerdeal.app.essential.ui.quick_order_lists.QuickOrderListFragment"
+        android:label="কুইক অর্ডার"
+        tools:layout="@layout/fragment_quick_order_list"
+        >
+
+        <action android:id="@+id/nav_quickOrderList_orderCollection"
+            app:destination="@id/nav_bar_code_scanner"/>
+
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_bar_code_scanner"
         android:name="com.ajkerdeal.app.essential.ui.quick_order_scan.QuickOrderCollectFragment"
         android:label="কুইক অর্ডার"
         tools:layout="@layout/fragment_quick_order_collect"
         />
 
-    <fragment
-        android:id="@+id/nav_quick_order_lists"
-        android:name="com.ajkerdeal.app.essential.ui.quick_order_lists.QuickOrderListFragment"
-        android:label="কুইক অর্ডার"
-        tools:layout="@layout/fragment_quick_order_list"
-        />
 
 </navigation>
