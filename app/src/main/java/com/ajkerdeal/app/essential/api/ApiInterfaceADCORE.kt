@@ -13,11 +13,14 @@ import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
+import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderListRequesst
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
 
@@ -62,5 +65,9 @@ interface ApiInterfaceADCORE {
 
     @POST("api/Bondhu/GetQuickOrders")
     suspend fun getQuickOrders(@Body requestBody: QuickOrderListRequesst): NetworkResponse<GenericResponse<List<QuickOrderList>>, ErrorResponse>
+
+    @POST("api/Fetch/DeliveryChargeDetailsAreaWise")
+    suspend fun getDeliveryCharge(@Body requestBody: DeliveryChargeRequest): NetworkResponse<GenericResponse<List<DeliveryChargeResponse>>, ErrorResponse>
+
 
 }

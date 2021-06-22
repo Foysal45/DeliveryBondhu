@@ -12,16 +12,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
 import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
+import com.ajkerdeal.app.essential.utils.CustomSpinnerAdapter
 import com.ajkerdeal.app.essential.utils.alert
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
@@ -45,6 +49,16 @@ class QuickOrderCollectFragment : Fragment() {
     private var thanaName = ""
     private var quickOrderId = ""
     private var quickOrderInfoImgUrl: String? = ""
+    private var weight: String = ""
+    private var isWeightSelected: Boolean = false
+    private var deliveryType: String = ""
+    private var merchantDistrict: Int = 0
+    private var serviceType: String = "alltoall"
+    private var payShipmentCharge: Double = 0.0
+    private var deliveryCharge: Double = 0.0
+    private var extraDeliveryCharge: Double = 0.0
+
+    private lateinit var deliveryTypeAdapter: DeliveryTypeAdapter
 
     companion object {
         fun newInstance(): QuickOrderCollectFragment = QuickOrderCollectFragment().apply {}
@@ -60,10 +74,27 @@ class QuickOrderCollectFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        init()
         initListener()
     }
 
+    private fun init(){
+        deliveryTypeAdapter = DeliveryTypeAdapter()
+        binding?.recyclerView?.let { view ->
+            with(view) {
+                setHasFixedSize(false)
+                isNestedScrollingEnabled = false
+                layoutManager = GridLayoutManager(context, 2, androidx.recyclerview.widget.RecyclerView.VERTICAL, false)
+                layoutAnimation = null
+                adapter = deliveryTypeAdapter
+            }
+        }
+
+    }
+
     private fun initListener() {
+
+        getDeliveryCharge(14, 10026, 0, serviceType)
 
         binding?.scanBtn?.setOnClickListener {
             if (isCheckPermission()) {
@@ -98,6 +129,7 @@ class QuickOrderCollectFragment : Fragment() {
                     }
                 }
                 binding!!.district.isEnabled = true
+                getDeliveryCharge(districtId, thanaId, 0, serviceType)
             })
         }
 
@@ -124,6 +156,7 @@ class QuickOrderCollectFragment : Fragment() {
                         }
                     }
                     binding!!.thana.isEnabled = true
+                    getDeliveryCharge(districtId, thanaId, 0, serviceType)
                 })
             }
         }
@@ -199,6 +232,71 @@ class QuickOrderCollectFragment : Fragment() {
             context?.toast("Order SuccessFull")
         })
     }
+
+    private fun getDeliveryCharge(districtId: Int, thanaId: Int, areaId: Int, serviceType: String) {
+
+        viewModel.getDeliveryCharge(DeliveryChargeRequest(districtId, thanaId, areaId, serviceType)).observe(viewLifecycleOwner, Observer { list ->
+
+            if (serviceType == "citytocity" && list.isEmpty()) {
+                this.serviceType = "alltoall"
+                getDeliveryCharge(districtId, thanaId, areaId, this.serviceType)
+                return@Observer
+            }
+
+            val weightList: MutableList<String> = mutableListOf()
+            weightList.add("ওজন (কেজি)")
+            for (model1 in list) {
+                weightList.add(model1.weight)
+            }
+
+            val weightAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_view_spinner_item, weightList)
+            binding?.spinnerWeightSelection?.adapter = weightAdapter
+            binding?.spinnerWeightSelection?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    if (p2 != 0) {
+                        val model2 = list[p2 - 1]
+                        weight = model2.weight
+                        isWeightSelected = true
+                        deliveryType = ""
+
+                        var filterDeliveryTypeList = model2.weightRangeWiseData
+                        if (merchantDistrict != 14) {
+                            filterDeliveryTypeList = model2.weightRangeWiseData.filterNot { it.type == "express" }
+                        }
+                        deliveryTypeAdapter.initLoad(filterDeliveryTypeList)
+                        deliveryTypeAdapter.selectPreSelection()
+                    } else {
+                        isWeightSelected = false
+                        deliveryType = ""
+                        if (list.isNotEmpty()) {
+                            val model2 = list.first()
+                            var filterDeliveryTypeList = model2.weightRangeWiseData
+                            if (merchantDistrict != 14) {
+                                filterDeliveryTypeList = model2.weightRangeWiseData.filterNot { it.type == "express" }
+                            }
+                            deliveryTypeAdapter.initLoad(filterDeliveryTypeList)
+                            //Reset change
+                            payShipmentCharge = 0.0
+                            deliveryCharge = 0.0
+                            extraDeliveryCharge = 0.0
+                            //calculateTotalPrice()
+                            // select pre selected
+                          /*  if (selectedServiceType != 0) {
+                                deliveryTypeAdapter.selectByDeliveryRangeId(selectedServiceType)
+                            } else {
+                                deliveryTypeAdapter.selectPreSelection()
+                            }*/
+                        } else {
+                            deliveryTypeAdapter.clearList()
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+
 
     private fun validation(): Boolean {
          quickOrderId = binding?.scanResult?.text.toString()

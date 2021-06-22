@@ -8,8 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
+import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderListRequesst
+import com.ajkerdeal.app.essential.api.models.quick_order.service_selection.ServiceInfoData
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive
@@ -22,6 +25,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import timber.log.Timber
 import java.io.File
 
@@ -190,6 +196,38 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }
+            }
+        }
+        return responseData
+    }
+
+
+    fun getDeliveryCharge(requestBody: DeliveryChargeRequest): LiveData<List<DeliveryChargeResponse>> {
+
+        val responseData: MutableLiveData<List<DeliveryChargeResponse>> = MutableLiveData()
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO){
+            val response = repository.getDeliveryCharge(requestBody)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        responseData.value = response.body.model
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
             }
         }
         return responseData
