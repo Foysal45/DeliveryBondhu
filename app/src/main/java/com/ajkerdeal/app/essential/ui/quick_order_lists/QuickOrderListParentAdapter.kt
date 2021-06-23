@@ -25,6 +25,7 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
     var onLocationUpdate: ((model: QuickOrderList) -> Unit)? = null
     var onPrintClicked: ((model: QuickOrderList) -> Unit)? = null
     var onOrderListExpand: ((model: QuickOrderList, state: Boolean) -> Unit)? = null
+    var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
 
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
@@ -114,10 +115,12 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         init {
 
             binding.parent.setOnClickListener {
-                val state = dataList[absoluteAdapterPosition].state
-                dataList[absoluteAdapterPosition].state = !state
-                notifyItemChanged(absoluteAdapterPosition)
-                onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
+                if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
+                    val state = dataList[absoluteAdapterPosition].state
+                    dataList[absoluteAdapterPosition].state = !state
+                    notifyItemChanged(absoluteAdapterPosition)
+                    onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
+                }
             }
 
             binding.showLocation.setOnClickListener {
@@ -130,6 +133,12 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
 
             binding.printBtn.setOnClickListener {
                 onPrintClicked?.invoke(dataList[absoluteAdapterPosition])
+            }
+
+            binding.phone.setOnClickListener {
+                if (absoluteAdapterPosition != RecyclerView.NO_POSITION) {
+                    onCall?.invoke(dataList[absoluteAdapterPosition].mobile, dataList[absoluteAdapterPosition].alterMobile)
+                }
             }
 
 

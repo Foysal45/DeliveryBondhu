@@ -42,8 +42,10 @@ class BarcodeScanningActivity : AppCompatActivity() {
             )
         }
 
+        val pattern: String = intent?.getStringExtra("pattern") ?: ""
+
         /**set analyzer*/
-        analyzer = ImageAnalyzer { barCodeData ->
+        analyzer = ImageAnalyzer(pattern) { barCodeData ->
             Intent().apply {
                 putExtra("data", barCodeData)
             }.also {

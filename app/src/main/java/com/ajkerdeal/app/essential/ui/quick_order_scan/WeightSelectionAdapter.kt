@@ -2,7 +2,9 @@ package com.ajkerdeal.app.essential.ui.quick_order_scan
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
 import com.ajkerdeal.app.essential.databinding.ItemViewWeightButtonBinding
 import timber.log.Timber
@@ -26,7 +28,18 @@ class WeightSelectionAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val binding = holder.binding
 
             binding.timeSlot.text = model.weight
-
+            val color = if (selectedItem == position) {
+                ContextCompat.getColor(binding.timeSlot.context, R.color.white)
+            } else {
+                ContextCompat.getColor(binding.timeSlot.context, R.color.black_90)
+            }
+            val drawable = if (selectedItem == position) {
+                ContextCompat.getDrawable(binding.timeSlot.context, R.drawable.bg_weight_selected)
+            } else {
+                ContextCompat.getDrawable(binding.timeSlot.context, R.drawable.bg_weight_unselected)
+            }
+            binding.timeSlot.background = drawable
+            binding.timeSlot.setTextColor(color)
         }
     }
 

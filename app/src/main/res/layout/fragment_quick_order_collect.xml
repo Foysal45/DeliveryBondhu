@@ -7,300 +7,312 @@
     android:layout_height="match_parent"
     tools:context=".ui.quick_order_scan.QuickOrderCollectFragment">
 
-    <TextView
-        android:id="@+id/scanResult"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="3dp"
-        tools:text="DT-001"
-        android:gravity="center"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <ImageView
-        android:id="@+id/invoicePic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/cd"
-        android:src="@drawable/ic_banner_place"
-        app:layout_constraintTop_toBottomOf="@+id/scanResult"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/districtLayout"
-        android:layout_margin="16dp"
-        />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/districtLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/invoicePic"
-        >
-
-        <EditText
-            android:id="@+id/district"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_round_corners"
-            android:focusable="false"
-            android:hint="জেলা নির্বাচন করুন"
-            android:importantForAutofill="no"
-            android:inputType="phone"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:textColor="@color/black_80"
-            android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:contentDescription="@string/cd"
-            app:layout_constraintEnd_toEndOf="@id/district"
-            app:layout_constraintTop_toTopOf="@id/district"
-            app:layout_constraintBottom_toBottomOf="@id/district"
-            app:tint="@color/black_50"
-            app:srcCompat="@drawable/ic_arrow_drop_down"
-            />
-
-        <ProgressBar
-            android:id="@+id/progressBar1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@id/district"
-            app:layout_constraintTop_toTopOf="@id/district"
-            app:layout_constraintBottom_toBottomOf="@id/district"
-            android:layout_marginEnd="16dp"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/thanaLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/districtLayout"
-        >
-
-        <EditText
-            android:id="@+id/thana"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_round_corners"
-            android:focusable="false"
-            android:hint="থানা নির্বাচন করুন"
-            android:importantForAutofill="no"
-            android:inputType="phone"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:textColor="@color/black_80"
-            android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:contentDescription="@string/cd"
-            app:layout_constraintEnd_toEndOf="@id/thana"
-            app:layout_constraintTop_toTopOf="@id/thana"
-            app:layout_constraintBottom_toBottomOf="@id/thana"
-            app:tint="@color/black_50"
-            app:srcCompat="@drawable/ic_arrow_drop_down"
-            />
-
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@id/thana"
-            app:layout_constraintTop_toTopOf="@id/thana"
-            app:layout_constraintBottom_toBottomOf="@id/thana"
-            android:layout_marginEnd="16dp"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/areaLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/thanaLayout"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <EditText
-            android:id="@+id/area"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_round_corners"
-            android:focusable="false"
-            android:hint="এরিয়া নির্বাচন করুন"
-            android:importantForAutofill="no"
-            android:inputType="phone"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:textColor="@color/black_80"
-            android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:contentDescription="@string/cd"
-            app:layout_constraintEnd_toEndOf="@id/area"
-            app:layout_constraintTop_toTopOf="@id/area"
-            app:layout_constraintBottom_toBottomOf="@id/area"
-            app:tint="@color/black_50"
-            app:srcCompat="@drawable/ic_arrow_drop_down"
-            />
-
-        <ProgressBar
-            android:id="@+id/progressBar3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@id/area"
-            app:layout_constraintTop_toTopOf="@id/area"
-            app:layout_constraintBottom_toBottomOf="@id/area"
-            android:layout_marginEnd="16dp"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/weightSelectionBtnLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/areaLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewWeight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-
-            tools:itemCount="3"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/item_view_weight_button"
-            tools:orientation="vertical"
-            tools:spanCount="3"
-            tools:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/weightSelectionLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weightSelectionBtnLayout">
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/spinner_weight_selection"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_round_corners"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:overlapAnchor="false"
-            android:spinnerMode="dropdown"
-            android:theme="@style/custom_spinner_style"
-            app:layout_constraintTop_toTopOf="parent"
-            android:entries="@array/spinner_array_collection_location" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:contentDescription="@string/cd"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/spinner_weight_selection"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/black_50"
-            app:srcCompat="@drawable/ic_arrow_drop_down" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:clipToPadding="false"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:overScrollMode="never"
+        >
 
-        tools:itemCount="3"
-        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/item_view_delivery_type"
-        tools:orientation="vertical"
-        tools:spanCount="2"
-        tools:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/weightSelectionLayout"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
-    <TextView
-        android:id="@+id/emptyView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No parcel added yet"
-        android:textColor="@color/colorPrimary"
-        android:textSize="14sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/scanResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="3dp"
+                tools:text="DT-001"
+                android:gravity="center"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <ImageView
+                android:id="@+id/invoicePic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cd"
+                android:src="@drawable/ic_banner_place"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toBottomOf="@+id/scanResult"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/districtLayout"
+                android:layout_margin="16dp"
+                />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/districtLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/invoicePic"
+                >
+
+                <EditText
+                    android:id="@+id/district"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_round_corners"
+                    android:focusable="false"
+                    android:hint="জেলা নির্বাচন করুন"
+                    android:importantForAutofill="no"
+                    android:inputType="phone"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/black_80"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="@string/cd"
+                    app:layout_constraintEnd_toEndOf="@id/district"
+                    app:layout_constraintTop_toTopOf="@id/district"
+                    app:layout_constraintBottom_toBottomOf="@id/district"
+                    app:tint="@color/black_50"
+                    app:srcCompat="@drawable/ic_arrow_drop_down"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progressBar1"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@id/district"
+                    app:layout_constraintTop_toTopOf="@id/district"
+                    app:layout_constraintBottom_toBottomOf="@id/district"
+                    android:layout_marginEnd="16dp"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/thanaLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/districtLayout"
+                >
+
+                <EditText
+                    android:id="@+id/thana"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_round_corners"
+                    android:focusable="false"
+                    android:hint="থানা নির্বাচন করুন"
+                    android:importantForAutofill="no"
+                    android:inputType="phone"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/black_80"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="@string/cd"
+                    app:layout_constraintEnd_toEndOf="@id/thana"
+                    app:layout_constraintTop_toTopOf="@id/thana"
+                    app:layout_constraintBottom_toBottomOf="@id/thana"
+                    app:tint="@color/black_50"
+                    app:srcCompat="@drawable/ic_arrow_drop_down"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progressBar2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@id/thana"
+                    app:layout_constraintTop_toTopOf="@id/thana"
+                    app:layout_constraintBottom_toBottomOf="@id/thana"
+                    android:layout_marginEnd="16dp"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/areaLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/thanaLayout"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <EditText
+                    android:id="@+id/area"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_round_corners"
+                    android:focusable="false"
+                    android:hint="এরিয়া নির্বাচন করুন"
+                    android:importantForAutofill="no"
+                    android:inputType="phone"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/black_80"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="@string/cd"
+                    app:layout_constraintEnd_toEndOf="@id/area"
+                    app:layout_constraintTop_toTopOf="@id/area"
+                    app:layout_constraintBottom_toBottomOf="@id/area"
+                    app:tint="@color/black_50"
+                    app:srcCompat="@drawable/ic_arrow_drop_down"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progressBar3"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@id/area"
+                    app:layout_constraintTop_toTopOf="@id/area"
+                    app:layout_constraintBottom_toBottomOf="@id/area"
+                    android:layout_marginEnd="16dp"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/weightSelectionBtnLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/areaLayout">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+
+                    tools:itemCount="6"
+                    tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    tools:listitem="@layout/item_view_weight_button"
+                    tools:orientation="vertical"
+                    tools:spanCount="3"
+                    tools:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/weightSelectionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weightSelectionBtnLayout"
+                android:visibility="gone"
+                tools:visibility="visible"
+                >
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_weight_selection"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_round_corners"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:overlapAnchor="false"
+                    android:spinnerMode="dropdown"
+                    android:theme="@style/custom_spinner_style"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:entries="@array/spinner_array_collection_location" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="@string/cd"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/spinner_weight_selection"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/black_50"
+                    app:srcCompat="@drawable/ic_arrow_drop_down" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+
+                tools:itemCount="3"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/item_view_delivery_type"
+                tools:orientation="vertical"
+                tools:spanCount="2"
+                tools:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/weightSelectionLayout"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/updateBtn"
@@ -340,5 +352,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/updateBtn" />
 
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No parcel added yet"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:indeterminate="true"
+        android:progressTint="@color/colorPrimary"
+        android:theme="@style/ProgressBarStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

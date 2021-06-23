@@ -8,7 +8,7 @@ import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
-class ImageAnalyzer(var listener: ((data: String) -> Unit)) : ImageAnalysis.Analyzer {
+class ImageAnalyzer(private val pattern: String, var listener: ((data: String) -> Unit)) : ImageAnalysis.Analyzer {
 
     override fun analyze(images: ImageProxy) {
         scanBarCode(images)
@@ -35,7 +35,14 @@ class ImageAnalyzer(var listener: ((data: String) -> Unit)) : ImageAnalysis.Anal
         for (barcodes in barcode) {
             when (barcodes.valueType) {
                 Barcode.TYPE_TEXT -> {
-                    listener.invoke(barcodes.rawValue ?: "")
+                    val value = barcodes.rawValue ?: ""
+                    if (pattern.isNotEmpty()) {
+                        if (value.matches(pattern.toRegex())) {
+                            listener.invoke(value)
+                        }
+                    } else {
+                        listener.invoke(value)
+                    }
                 }
             }
         }

@@ -1,6 +1,9 @@
 package com.ajkerdeal.app.essential.ui.quick_order_lists
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -98,6 +101,28 @@ class QuickOrderListFragment : Fragment() {
             }
         }
 
+        dataAdapter.onCall = { number, altNumber ->
+            if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("কোন নাম্বার এ কল করতে চান")
+                val numberLists = arrayOf(number, altNumber)
+                builder.setItems(numberLists) { _, which ->
+                    when (which) {
+                        0 -> {
+                            goToCallOption(numberLists[0])
+                        }
+                        1 -> {
+                            goToCallOption(numberLists[1])
+                        }
+                    }
+                }
+                val dialog = builder.create()
+                dialog.show()
+            } else {
+                goToCallOption(number!!)
+            }
+        }
+
         binding?.swipeRefresh?.setOnRefreshListener {
             binding?.swipeRefresh?.isRefreshing = false
             if (SessionManager.isOffline) return@setOnRefreshListener
@@ -176,9 +201,23 @@ class QuickOrderListFragment : Fragment() {
 
     }
 
+    private fun goToCallOption(number: String) {
+        try {
+            val zoiperAvailable = isPackageInstalled(requireContext().packageManager, "com.zoiper.android.app")
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number"))
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (zoiperAvailable) {
+                intent.setPackage("com.zoiper.android.app")
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            requireContext().toast("Could not find an activity to place the call")
+        }
+    }
+
     override fun onPause() {
-        hideKeyboard()
         super.onPause()
+        hideKeyboard()
     }
 
     override fun onDestroyView() {

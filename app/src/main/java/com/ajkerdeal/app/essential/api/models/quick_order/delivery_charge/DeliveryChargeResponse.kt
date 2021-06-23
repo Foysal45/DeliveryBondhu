@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName
 
 data class DeliveryChargeResponse(
     @SerializedName("weightRangeId")
-    var weightRangeId: Int,
+    var weightRangeId: Int = 0,
     @SerializedName("weight")
-    var weight: String,
+    var weight: String = "",
     @SerializedName("isOpenBox")
-    var isOpenBox: Boolean,
+    var isOpenBox: Boolean = false,
     @SerializedName("weightRangeWiseData")
-    var weightRangeWiseData: List<WeightRangeWiseData>,
+    var weightRangeWiseData: List<WeightRangeWiseData> = listOf(),
     @SerializedName("deliveryTypeModel")
-    var deliveryTypeModel: List<DeliveryTypeModel>
+    var deliveryTypeModel: List<DeliveryTypeModel> = listOf()
 )

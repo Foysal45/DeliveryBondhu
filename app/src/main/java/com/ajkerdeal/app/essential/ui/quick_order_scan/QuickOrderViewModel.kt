@@ -127,12 +127,13 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
-    fun updateQuickOrder(requestBody: QuickOrderUpdateRequest): LiveData<QuickOrderResponse> {
 
-        val responseData: MutableLiveData<QuickOrderResponse> = MutableLiveData()
+    fun loadAllDistrictsById(id: Int): LiveData<List<DistrictThanaAreaDataModel>> {
+
+        val responseData: MutableLiveData<List<DistrictThanaAreaDataModel>> = MutableLiveData()
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.updateQuickOrder(requestBody)
+            val response = repository.loadAllDistrictsById(id)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
@@ -158,12 +159,12 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
-    fun loadAllDistrictsById(id: Int): LiveData<List<DistrictThanaAreaDataModel>> {
+    fun getDeliveryCharge(requestBody: DeliveryChargeRequest): LiveData<List<DeliveryChargeResponse>> {
 
-        val responseData: MutableLiveData<List<DistrictThanaAreaDataModel>> = MutableLiveData()
+        val responseData: MutableLiveData<List<DeliveryChargeResponse>> = MutableLiveData()
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.loadAllDistrictsById(id)
+            val response = repository.getDeliveryCharge(requestBody)
             withContext(Dispatchers.Main) {
                 viewState.value = ViewState.ProgressState(false)
                 when (response) {
@@ -223,7 +224,7 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
     fun uploadProfilePhoto(orderId: String, context: Context, url: String): LiveData<Boolean> {
 
         val responseData: MutableLiveData<Boolean> = MutableLiveData()
-        viewState.value = ViewState.ProgressState(true)
+        viewState.value = ViewState.ProgressState(true, 1)
         val mediaTypeMultipart = "multipart/form-data".toMediaTypeOrNull()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -238,7 +239,7 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
             val response = repository.imageUpload(imageUrl, fileName, part)
 
             withContext(Dispatchers.Main) {
-                viewState.value = ViewState.ProgressState(false)
+                viewState.value = ViewState.ProgressState(false, 1)
                 when (response) {
                     is NetworkResponse.Success -> {
                         responseData.value = response.body
@@ -262,15 +263,14 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
+    fun updateQuickOrder(requestBody: QuickOrderUpdateRequest): LiveData<QuickOrderResponse> {
 
-    fun getDeliveryCharge(requestBody: DeliveryChargeRequest): LiveData<List<DeliveryChargeResponse>> {
-
-        val responseData: MutableLiveData<List<DeliveryChargeResponse>> = MutableLiveData()
-        viewState.value = ViewState.ProgressState(true)
+        val responseData: MutableLiveData<QuickOrderResponse> = MutableLiveData()
+        viewState.value = ViewState.ProgressState(true, 1)
         viewModelScope.launch(Dispatchers.IO){
-            val response = repository.getDeliveryCharge(requestBody)
+            val response = repository.updateQuickOrder(requestBody)
             withContext(Dispatchers.Main) {
-                viewState.value = ViewState.ProgressState(false)
+                viewState.value = ViewState.ProgressState(false, 1)
                 when (response) {
                     is NetworkResponse.Success -> {
                         responseData.value = response.body.model
