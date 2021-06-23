@@ -17,9 +17,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
+import com.ajkerdeal.app.essential.api.models.district.LocationData
+import com.ajkerdeal.app.essential.api.models.district.LocationType
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
@@ -27,6 +31,7 @@ import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
 import com.ajkerdeal.app.essential.utils.CustomSpinnerAdapter
 import com.ajkerdeal.app.essential.utils.alert
+import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -45,8 +50,7 @@ class QuickOrderCollectFragment : Fragment() {
     private var quickOrderRequestID = 0
     private var districtId = 0
     private var thanaId = 0
-    private var districtName = ""
-    private var thanaName = ""
+    private var areaId = 0
     private var quickOrderId = ""
     private var quickOrderInfoImgUrl: String? = ""
     private var weight: String = ""
@@ -58,7 +62,23 @@ class QuickOrderCollectFragment : Fragment() {
     private var deliveryCharge: Double = 0.0
     private var extraDeliveryCharge: Double = 0.0
 
+    //Merchant request info
+    private var orderRequestId: Int = 0
+    private var collectionTimeSlotId: Int = 0
+    private var courierUserId: Int = 0
+    private var collectionDistrictId: Int = 0
+    private var collectionThanaId: Int = 0
+    private var status: Int = 0
+
     private lateinit var deliveryTypeAdapter: DeliveryTypeAdapter
+    private var dataAdapter:WeightSelectionAdapter = WeightSelectionAdapter()
+    private var isLocationLoading: Boolean = false
+
+    private var filteredDistrictLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
+    private var filteredThanaLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
+    private var filteredAreaLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
+
+    private var isAriaAvailable = true
 
     companion object {
         fun newInstance(): QuickOrderCollectFragment = QuickOrderCollectFragment().apply {}
@@ -76,6 +96,12 @@ class QuickOrderCollectFragment : Fragment() {
 
         init()
         initListener()
+        orderRequestId = arguments?.getInt("orderRequestId", 0) ?: 0
+        courierUserId = arguments?.getInt("courierUserId", 0) ?: 0
+        collectionTimeSlotId = arguments?.getInt("collectionTimeSlotId", 0) ?: 0
+        collectionDistrictId = arguments?.getInt("collectionDistrictId", 0) ?: 0
+        collectionThanaId = arguments?.getInt("collectionThanaId", 0) ?: 0
+        status = arguments?.getInt("status", 0) ?: 0
     }
 
     private fun init(){
@@ -89,12 +115,21 @@ class QuickOrderCollectFragment : Fragment() {
                 adapter = deliveryTypeAdapter
             }
         }
+        binding?.recyclerViewWeight?.let { view ->
+            with(view) {
+                setHasFixedSize(false)
+                isNestedScrollingEnabled = false
+                layoutManager = GridLayoutManager(context, 2, androidx.recyclerview.widget.RecyclerView.VERTICAL, false)
+                layoutAnimation = null
+                adapter = dataAdapter
+            }
+        }
 
     }
 
     private fun initListener() {
 
-        getDeliveryCharge(14, 10026, 0, serviceType)
+        //getDeliveryCharge(14, 10026, 0, serviceType)
 
         binding?.scanBtn?.setOnClickListener {
             if (isCheckPermission()) {
@@ -112,73 +147,39 @@ class QuickOrderCollectFragment : Fragment() {
 
         binding!!.district.setOnClickListener {
 
-            binding!!.district.isEnabled = false
-            viewModel.loadAllDistrictsById(0).observe(viewLifecycleOwner, Observer { response ->
-
-                val districtModelList = response
-                val districtNameList = districtModelList.map { it.districtBng }
-
-                val dialog = LocationSelectionDialog.newInstance(districtNameList as MutableList<String>)
-                dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                dialog.onLocationPicked = { position, value ->
-                    binding?.district?.setText(value)
-                    binding?.thana?.setText("")
-                    binding?.area?.setText("")
-                    if (position in 0..districtModelList.size) {
-                        districtId = districtModelList[position].districtId
-                    }
-                }
-                binding!!.district.isEnabled = true
-                getDeliveryCharge(districtId, thanaId, 0, serviceType)
-            })
+            hideKeyboard()
+            fetchLocationById(0, LocationType.DISTRICT)
         }
 
         binding!!.thana.setOnClickListener {
 
-            if (districtId == 0) {
-                context?.toast("জেলা নির্বাচন করুন")
+            hideKeyboard()
+            if (districtId != 0) {
+                if (filteredThanaLists.isEmpty()) {
+                    fetchLocationById(districtId, LocationType.THANA)
+                } else {
+                    goToLocationSelectionDialog(filteredThanaLists, LocationType.THANA)
+                }
             } else {
-                binding!!.thana.isEnabled = false
-                viewModel.loadAllDistrictsById(districtId).observe(viewLifecycleOwner, Observer { response ->
-
-                    val thanaModelList = response
-                    val thanaNameList = thanaModelList?.map { it.districtBng }
-
-                    val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
-                    dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                    dialog.onLocationPicked = { position, value ->
-                        thanaName = value
-                        binding?.thana?.setText(value)
-                        binding?.area?.setText("")
-                        if (position in 0..thanaModelList.size) {
-                            thanaId = thanaModelList[position].districtId
-
-                        }
-                    }
-                    binding!!.thana.isEnabled = true
-                    getDeliveryCharge(districtId, thanaId, 0, serviceType)
-                })
+                context?.toast(getString(R.string.select_dist))
             }
         }
 
         binding!!.area.setOnClickListener {
 
-            if (thanaId == 0) {
-                context?.toast("থানা নির্বাচন করুন")
-            } else {
-                binding!!.area.isEnabled = false
-                viewModel.loadAllDistrictsById(thanaId).observe(viewLifecycleOwner, Observer { response ->
-
-                    val areaModelList = response
-                    val areaNameList = areaModelList?.map { it.districtBng }
-
-                    val dialog = LocationSelectionDialog.newInstance(areaNameList as MutableList<String>)
-                    dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                    dialog.onLocationPicked = { position, value ->
-                        binding?.area?.setText(value)
+            hideKeyboard()
+            if (isAriaAvailable) {
+                if (thanaId != 0) {
+                    if (filteredAreaLists.isEmpty()) {
+                        fetchLocationById(thanaId, LocationType.AREA)
+                    } else {
+                        goToLocationSelectionDialog(filteredAreaLists, LocationType.AREA)
                     }
-                    binding!!.area.isEnabled = true
-                })
+                } else {
+                    context?.toast(getString(R.string.select_thana))
+                }
+            } else {
+                context?.toast(getString(R.string.no_aria))
             }
         }
 
@@ -211,26 +212,249 @@ class QuickOrderCollectFragment : Fragment() {
         val requestBody = QuickOrderUpdateRequest(
             scannedOrderID,
             quickOrderRequestID,
-            1,
-            44,
-            14,
-            10026,
-            0,
-            0,
-            0,
+            courierUserId,
+            status,
+            districtId,
+            thanaId,
+            areaId,
+            collectionDistrictId,
+            collectionThanaId,
             18,
             5,
             "3 kg - 4 kg",
             "Sador Express 48 hours ৩",
             "alltoall",
             125.0,
-            5,
+            collectionTimeSlotId,
             "https://static.ajkerdeal.com/images/dt/orderrequest/${scannedOrderID.lowercase(Locale.US)}.jpg"
         )
 
-        viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {
+       viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {
             context?.toast("Order SuccessFull")
         })
+    }
+
+    private fun fetchLocationById(id: Int, locationType: LocationType, preSelect: Boolean = false) {
+
+        if (isLocationLoading) {
+            context?.toast("লোকেশন লোড হচ্ছে, অপেক্ষা করুন")
+            return
+        } else {
+            isLocationLoading = true
+        }
+        when (locationType) {
+            LocationType.DISTRICT -> {
+                binding?.progressBar1?.isVisible = true
+                viewModel.loadAllDistrictsById(id).observe(viewLifecycleOwner, Observer { list ->
+                    isLocationLoading = false
+                    binding?.progressBar1?.isVisible = false
+                    filteredDistrictLists.clear()
+                    filteredDistrictLists.addAll(list)
+                    filteredThanaLists.clear()
+                    filteredAreaLists.clear()
+                    if (!preSelect) {
+                        goToLocationSelectionDialog(filteredDistrictLists, locationType)
+                    }
+                })
+            }
+            LocationType.THANA -> {
+                binding?.progressBar2?.isVisible = true
+                viewModel.loadAllDistrictsById(id).observe(viewLifecycleOwner, Observer { list ->
+                    isLocationLoading = false
+                    binding?.progressBar2?.isVisible = false
+                    filteredThanaLists.clear()
+                    filteredThanaLists.addAll(list)
+                    if (!preSelect) {
+                        goToLocationSelectionDialog(filteredThanaLists, locationType)
+                    } else {
+                        if (list.isNotEmpty()) {
+                            val sadarThana = list.first()
+                            thanaId = sadarThana.districtId
+                            binding?.thana?.setText(sadarThana.districtBng)
+                            fetchLocationById(thanaId, LocationType.AREA, true)
+                            getDeliveryCharge(districtId, thanaId, 0, serviceType)
+                        }
+                    }
+                })
+            }
+            LocationType.AREA -> {
+                binding?.progressBar3?.isVisible = true
+                viewModel.loadAllDistrictsById(id).observe(viewLifecycleOwner, Observer { list ->
+                    isLocationLoading = false
+                    binding?.progressBar3?.isVisible = false
+                    filteredAreaLists.clear()
+                    filteredAreaLists.addAll(list)
+                    isAriaAvailable = filteredAreaLists.isNotEmpty()
+                    if (isAriaAvailable) {
+                        binding?.areaLayout?.visibility = View.VISIBLE
+                        if (!preSelect) {
+                            goToLocationSelectionDialog(filteredAreaLists, locationType)
+                        } else {
+                            val sadarArea = list.first()
+                            areaId = sadarArea.districtId
+                            binding?.area?.setText(sadarArea.districtBng)
+                            getDeliveryCharge(districtId, thanaId, areaId, serviceType)
+                        }
+                    } else {
+                        binding?.areaLayout?.visibility = View.GONE
+                        areaId = 0
+                        binding?.area?.setText("")
+                    }
+                })
+            }
+        }
+    }
+
+    private fun updateUIAfterDistrict(id: Int, displayNameBangla: String) {
+
+        districtId = id
+        binding?.district?.setText(displayNameBangla)
+        thanaId = 0
+        binding?.thana?.setText("")
+        areaId = 0
+        binding?.area?.setText("")
+        binding?.areaLayout?.visibility = View.GONE
+
+        val selectedDistrict = filteredDistrictLists.find { it.districtId == districtId }
+        selectedDistrict?.let { district ->
+            showLocationAlert(district, LocationType.DISTRICT)
+        }
+
+        serviceType = if (merchantDistrict == districtId) {
+            "citytocity"
+        } else "alltoall"
+        /*codChargePercentage = if (districtId == 14) {
+            codChargePercentageInsideDhaka
+        } else {
+            codChargePercentageOutsideDhaka
+        }
+        calculateTotalPrice()*/
+        fetchLocationById(districtId, LocationType.THANA, true)
+
+        /*val filterList = allLocationList.filter { it.parentId == districtId }
+        filteredThanaLists.clear()
+        if (filterList.isNotEmpty()) {
+            val sortedList = filterList.sortedBy { it.districtPriority } as MutableList<AllDistrictListsModel>
+            filteredThanaLists.addAll(sortedList)
+        }
+        val sadarThana = filteredThanaLists.first()
+        thanaId = sadarThana.districtId
+        etThana.setText(sadarThana.districtBng)*/
+
+        /*val filterArea = allLocationList.filter { it.parentId == thanaId } as MutableList<AllDistrictListsModel>
+        Timber.d("filterArea $filterArea")
+        isAriaAvailable = filterArea.isNotEmpty()
+        if (isAriaAvailable) {
+            filteredAreaLists.clear()
+            filteredAreaLists.addAll(filterArea.sortedBy { it.districtPriority })
+            etAriaPostOfficeLayout.visibility = View.VISIBLE
+        } else {
+            etAriaPostOfficeLayout.visibility = View.GONE
+        }*/
+
+        // Check same city logic
+        /*serviceType = if (merchantDistrict == districtId) {
+            "citytocity"
+        } else "alltoall"
+        getDeliveryCharge(districtId, sadarThana.districtId, 0, serviceType)
+        if (districtId == 14) {
+            codChargePercentage = codChargePercentageInsideDhaka
+        } else {
+            codChargePercentage = codChargePercentageOutsideDhaka
+        }
+        calculateTotalPrice()*/
+    }
+
+    private fun goToLocationSelectionDialog(list: MutableList<DistrictThanaAreaDataModel>, locationType: LocationType) {
+
+        val locationList: MutableList<LocationData> = mutableListOf()
+        val locationListName: MutableList<String> = mutableListOf()
+        list.forEach { model ->
+            locationList.add(LocationData.from(model))
+            locationListName.add(model.districtBng ?: "")
+        }
+
+        val dialog = LocationSelectionDialog.newInstance(locationListName)
+        dialog.show(childFragmentManager, LocationSelectionDialog.tag)
+        dialog.onLocationPicked = { position, value ->
+            when (locationType) {
+                LocationType.DISTRICT -> {
+                    districtId = list[position].districtId
+                    binding?.district?.setText(value)
+                    thanaId = 0
+                    binding?.thana?.setText("")
+                    areaId = 0
+                    binding?.area?.setText("")
+                    binding?.areaLayout?.visibility = View.GONE
+                    filteredThanaLists.clear()
+                    filteredAreaLists.clear()
+                    updateUIAfterDistrict(districtId, value)
+                    val locationModel = list[position]
+                    showLocationAlert(locationModel, LocationType.DISTRICT)
+                }
+                LocationType.THANA -> {
+                    thanaId = list[position].districtId
+                    binding?.thana?.setText(value)
+                    areaId = 0
+                    binding?.area?.setText("")
+
+                    val locationModel = list[position]
+                    showLocationAlert(locationModel, LocationType.THANA)
+                    getDeliveryCharge(districtId, thanaId, 0, serviceType)
+                    if (filteredAreaLists.isEmpty()) {
+                        fetchLocationById(thanaId, LocationType.AREA, true)
+                    }
+
+                }
+                LocationType.AREA -> {
+                    areaId = list[position].districtId
+                    val areaName = value
+                    binding?.area?.setText(areaName)
+
+                    val locationModel = list[position]
+                    showLocationAlert(locationModel, LocationType.AREA)
+
+                    getDeliveryCharge(districtId, thanaId, areaId, serviceType)
+                }
+            }
+        }
+    }
+
+    private fun showLocationAlert(model: DistrictThanaAreaDataModel, locationType: LocationType) {
+        if (model.isActiveForCorona) {
+            val msg = when (locationType) {
+                LocationType.DISTRICT -> "${model.districtBng} জেলায় ডেলিভারি সার্ভিস সাময়িকভাবে বন্ধ রয়েছে।"
+                LocationType.THANA -> "${model.districtBng} থানায় ডেলিভারি সার্ভিস সাময়িকভাবে বন্ধ রয়েছে।"
+                LocationType.AREA -> "${model.districtBng} এরিয়ায় ডেলিভারি সার্ভিস সাময়িকভাবে বন্ধ রয়েছে।"
+            }
+            alert(getString(R.string.instruction), msg) {
+                if (it == AlertDialog.BUTTON_POSITIVE) {
+                    when (locationType) {
+                        LocationType.DISTRICT -> {
+                            districtId = 0
+                            binding?.district?.setText("")
+                            thanaId = 0
+                            binding?.thana?.setText("")
+                            areaId = 0
+                            binding?.area?.setText("")
+                            binding?.areaLayout?.visibility = View.GONE
+                        }
+                        LocationType.THANA -> {
+                            thanaId = 0
+                            binding?.thana?.setText("")
+                            areaId = 0
+                            binding?.area?.setText("")
+                            binding?.areaLayout?.visibility = View.GONE
+                        }
+                        LocationType.AREA -> {
+                            areaId = 0
+                            binding?.area?.setText("")
+                            binding?.areaLayout?.visibility = View.GONE
+                        }
+                    }
+                }
+            }.show()
+        }
     }
 
     private fun getDeliveryCharge(districtId: Int, thanaId: Int, areaId: Int, serviceType: String) {
@@ -248,6 +472,7 @@ class QuickOrderCollectFragment : Fragment() {
             for (model1 in list) {
                 weightList.add(model1.weight)
             }
+            //dataAdapter.initLoad(list)
 
             val weightAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_view_spinner_item, weightList)
             binding?.spinnerWeightSelection?.adapter = weightAdapter
@@ -282,7 +507,7 @@ class QuickOrderCollectFragment : Fragment() {
                             extraDeliveryCharge = 0.0
                             //calculateTotalPrice()
                             // select pre selected
-                          /*  if (selectedServiceType != 0) {
+                            /*if (selectedServiceType != 0) {
                                 deliveryTypeAdapter.selectByDeliveryRangeId(selectedServiceType)
                             } else {
                                 deliveryTypeAdapter.selectPreSelection()
@@ -295,8 +520,6 @@ class QuickOrderCollectFragment : Fragment() {
             }
         })
     }
-
-
 
     private fun validation(): Boolean {
          quickOrderId = binding?.scanResult?.text.toString()
@@ -447,7 +670,6 @@ class QuickOrderCollectFragment : Fragment() {
             context?.toast(ImagePicker.getError(data))
         }
     }
-
 
     private val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         var isCameraGranted: Boolean = false

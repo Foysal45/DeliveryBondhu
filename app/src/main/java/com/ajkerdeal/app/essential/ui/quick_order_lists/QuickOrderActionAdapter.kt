@@ -54,7 +54,7 @@ class QuickOrderActionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     private inner class ViewHolder(val binding: ItemViewActionBtnPositiveBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.parent.setOnClickListener {
-                onActionClicked?.invoke(dataList[adapterPosition])
+                onActionClicked?.invoke(dataList[absoluteAdapterPosition])
             }
         }
     }

@@ -75,6 +75,18 @@
             app:srcCompat="@drawable/ic_arrow_drop_down"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/district"
+            app:layout_constraintTop_toTopOf="@id/district"
+            app:layout_constraintBottom_toBottomOf="@id/district"
+            android:layout_marginEnd="16dp"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -119,6 +131,18 @@
             app:srcCompat="@drawable/ic_arrow_drop_down"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/thana"
+            app:layout_constraintTop_toTopOf="@id/thana"
+            app:layout_constraintBottom_toBottomOf="@id/thana"
+            android:layout_marginEnd="16dp"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -130,7 +154,9 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/thanaLayout">
+        app:layout_constraintTop_toBottomOf="@+id/thanaLayout"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <EditText
             android:id="@+id/area"
@@ -162,6 +188,49 @@
             app:srcCompat="@drawable/ic_arrow_drop_down"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/area"
+            app:layout_constraintTop_toTopOf="@id/area"
+            app:layout_constraintBottom_toBottomOf="@id/area"
+            android:layout_marginEnd="16dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/weightSelectionBtnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/areaLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+
+            tools:itemCount="3"
+            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:listitem="@layout/item_view_weight_button"
+            tools:orientation="vertical"
+            tools:spanCount="3"
+            tools:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -173,7 +242,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/areaLayout">
+        app:layout_constraintTop_toBottomOf="@+id/weightSelectionBtnLayout">
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_weight_selection"
@@ -201,30 +270,25 @@
             app:tint="@color/black_50"
             app:srcCompat="@drawable/ic_arrow_drop_down" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:clipToPadding="false"
         android:overScrollMode="never"
 
-        tools:itemCount="2"
+        tools:itemCount="3"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/item_view_delivery_type"
         tools:orientation="vertical"
         tools:spanCount="2"
-        app:layout_constraintTop_toBottomOf="@+id/weightSelectionLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/weightSelectionLayout"/>
 
     <TextView
         android:id="@+id/emptyView"

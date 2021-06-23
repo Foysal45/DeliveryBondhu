@@ -8,6 +8,7 @@ import com.ajkerdeal.app.essential.databinding.ItemViewDeliveryTypeBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
+import timber.log.Timber
 import java.util.*
 
 class DeliveryTypeAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -29,6 +30,7 @@ class DeliveryTypeAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (holder is ViewHolder) {
             val model = dataList[position]
             val binding = holder.binding
+            Timber.d("deliveryChargeDebug $model")
 
             if (position == selectedItem) {
                 Glide.with(binding.deliveryTypeImage)
@@ -49,7 +51,7 @@ class DeliveryTypeAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class ViewHolder(val binding: ItemViewDeliveryTypeBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick?.invoke(position, dataList[position])
                     selectedItem = position
@@ -63,6 +65,7 @@ class DeliveryTypeAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         dataList.clear()
         dataList.addAll(list)
         notifyDataSetChanged()
+        Timber.d("deliveryChargeDebug $list")
     }
 
     fun selectPreSelection() {
