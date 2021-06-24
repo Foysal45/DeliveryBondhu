@@ -24,6 +24,8 @@ data class QuickOrderUpdateRequest(
     var collectAddressThanaId: Int = 0,
     @SerializedName("deliveryRangeId")
     var deliveryRangeId: Int = 0,
+    @SerializedName("deliveryUserId")
+    var deliveryUserId: Int = 0,
     @SerializedName("weightRangeId")
     var weightRangeId: Int = 0,
     @SerializedName("weight")

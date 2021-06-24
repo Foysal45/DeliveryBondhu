@@ -216,7 +216,7 @@ class QuickOrderCollectFragment : Fragment() {
 
         deliveryTypeAdapter.onItemClick = { _, model ->
             deliveryRangeId = model.deliveryRangeId
-            deliveryType = model.type ?: ""
+            deliveryType = model.deliveryType ?: ""
             deliveryCharge = model.chargeAmount
         }
 
@@ -772,7 +772,7 @@ class QuickOrderCollectFragment : Fragment() {
             status,
             districtId, thanaId, areaId,
             collectionDistrictId, collectionThanaId,
-            deliveryRangeId,
+            deliveryRangeId,SessionManager.dtUserId,
             weightRangeId, selectedWeight,
             deliveryType, serviceType,
             deliveryCharge,

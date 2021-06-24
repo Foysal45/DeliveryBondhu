@@ -178,9 +178,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         navController.navigate(R.id.nav_profile)
                         menuItem?.isChecked = true
                     }
-                    R.id.nav_bar_code_scanner -> {
-                        navController.navigate(R.id.nav_bar_code_scanner)
-                    }
+
                     R.id.nav_quick_order_lists -> {
                         navController.navigate(R.id.nav_quick_order_lists)
                     }

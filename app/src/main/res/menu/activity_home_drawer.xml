@@ -19,10 +19,6 @@
             android:title="প্রোফাইল" />
 
         <item
-            android:id="@+id/nav_bar_code_scanner"
-            android:icon="@drawable/ic_package"
-            android:title="কুইক অর্ডার" />
-        <item
             android:id="@+id/nav_quick_order_lists"
             android:icon="@drawable/ic_package"
             android:title="কুইক অর্ডার লিস্ট" />
