@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -131,8 +132,8 @@ class DashboardFragment : Fragment() {
         binding?.button2?.setOnClickListener {
             if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
-                val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY)
-                findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
+                //val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY)
+                findNavController().navigate(R.id.nav_quick_order_lists)
             }
         }
         binding?.button3?.setOnClickListener {
@@ -179,6 +180,8 @@ class DashboardFragment : Fragment() {
                 }
             }
         })
+
+        isCheckPermission()
 
     }
 
@@ -287,6 +290,50 @@ class DashboardFragment : Fragment() {
                 e.printStackTrace()
             }
             return gpsEnabled && networkEnabled
+    }
+
+    private fun isCheckPermission(): Boolean {
+        val permission1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+        val permission2 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return when {
+            permission1 == PackageManager.PERMISSION_GRANTED  && permission2 == PackageManager.PERMISSION_GRANTED -> {
+                true
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
+                requestMultiplePermissions.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+                false
+            }
+            else -> {
+                requestMultiplePermissions.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+                false
+            }
+        }
+    }
+
+    private val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        var isCameraGranted: Boolean = false
+        var isStorageGranted: Boolean = false
+        permissions.entries.forEach { permission ->
+            if (permission.key == Manifest.permission.CAMERA) {
+                isCameraGranted = permission.value
+            }
+            if (permission.key == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                isStorageGranted = permission.value
+            }
+        }
+        if (isCameraGranted /*&& isStorageGranted*/) {
+
+        }
     }
 
 }

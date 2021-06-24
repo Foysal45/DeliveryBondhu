@@ -65,6 +65,7 @@ class QuickOrderCollectFragment : Fragment() {
     private var collectionDistrictId: Int = 0
     private var collectionThanaId: Int = 0
     private var status: Int = 0
+    private var operationFlag: Int = 0
 
     private lateinit var deliveryTypeAdapter: DeliveryTypeAdapter
     private var weightDataAdapter: WeightSelectionAdapter = WeightSelectionAdapter()
@@ -106,6 +107,7 @@ class QuickOrderCollectFragment : Fragment() {
         collectionDistrictId = arguments?.getInt("collectionDistrictId", 0) ?: 0
         collectionThanaId = arguments?.getInt("collectionThanaId", 0) ?: 0
         status = arguments?.getInt("status", 0) ?: 0
+        operationFlag = arguments?.getInt("operationFlag", 0) ?: 0
 
         Timber.d("BundleLog ${arguments?.bundleToString()}")
 
@@ -125,6 +127,9 @@ class QuickOrderCollectFragment : Fragment() {
 
         init()
         initListener()
+        if (operationFlag == 1) {
+            binding?.scanBtn?.performClick()
+        }
 
     }
 
