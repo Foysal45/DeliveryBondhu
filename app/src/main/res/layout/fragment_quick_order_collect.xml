@@ -321,7 +321,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:text="ORDER"
+        android:text="Collect"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="14sp"
