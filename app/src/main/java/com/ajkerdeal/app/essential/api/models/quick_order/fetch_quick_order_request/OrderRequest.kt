@@ -32,4 +32,6 @@ data class OrderRequest(
     var actionModel: List<ActionModel> = listOf(),
     @SerializedName("courierUsersView")
     var courierUsersView: String? = "",
+    @SerializedName("orderRequestSelfList")
+    var orderRequestSelfList: List<OrderIdWiseAmount> = listOf()
 )

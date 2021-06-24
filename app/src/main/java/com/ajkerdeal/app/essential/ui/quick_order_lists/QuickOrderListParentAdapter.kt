@@ -1,18 +1,26 @@
 package com.ajkerdeal.app.essential.ui.quick_order_lists
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.ActionModel
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.OrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.databinding.ItemViewQuickOrderParentBinding
+import com.ajkerdeal.app.essential.utils.DigitConverter
 
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -28,7 +36,9 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
 
     var isCollectionTimerShow: Boolean = false
-    var isWeightUpdateEnable: Boolean = false
+
+    private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
+    private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewQuickOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -38,13 +48,14 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         return dataList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
 
             val model = dataList[position]
             val binding = holder.binding
 
-            val nameWithDistrict = "${model.companyName} (<font color='#E86324'>${model.companyName}</font>)"
+            val nameWithDistrict = "${model.companyName} (<font color='#E86324'>${model.districtsViewModel.thana}</font>)"
             binding.customerName.text = HtmlCompat.fromHtml(nameWithDistrict, HtmlCompat.FROM_HTML_MODE_LEGACY)
             if (model.address.isNullOrEmpty()){
                 binding.customerAddress.text = "Address"
@@ -52,8 +63,27 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
                 binding.customerAddress.text = model.address
             }
 
+            binding.parcelCountText.text = "${DigitConverter.toBanglaDigit(model.orderRequestList.first().requestOrderAmount)} টি"
 
-            if (model.state) {
+            collectionTimer(holder, model.orderRequestList.first())
+
+            if (model.actionModel.isNullOrEmpty()) {
+                binding.recyclerViewAction.visibility = View.GONE
+            } else {
+                binding.recyclerViewAction.visibility = View.VISIBLE
+                val dataAdapter = QuickOrderActionAdapter()
+                dataAdapter.loadData(model.actionModel)
+                with(binding.recyclerViewAction) {
+                    setHasFixedSize(false)
+                    layoutManager = LinearLayoutManager(holder.binding.recyclerViewAction.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter = dataAdapter
+                }
+                dataAdapter.onActionClicked = { actionModel ->
+                    onActionClicked?.invoke(model, actionModel, null)
+                }
+            }
+
+            /*if (model.state) {
                 val currentRotation = holder.binding.indicator.rotation
                 rotateView(holder.binding.indicator, currentRotation, 180f)
                 holder.binding.recyclerView.visibility = View.VISIBLE
@@ -63,9 +93,9 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
                     rotateView(holder.binding.indicator, currentRotation, 0f)
                 }
                 holder.binding.recyclerView.visibility = View.GONE
-            }
+            }*/
 
-            val dataAdapter = QuickOrderListChildAdapter()
+            /*val dataAdapter = QuickOrderListChildAdapter()
             dataAdapter.isCollectionTimerShow = isCollectionTimerShow
             dataAdapter.isWeightUpdateEnable = isWeightUpdateEnable
             dataAdapter.loadData(model.orderRequestList)
@@ -80,38 +110,21 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
                 onActionClicked?.invoke(model,actionModel, orderModel)
             }
 
-            /*dataAdapter.onPictureClicked = { model1 ->
+            *//*dataAdapter.onPictureClicked = { model1 ->
                 onPictureClicked?.invoke(model1)
             }
 
             dataAdapter.onQRCodeClicked = { model1 ->
                 onQRCodeClicked?.invoke(model1)
-            }*/
+            }*//*
             dataAdapter.onWeightUpdateClicked = { model1 ->
                 onWeightUpdateClicked?.invoke(model1, model)
-            }
-
-            if (model.actionModel.isNullOrEmpty()) {
-                binding.recyclerViewAction.visibility = View.GONE
-            } else {
-                binding.recyclerViewAction.visibility = View.VISIBLE
-                val dataAdapter = QuickOrderActionAdapter()
-                 dataAdapter.loadData(model.actionModel)
-                with(binding.recyclerViewAction) {
-                    setHasFixedSize(false)
-                    layoutManager = LinearLayoutManager(holder.binding.recyclerViewAction.context, LinearLayoutManager.HORIZONTAL, false)
-                    adapter = dataAdapter
-                }
-                dataAdapter.onActionClicked = { actionModel ->
-                    onActionClicked?.invoke(model, actionModel, null)
-                }
-            }
-
+            }*/
         }
     }
 
     private inner class ViewHolder(val binding: ItemViewQuickOrderParentBinding) : RecyclerView.ViewHolder(binding.root) {
-
+        var countDownTimer: CountDownTimer? = null
         init {
 
             binding.parent.setOnClickListener {
@@ -149,6 +162,53 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
             }*/
         }
 
+    }
+
+    private fun collectionTimer(holder: ViewHolder, model: OrderRequest) {
+        if (holder.countDownTimer != null) {
+            holder.countDownTimer?.cancel()
+        }
+        val endTime = model.collectionTimeSlot.endTime ?: "00:00:00"
+        Timber.d("timeDebug $endTime")
+        if (endTime != "00:00:00") {
+            try {
+                val endDate = sdf.parse("${sdf1.format(Date().time)} $endTime")
+                Timber.d("timeDebug $endTime")
+                if (endDate != null) {
+                    val timeDifference = endDate.time - Date().time
+                    Timber.d("timeDifference $timeDifference ${endDate.time}")
+                    Timber.d("timeDifference $endTime")
+                    if (timeDifference > 0) {
+                        holder.binding.timerLayout.visibility = View.VISIBLE
+                        holder.countDownTimer = object: CountDownTimer(timeDifference,1000L) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                val hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished).toInt() % 24
+                                val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished).toInt() % 60
+                                val seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt() % 60
+
+                                val message = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                                holder.binding.timeText.text = DigitConverter.toBanglaDigit(message)
+                                if (hours < 1) {
+                                    holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.crimson))
+                                } else {
+                                    holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.colorPrimary))
+                                }
+                            }
+
+                            override fun onFinish() {
+                                holder.binding.timeText.text = "কালেকশন টাইম আউট"
+                            }
+                        }.start()
+                    } else {
+                        holder.binding.timerLayout.visibility = View.GONE
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            holder.binding.timerLayout.visibility = View.GONE
+        }
     }
 
     fun loadInitData(list: List<QuickOrderList>) {

@@ -14,7 +14,7 @@
         android:minHeight="40dp"
         android:padding="8dp">
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/indicator"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -22,13 +22,13 @@
             android:rotation="0"
             android:src="@drawable/ic_expand"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />-->
 
         <TextView
             android:id="@+id/customerName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -37,7 +37,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@id/actionLayout"
-            app:layout_constraintStart_toEndOf="@id/indicator"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Maleka Begum" />
 
@@ -49,13 +49,12 @@
 
             android:ellipsize="end"
             android:maxLines="3"
-            android:paddingStart="5dp"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/indicator"
+            app:layout_constraintTop_toBottomOf="@id/customerName"
             tools:text="House#343, Ashkona, Hajj Camp area, Dhaka-1230" />
 
         <LinearLayout
@@ -127,24 +126,67 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/collectionMsg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="6dp"
 
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:visibility="gone"
+        <LinearLayout
+            android:id="@+id/parcelCountLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/customerAddress"
-            tools:text="তারেক জেনারেল স্টোর, আশকোনা হাজি ক্যাম্প"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@id/customerAddress">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="পার্সেল সংখ্যা:"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/parcelCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"
+                tools:text="৬ টি" />
+
+            <LinearLayout
+                android:id="@+id/timerLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="কালেকশন টাইম:"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/timeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:layout_marginStart="4dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="01:30:00" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/addLocation"
@@ -154,7 +196,7 @@
             android:orientation="horizontal"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/collectionMsg"
+            app:layout_constraintTop_toBottomOf="@id/parcelCountLayout"
             tools:ignore="UseCompoundDrawables"
             tools:visibility="visible">
 

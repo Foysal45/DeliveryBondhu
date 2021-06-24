@@ -74,31 +74,64 @@ class QuickOrderListFragment : Fragment() {
     private fun initClickLister(){
 
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
-
-            when (actionModel.statusUpdate) {
-                // Collect
-                44 -> {
-                    val bundle = bundleOf(
-                        "orderRequestId" to (orderModel?.orderRequestId ?: 0),
-                        "collectionTimeSlotId" to (orderModel?.collectionTimeSlotId ?: 0),
-                        "courierUserId" to (model.courierUserId),
-                        "collectionDistrictId" to model.districtsViewModel.districtId,
-                        "collectionThanaId" to model.districtsViewModel.thanaId,
-                        "status" to actionModel.statusUpdate
-                    )
-                    findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
+            if (orderModel != null) {
+                when (actionModel.statusUpdate) {
+                    // Collect
+                    44 -> {
+                        val bundle = bundleOf(
+                            "orderRequestSelfList" to (orderModel.orderRequestSelfList),
+                            "requestOrderAmountTotal" to orderModel.requestOrderAmount,
+                            "collectionTimeSlotId" to (orderModel.collectionTimeSlot.collectionTimeSlotId),
+                            "courierUserId" to (model.courierUserId),
+                            "collectionDistrictId" to model.districtsViewModel.districtId,
+                            "collectionThanaId" to model.districtsViewModel.thanaId,
+                            "status" to actionModel.statusUpdate
+                        )
+                        findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
+                    }
+                    else -> {
+                        val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
+                        val requestModel = QuickOrderStatusUpdateRequest(
+                            orderModel.orderRequestId ?: 0,
+                            SessionManager.dtUserId,
+                            actionModel.statusUpdate
+                        )
+                        requestBody.add(requestModel)
+                        updateOrderStatus(requestBody)
+                    }
                 }
-                else -> {
-                    val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
-                    val requestModel = QuickOrderStatusUpdateRequest(
-                        orderModel?.orderRequestId ?: 0,
-                        SessionManager.dtUserId,
-                        actionModel.statusUpdate
-                    )
-                    requestBody.add(requestModel)
-                    updateOrderStatus(requestBody)
+            } else {
+                when (actionModel.statusUpdate) {
+                    // Collect
+                    44 -> {
+                        val bundle = bundleOf(
+                            "orderRequestSelfList" to (model.orderRequestList.first().orderRequestSelfList),
+                            "requestOrderAmountTotal" to model.orderRequestList.first().requestOrderAmount,
+                            "collectionTimeSlotId" to (model.orderRequestList.first().collectionTimeSlot.collectionTimeSlotId),
+                            "courierUserId" to (model.courierUserId),
+                            "collectionDistrictId" to model.districtsViewModel.districtId,
+                            "collectionThanaId" to model.districtsViewModel.thanaId,
+                            "status" to actionModel.statusUpdate
+                        )
+                        findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
+                    }
+                    else -> {
+                        val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
+                        model.orderRequestList.forEach { orderModel ->
+                            orderModel.orderRequestSelfList.forEach { orderRequest ->
+                                val requestModel = QuickOrderStatusUpdateRequest(
+                                    orderRequest.orderRequestId,
+                                    SessionManager.dtUserId,
+                                    actionModel.statusUpdate
+                                )
+                                requestBody.add(requestModel)
+                            }
+                        }
+                        updateOrderStatus(requestBody)
+                    }
                 }
             }
+
         }
 
         dataAdapter.onCall = { number, altNumber ->

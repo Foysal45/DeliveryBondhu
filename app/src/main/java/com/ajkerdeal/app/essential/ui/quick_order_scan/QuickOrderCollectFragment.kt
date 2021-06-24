@@ -29,6 +29,7 @@ import com.ajkerdeal.app.essential.api.models.district.LocationType
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
+import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.OrderIdWiseAmount
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
 import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
@@ -57,7 +58,8 @@ class QuickOrderCollectFragment : Fragment() {
     private var deliveryCharge: Double = 0.0
 
     //Merchant request info
-    private var orderRequestId: Int = 0
+    private var orderRequestSelfList: List<OrderIdWiseAmount> = listOf()
+    private var requestOrderAmountTotal: Int = 0
     private var collectionTimeSlotId: Int = 0
     private var courierUserId: Int = 0
     private var collectionDistrictId: Int = 0
@@ -78,6 +80,11 @@ class QuickOrderCollectFragment : Fragment() {
     private var deliveryRangeId: Int = 0
     private var deliveryType: String = ""
 
+    private var currentOrderRequestId: Int = 0
+    private var currentOrderAmountInOrderRequestId: Int = 0
+    private var currentTotalParcel: Int = 0
+
+
     private var dialog: ProgressDialog? = null
 
 
@@ -92,21 +99,29 @@ class QuickOrderCollectFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // bundle data
-        orderRequestId = arguments?.getInt("orderRequestId", 0) ?: 0
+        orderRequestSelfList = (arguments?.getParcelableArrayList("orderRequestSelfList") ?: listOf())
+        requestOrderAmountTotal = arguments?.getInt("requestOrderAmountTotal", 0) ?: 0
         courierUserId = arguments?.getInt("courierUserId", 0) ?: 0
         collectionTimeSlotId = arguments?.getInt("collectionTimeSlotId", 0) ?: 0
         collectionDistrictId = arguments?.getInt("collectionDistrictId", 0) ?: 0
         collectionThanaId = arguments?.getInt("collectionThanaId", 0) ?: 0
         status = arguments?.getInt("status", 0) ?: 0
 
-        if (BuildConfig.DEBUG) {
+        Timber.d("BundleLog ${arguments?.bundleToString()}")
+
+        val firstModel = orderRequestSelfList.first()
+        currentOrderRequestId = firstModel.orderRequestId
+        currentOrderAmountInOrderRequestId = firstModel.requestOrderAmount
+        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmountInOrderRequestId $currentTotalParcel")
+
+        /*if (BuildConfig.DEBUG) {
             status = 44
             collectionDistrictId = 14
             collectionThanaId = 10026
             courierUserId = 1
             collectionTimeSlotId = 10
             orderRequestId = 26
-        }
+        }*/
 
         init()
         initListener()
@@ -156,6 +171,7 @@ class QuickOrderCollectFragment : Fragment() {
         }
 
         binding?.updateBtn?.setOnClickListener {
+            //orderRequestIdChange()
             startPlaceOrderProcess()
         }
 
@@ -752,7 +768,7 @@ class QuickOrderCollectFragment : Fragment() {
     private fun placeOrder(){
         val parcelImage = "https://static.ajkerdeal.com/images/dt/orderrequest/${courierOrdersId.lowercase(Locale.US)}.jpg"
         val requestBody = QuickOrderUpdateRequest(
-            courierOrdersId, orderRequestId, courierUserId,
+            courierOrdersId, currentOrderRequestId, courierUserId,
             status,
             districtId, thanaId, areaId,
             collectionDistrictId, collectionThanaId,
@@ -766,7 +782,21 @@ class QuickOrderCollectFragment : Fragment() {
 
         viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {
             context?.toast("Order place successFull")
+            orderRequestIdChange()
         })
+    }
+
+    private fun orderRequestIdChange() {
+        currentTotalParcel++
+        if (currentTotalParcel >= currentOrderAmountInOrderRequestId) {
+            val index = orderRequestSelfList.indexOfFirst { it.orderRequestId == currentOrderRequestId }
+            if (index != -1 && index != orderRequestSelfList.lastIndex) {
+                currentOrderRequestId = orderRequestSelfList[index + 1].orderRequestId
+                currentOrderAmountInOrderRequestId = orderRequestSelfList[index + 1].requestOrderAmount
+                currentTotalParcel = 0
+            }
+        }
+        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmountInOrderRequestId $currentTotalParcel")
     }
     //#endregion
 
