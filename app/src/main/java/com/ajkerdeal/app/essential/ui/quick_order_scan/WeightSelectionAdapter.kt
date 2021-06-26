@@ -63,4 +63,9 @@ class WeightSelectionAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         Timber.d("deliveryChargeDebug $list")
     }
 
+    fun clearList() {
+        dataList.clear()
+        notifyDataSetChanged()
+    }
+
 }

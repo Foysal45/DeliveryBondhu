@@ -363,6 +363,7 @@ class QuickOrderCollectFragment : Fragment() {
                     binding?.thana?.setText(value)
                     areaId = 0
                     binding?.area?.setText("")
+                    filteredAreaLists.clear()
 
                     val locationModel = list[position]
                     showLocationAlert(locationModel, LocationType.THANA)
@@ -492,13 +493,40 @@ class QuickOrderCollectFragment : Fragment() {
                 return@Observer
             }
 
+            if (list.isNotEmpty()) {
+                val model = list.first()
+                var filterDeliveryTypeList = model.weightRangeWiseData
+                if (collectionDistrictId != 14) {
+                    filterDeliveryTypeList = model.weightRangeWiseData.filterNot { it.type == "express" }
+                }
+                deliveryTypeAdapter.initLoad(filterDeliveryTypeList)
+                deliveryTypeAdapter.selectPreSelection()
+
+
+                val selectedWeightList: MutableList<DeliveryChargeResponse> = mutableListOf()
+                val subList = list.subList(0, 3)
+                selectedWeightList.addAll(subList)
+                selectedWeightList.add(DeliveryChargeResponse(-1, "More"))
+                weightDataAdapter.initLoad(selectedWeightList)
+                weightDataAdapter.onItemClick = { _, model ->
+                    if (model.weightRangeId == -1) {
+                        binding?.weightSelectionLayout?.isVisible = true
+                    } else {
+                        binding?.weightSelectionLayout?.isVisible = false
+                        selectWeight(model)
+                    }
+                }
+
+            } else {
+                deliveryTypeAdapter.clearList()
+                weightDataAdapter.clearList()
+            }
+
             val weightList: MutableList<String> = mutableListOf()
             weightList.add("ওজন (কেজি)")
-            for (model1 in list) {
-                weightList.add(model1.weight)
+            list.forEach {
+                weightList.add(it.weight)
             }
-            //dataAdapter.initLoad(list)
-
             val weightAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_view_spinner_item, weightList)
             binding?.spinnerWeightSelection?.adapter = weightAdapter
             binding?.spinnerWeightSelection?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -508,37 +536,14 @@ class QuickOrderCollectFragment : Fragment() {
                         val model2 = list[p2 - 1]
                         selectWeight(model2)
                     } else {
+                        selectedWeight = ""
                         isWeightSelected = false
                         weightRangeId = 0
-                        if (list.isNotEmpty()) {
-                            val model2 = list.first()
-                            var filterDeliveryTypeList = model2.weightRangeWiseData
-                            if (collectionDistrictId != 14) {
-                                filterDeliveryTypeList = model2.weightRangeWiseData.filterNot { it.type == "express" }
-                            }
-                            deliveryTypeAdapter.initLoad(filterDeliveryTypeList)
-                            // select pre selected
-                            deliveryTypeAdapter.selectPreSelection()
-                        } else {
-                            deliveryTypeAdapter.clearList()
-                        }
                     }
                 }
             }
 
-            val selectedWeightList: MutableList<DeliveryChargeResponse> = mutableListOf()
-            val subList = list.subList(0, 3)
-            selectedWeightList.addAll(subList)
-            selectedWeightList.add(DeliveryChargeResponse(-1, "More"))
-            weightDataAdapter.initLoad(selectedWeightList)
-            weightDataAdapter.onItemClick = { _, model ->
-                if (model.weightRangeId == -1) {
-                    binding?.weightSelectionLayout?.isVisible = true
-                } else {
-                    binding?.weightSelectionLayout?.isVisible = false
-                    selectWeight(model)
-                }
-            }
+
         })
     }
 
@@ -546,13 +551,6 @@ class QuickOrderCollectFragment : Fragment() {
         selectedWeight = model.weight
         isWeightSelected = true
         weightRangeId = model.weightRangeId
-
-        var filterDeliveryTypeList = model.weightRangeWiseData
-        if (collectionDistrictId != 14) {
-            filterDeliveryTypeList = model.weightRangeWiseData.filterNot { it.type == "express" }
-        }
-        deliveryTypeAdapter.initLoad(filterDeliveryTypeList)
-        deliveryTypeAdapter.selectPreSelection()
     }
     //#endregion
 
