@@ -188,11 +188,11 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                 val message = String.format("%02d:%02d:%02d", hours, minutes, seconds)
                                 holder.binding.timeText.text = DigitConverter.toBanglaDigit(message)
-                                if (hours < 1) {
+                                /*if (hours < 1) {
                                     holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.crimson))
                                 } else {
                                     holder.binding.timeText.setTextColor(ContextCompat.getColor(holder.binding.timeText.context, R.color.colorPrimary))
-                                }
+                                }*/
                             }
 
                             override fun onFinish() {

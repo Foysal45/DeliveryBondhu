@@ -808,18 +808,22 @@ class QuickOrderCollectFragment : Fragment() {
             if (flag){
                 uploadParcelImage(orderId)
             }else{
-                context?.toast("Invalid Order Id")
+                context?.toast("দুঃখিত, কুইক অর্ডার কোডটি সঠিক নয়")
             }
         })
     }
 
     private fun uploadParcelImage(orderId: String) {
-        viewModel.uploadProfilePhoto(orderId, requireContext(), quickOrderInfoImgUrl ?: "").observe(viewLifecycleOwner, Observer { uploadFlag ->
-            if (uploadFlag){
-                context?.toast("Parcel image uploaded")
-                placeOrder()
-            }
-        })
+        if (quickOrderInfoImgUrl.isNullOrEmpty()){
+            context?.toast("অনুগ্রহ করে ছবি সংগ্রহ করুন")
+        }else{
+            viewModel.uploadProfilePhoto(orderId, requireContext(), quickOrderInfoImgUrl ?: "").observe(viewLifecycleOwner, Observer { uploadFlag ->
+                if (uploadFlag){
+                    context?.toast("Parcel image uploaded")
+                    placeOrder()
+                }
+            })
+        }
     }
 
     private fun placeOrder(){
@@ -847,7 +851,21 @@ class QuickOrderCollectFragment : Fragment() {
             context?.toast("Order place successFull")
             orderRequestIdChange()
             orderRequestIdStatusUpdate()
+            clearData()
         })
+    }
+
+    private fun clearData(){
+        binding?.scanResult?.text = ""
+        quickOrderInfoImgUrl = ""
+        binding?.invoicePic?.let {  view->
+            Glide.with(view)
+                .load(quickOrderInfoImgUrl)
+                .apply(RequestOptions().placeholder(R.drawable.ic_banner_place).error(R.drawable.ic_banner_place))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(view)
+        }
     }
 
     private fun orderRequestIdChange() {
