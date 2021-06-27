@@ -125,4 +125,5 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun updateQuickOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) = apiInterfaceADCORE.updateQuickOrderStatus(requestBody)
 
+    suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 }

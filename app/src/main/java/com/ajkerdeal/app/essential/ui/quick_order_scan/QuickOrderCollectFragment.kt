@@ -30,6 +30,7 @@ import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateReques
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.OrderIdWiseAmount
+import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.databinding.FragmentQuickOrderCollectBinding
 import com.ajkerdeal.app.essential.ui.barcode.BarcodeScanningActivity
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
@@ -84,7 +85,16 @@ class QuickOrderCollectFragment : Fragment() {
     private var currentOrderRequestId: Int = 0
     private var currentOrderAmountInOrderRequestId: Int = 0
     private var currentTotalParcel: Int = 0
+    private var previousOrderAmountInOrderRequestId: Int = 0
 
+    private var orderType: String = "Only Delivery"
+    private var isOrderTypeSelected: Boolean = false
+    private var isCollection: Boolean = false
+
+    private var codChargePercentageInsideDhaka: Double = 0.0
+    private var codChargePercentageOutsideDhaka: Double = 0.0
+    private var codChargePercentage: Double = 0.0
+    private var codChargeMin: Int = 0
 
     private var dialog: ProgressDialog? = null
 
@@ -160,7 +170,7 @@ class QuickOrderCollectFragment : Fragment() {
                 adapter = weightDataAdapter
             }
         }
-
+        getBreakableCharge()
     }
 
     private fun initListener() {
@@ -224,6 +234,27 @@ class QuickOrderCollectFragment : Fragment() {
             deliveryType = model.deliveryType ?: ""
             deliveryCharge = model.chargeAmount
         }
+
+        binding?.prePaidOrderBtn?.setOnClickListener {
+            isOrderTypeSelected = true
+            binding?.prePaidOrderBtn?.background = ContextCompat.getDrawable(requireContext(), R.drawable.dotted_selected)
+            binding?.codOrderBtn?.background = ContextCompat.getDrawable(requireContext(), R.drawable.dotted)
+            isCollection = false
+            orderType = "Only Delivery"
+            binding?.collectionAmount?.hint = "প্যাকেজ এর ভিতরে প্রোডাক্টের দাম"
+            binding?.collectionAmount?.requestFocus()
+        }
+
+        binding?.codOrderBtn?.setOnClickListener {
+            isOrderTypeSelected = true
+            binding?.codOrderBtn?.background = ContextCompat.getDrawable(requireContext(), R.drawable.dotted_selected)
+            binding?.prePaidOrderBtn?.background = ContextCompat.getDrawable(requireContext(), R.drawable.dotted)
+            isCollection = true
+            orderType = "Delivery Taka Collection"
+            binding?.collectionAmount?.hint = "কালেকশন অ্যামাউন্ট"
+            binding?.collectionAmount?.requestFocus()
+        }
+
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -403,12 +434,12 @@ class QuickOrderCollectFragment : Fragment() {
         }
 
         serviceType = if (collectionDistrictId == districtId) { "citytocity" } else "alltoall"
-        /*codChargePercentage = if (districtId == 14) {
+        codChargePercentage = if (districtId == 14) {
             codChargePercentageInsideDhaka
         } else {
             codChargePercentageOutsideDhaka
         }
-        calculateTotalPrice()*/
+
         fetchLocationById(districtId, LocationType.THANA, true)
 
         /*val filterList = allLocationList.filter { it.parentId == districtId }
@@ -715,6 +746,8 @@ class QuickOrderCollectFragment : Fragment() {
     private fun validation(): Boolean {
 
         quickOrderId = binding?.scanResult?.text.toString()
+        val amountText = binding?.collectionAmount?.text?.toString() ?: ""
+        val amount = amountText.toDoubleOrNull() ?: 0.0
 
         if (quickOrderId.isEmpty()) {
             val message = "Please Scan for order code"
@@ -739,6 +772,27 @@ class QuickOrderCollectFragment : Fragment() {
             context?.toast(message)
             return false
         }
+
+        if (!isOrderTypeSelected) {
+            val message = "Please select order type"
+            context?.toast(message)
+            return false
+        }
+
+        if (amountText.isEmpty()) {
+            val message = if (isCollection) {
+                "Please type collection amount"
+            } else "Please type parcel actual amount"
+            context?.toast(message)
+            return false
+        }
+
+        if (isCollection && amount < deliveryCharge) {
+            val message = "Collection amount can not be less than service charge"
+            context?.toast(message)
+            return false
+        }
+
 
         if (quickOrderInfoImgUrl.isNullOrEmpty()) {
             val message = "Please Captured Image"
@@ -770,6 +824,8 @@ class QuickOrderCollectFragment : Fragment() {
 
     private fun placeOrder(){
         val parcelImage = "https://static.ajkerdeal.com/images/dt/orderrequest/${courierOrdersId.lowercase(Locale.US)}.jpg"
+        val amountText = binding?.collectionAmount?.text?.toString() ?: "0.0"
+        val amount = amountText.toDoubleOrNull() ?: 0.0
         val requestBody = QuickOrderUpdateRequest(
             courierOrdersId, currentOrderRequestId, courierUserId,
             status,
@@ -780,12 +836,17 @@ class QuickOrderCollectFragment : Fragment() {
             deliveryType, serviceType,
             deliveryCharge,
             collectionTimeSlotId,
-            parcelImage
+            parcelImage,
+            orderType,
+            if (isCollection) amount else 0.0,
+            amount,
+            calculateCODCharge()
         )
 
         viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {
             context?.toast("Order place successFull")
             orderRequestIdChange()
+            orderRequestIdStatusUpdate()
         })
     }
 
@@ -800,6 +861,52 @@ class QuickOrderCollectFragment : Fragment() {
             }
         }
         Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmountInOrderRequestId $currentTotalParcel")
+    }
+
+    private fun getBreakableCharge() {
+        viewModel.getBreakableCharge().observe(viewLifecycleOwner, Observer { model ->
+            codChargeMin = model.codChargeMin
+            codChargePercentageInsideDhaka = model.codChargeDhakaPercentage
+            codChargePercentageOutsideDhaka = model.codChargePercentage
+        })
+    }
+
+    private fun calculateCODCharge(): Double {
+        return if (isCollection) {
+            val amountText = binding?.collectionAmount?.text?.toString() ?: "0.0"
+            val amount = amountText.toDoubleOrNull() ?: 0.0
+            var payCODCharge = (amount / 100.0) * codChargePercentage
+            if (payCODCharge < codChargeMin) {
+                payCODCharge = codChargeMin.toDouble()
+            }
+            return payCODCharge
+        } else {
+            0.0
+        }
+    }
+
+    private fun orderRequestIdStatusUpdate() {
+
+        if (previousOrderAmountInOrderRequestId != currentOrderAmountInOrderRequestId) {
+            val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
+            val requestModel = QuickOrderStatusUpdateRequest(
+                currentOrderAmountInOrderRequestId,
+                SessionManager.dtUserId,
+                status
+            )
+            requestBody.add(requestModel)
+            updateOrderStatus(requestBody)
+            previousOrderAmountInOrderRequestId = currentOrderAmountInOrderRequestId
+        }
+    }
+
+    private fun updateOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) {
+        viewModel.updateQuickOrderStatus(requestBody).observe(viewLifecycleOwner, Observer { flag ->
+            if (flag) {
+                Timber.d("updateOrderStatus $flag")
+            }
+        })
+
     }
     //#endregion
 

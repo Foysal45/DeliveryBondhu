@@ -5,6 +5,7 @@ import com.ajkerdeal.app.essential.api.models.GenericResponse
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
+import com.ajkerdeal.app.essential.api.models.charge.BreakableChargeData
 import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
@@ -75,5 +76,8 @@ interface ApiInterfaceADCORE {
 
     @PUT("api/Bondhu/UpdateOrderRequests")
     suspend fun updateQuickOrderStatus(@Body requestBody: List<QuickOrderStatusUpdateRequest>): NetworkResponse<GenericResponse<Int>, ErrorResponse>
+
+    @GET("api/Fetch/GetBreakableCharge")
+    suspend fun getBreakableCharge(): NetworkResponse<GenericResponse<BreakableChargeData>, ErrorResponse>
 
 }

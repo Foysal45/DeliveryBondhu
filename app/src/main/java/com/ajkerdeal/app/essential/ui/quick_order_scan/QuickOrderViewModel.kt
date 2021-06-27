@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
+import com.ajkerdeal.app.essential.api.models.charge.BreakableChargeData
 import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
@@ -289,6 +290,39 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+            }
+        }
+        return responseData
+    }
+
+    fun getBreakableCharge(): LiveData<BreakableChargeData> {
+        viewState.value = ViewState.ProgressState(true)
+        val responseData = MutableLiveData<BreakableChargeData>()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.getBreakableCharge()
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        if (response.body.model != null) {
+                            responseData.value = response.body.model!!
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }
             }
         }
         return responseData
