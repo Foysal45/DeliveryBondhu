@@ -189,13 +189,13 @@
 
                 <TextView
                     android:id="@+id/timeText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:layout_marginStart="4dp"
                     android:textColor="@color/crimson"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    android:gravity="end"
                     tools:text="01:30:00" />
 
             </LinearLayout>
