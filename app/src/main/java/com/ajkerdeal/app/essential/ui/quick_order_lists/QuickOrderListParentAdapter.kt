@@ -64,6 +64,8 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             binding.parcelCountText.text = "${DigitConverter.toBanglaDigit(model.orderRequestList.first().requestOrderAmount)} টি"
+            val requestDate = model.orderRequestList.last().requestDate?.split("T")?.first()
+            binding.requestDate.text = DigitConverter.toBanglaDate(requestDate, "yyyy-MM-dd")
 
             collectionTimer(holder, model.orderRequestList.first())
 

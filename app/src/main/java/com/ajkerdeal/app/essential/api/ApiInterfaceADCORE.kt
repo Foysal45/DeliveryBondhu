@@ -75,7 +75,7 @@ interface ApiInterfaceADCORE {
     suspend fun fetchQuickOrderStatus(): NetworkResponse<GenericResponse<List<QuickOrderStatus>>, ErrorResponse>
 
     @GET("api/QuickOrder/IsAcceptedQuickOrder/{orderRequestId}")
-    suspend fun isAcceptedQuickOrder(@Path("orderRequestId") orderRequestId: String): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+    suspend fun isAcceptedQuickOrder(@Path("orderRequestId") orderRequestId: Int): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
     @PUT("api/Bondhu/UpdateOrderRequests")
     suspend fun updateQuickOrderStatus(@Body requestBody: List<QuickOrderStatusUpdateRequest>): NetworkResponse<GenericResponse<Int>, ErrorResponse>

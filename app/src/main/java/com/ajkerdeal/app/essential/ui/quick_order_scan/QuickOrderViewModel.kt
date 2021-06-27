@@ -158,7 +158,7 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
-    fun isAcceptedQuickOrder(orderRequestId: String): LiveData<Boolean> {
+    fun isAcceptedQuickOrder(orderRequestId: Int): LiveData<Boolean> {
 
         val responseData: MutableLiveData<Boolean> = MutableLiveData()
         viewState.value = ViewState.ProgressState(true)

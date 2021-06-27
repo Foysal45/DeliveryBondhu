@@ -123,7 +123,7 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
 
     suspend fun fetchQuickOrderStatus() = apiInterfaceADCORE.fetchQuickOrderStatus()
 
-    suspend fun isAcceptedQuickOrder(orderRequestId: String) = apiInterfaceADCORE.isAcceptedQuickOrder(orderRequestId)
+    suspend fun isAcceptedQuickOrder(orderRequestId: Int) = apiInterfaceADCORE.isAcceptedQuickOrder(orderRequestId)
 
     suspend fun updateQuickOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) = apiInterfaceADCORE.updateQuickOrderStatus(requestBody)
 

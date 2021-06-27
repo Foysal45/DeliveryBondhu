@@ -74,7 +74,7 @@ class QuickOrderListFragment : Fragment() {
     private fun initClickLister(){
 
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
-            viewModel.isAcceptedQuickOrder(orderModel?.orderRequestId.toString()).observe(viewLifecycleOwner, Observer {
+            viewModel.isAcceptedQuickOrder(orderModel?.orderRequestId ?: 0).observe(viewLifecycleOwner, Observer {
                 if (it){
                     if (orderModel != null) {
                         when (actionModel.statusUpdate) {
