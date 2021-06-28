@@ -93,8 +93,8 @@ class QuickOrderListFragment : Fragment() {
                     }
                     // Accept
                     41 -> {
-                        viewModel.isAcceptedQuickOrder(orderModel?.orderRequestId ?: 0).observe(viewLifecycleOwner, Observer {
-                            if (it){
+                        viewModel.isAcceptedQuickOrder(orderModel?.orderRequestId ?: 0).observe(viewLifecycleOwner, Observer { flag ->
+                            if (!flag){
                                 val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
                                 val requestModel = QuickOrderStatusUpdateRequest(
                                     orderModel.orderRequestId ?: 0,
@@ -137,8 +137,8 @@ class QuickOrderListFragment : Fragment() {
                     }
                     // Accept
                     41 -> {
-                        viewModel.isAcceptedQuickOrder(model.orderRequestList.first().orderRequestSelfList.first().orderRequestId).observe(viewLifecycleOwner, Observer {
-                            if (it){
+                        viewModel.isAcceptedQuickOrder(model.orderRequestList.first().orderRequestSelfList.first().orderRequestId).observe(viewLifecycleOwner, Observer { flag ->
+                            if (!flag){
                                 val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
                                 model.orderRequestList.forEach { orderModel ->
                                     orderModel.orderRequestSelfList.forEach { orderRequest ->

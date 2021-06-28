@@ -21,6 +21,9 @@ import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.haroldadmin.cnradapter.NetworkResponse
 import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.default
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -261,7 +264,10 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
 
             val file = File(url)
             Timber.d("ImageLog ImageFilePath: $file")
-            val compressedFile = Compressor.compress(context, file)
+            val compressedFile = Compressor.compress(context, file) {
+                resolution(500, 500)
+                quality(20)
+            }
             val requestFile = compressedFile.asRequestBody(mediaTypeMultipart)
             val part = MultipartBody.Part.createFormData("", "${orderId}.jpg", requestFile)
             val imageUrl = "images/dt/orderrequest".toRequestBody()
