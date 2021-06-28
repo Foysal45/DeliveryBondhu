@@ -248,6 +248,7 @@ class QuickOrderListFragment : Fragment() {
                     selectedOrderStatus = model.statusUpdate
 
                     fetchOrderData(selectedOrderStatus)
+                    dataAdapter.currentStatus = selectedOrderStatus
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}

@@ -39,6 +39,7 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
     private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+    var currentStatus: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewQuickOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -67,7 +68,16 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
             val requestDate = model.orderRequestList.last().requestDate?.split("T")?.first()
             binding.requestDate.text = DigitConverter.toBanglaDate(requestDate, "yyyy-MM-dd")
 
-            collectionTimer(holder, model.orderRequestList.first())
+            if (currentStatus == 44) {
+                holder.binding.timerLayout.visibility = View.GONE
+                if (holder.countDownTimer != null) {
+                    holder.countDownTimer?.cancel()
+                }
+            } else {
+                holder.binding.timerLayout.visibility = View.VISIBLE
+                collectionTimer(holder, model.orderRequestList.first())
+            }
+
 
             if (model.actionModel.isNullOrEmpty()) {
                 binding.recyclerViewAction.visibility = View.GONE
@@ -198,7 +208,7 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
                             }
 
                             override fun onFinish() {
-                                holder.binding.timeText.text = "কালেকশন টাইম আউট"
+                                holder.binding.timeText.text = "টাইম আউট"
                             }
                         }.start()
                     } else {
