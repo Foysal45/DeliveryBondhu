@@ -83,9 +83,9 @@ class QuickOrderCollectFragment : Fragment() {
     private var deliveryType: String = ""
 
     private var currentOrderRequestId: Int = 0
-    private var currentOrderAmountInOrderRequestId: Int = 0
+    private var currentOrderAmount: Int = 0
     private var currentTotalParcel: Int = 0
-    private var previousOrderAmountInOrderRequestId: Int = 0
+    private var previousOrderRequestId: Int = 0
 
     private var orderType: String = "Only Delivery"
     private var isOrderTypeSelected: Boolean = false
@@ -123,8 +123,8 @@ class QuickOrderCollectFragment : Fragment() {
 
         val firstModel = orderRequestSelfList.first()
         currentOrderRequestId = firstModel.orderRequestId
-        currentOrderAmountInOrderRequestId = firstModel.requestOrderAmount
-        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmountInOrderRequestId $currentTotalParcel")
+        currentOrderAmount = firstModel.requestOrderAmount
+        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmount $currentTotalParcel")
 
         /*if (BuildConfig.DEBUG) {
             status = 44
@@ -873,15 +873,15 @@ class QuickOrderCollectFragment : Fragment() {
 
     private fun orderRequestIdChange() {
         currentTotalParcel++
-        if (currentTotalParcel >= currentOrderAmountInOrderRequestId) {
+        if (currentTotalParcel >= currentOrderAmount) {
             val index = orderRequestSelfList.indexOfFirst { it.orderRequestId == currentOrderRequestId }
             if (index != -1 && index != orderRequestSelfList.lastIndex) {
                 currentOrderRequestId = orderRequestSelfList[index + 1].orderRequestId
-                currentOrderAmountInOrderRequestId = orderRequestSelfList[index + 1].requestOrderAmount
+                currentOrderAmount = orderRequestSelfList[index + 1].requestOrderAmount
                 currentTotalParcel = 0
             }
         }
-        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmountInOrderRequestId $currentTotalParcel")
+        Timber.d("orderRequestIdChangeDebug $currentOrderRequestId $currentOrderAmount $currentTotalParcel")
     }
 
     private fun getBreakableCharge() {
@@ -908,16 +908,16 @@ class QuickOrderCollectFragment : Fragment() {
 
     private fun orderRequestIdStatusUpdate() {
 
-        if (previousOrderAmountInOrderRequestId != currentOrderAmountInOrderRequestId) {
+        if (previousOrderRequestId != currentOrderRequestId) {
             val requestBody: MutableList<QuickOrderStatusUpdateRequest> = mutableListOf()
             val requestModel = QuickOrderStatusUpdateRequest(
-                currentOrderAmountInOrderRequestId,
+                currentOrderRequestId,
                 SessionManager.dtUserId,
                 status
             )
             requestBody.add(requestModel)
             updateOrderStatus(requestBody)
-            previousOrderAmountInOrderRequestId = currentOrderAmountInOrderRequestId
+            previousOrderRequestId = currentOrderRequestId
         }
     }
 
