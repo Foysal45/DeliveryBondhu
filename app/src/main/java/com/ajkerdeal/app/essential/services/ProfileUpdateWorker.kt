@@ -47,7 +47,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
 
         val data = parameters.inputData
         val model = data.getString("Data") ?: "{\"BondhuId\":${SessionManager.userId}}"
-        val modelDT = data.getString("DataDT") ?: "{\"BondhuId\":${SessionManager.userId}}"
+        val modelDT = data.getString("DataDT") ?: "{\"BondhuId\":${SessionManager.dtUserId}}"
         val profileUri = data.getString("profileUri") ?: ""
         val nidUri = data.getString("nidUri") ?: ""
         val drivingUri = data.getString("drivingUri") ?: ""

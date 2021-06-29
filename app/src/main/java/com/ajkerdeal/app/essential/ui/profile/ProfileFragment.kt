@@ -267,7 +267,7 @@ class ProfileFragment : Fragment() {
             isNID = !nidUri.isNullOrEmpty()
         }
         val modelDT = ProfileDataDT().apply {
-            bondhuId = SessionManager.userId
+            bondhuId = SessionManager.dtUserId
             name = binding!!.name.text.toString().trim()
             mobile = profileMobile
             alternativeMobile = binding!!.alterMobile.text.toString().trim()
