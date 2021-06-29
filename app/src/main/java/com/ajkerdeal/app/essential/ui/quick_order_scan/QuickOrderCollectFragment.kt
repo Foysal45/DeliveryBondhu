@@ -736,6 +736,7 @@ class QuickOrderCollectFragment : Fragment() {
 
     //#region Collection
     private fun startPlaceOrderProcess() {
+        hideKeyboard()
         if (!validation()){
             return
         }
