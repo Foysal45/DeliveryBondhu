@@ -6,13 +6,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.profile.AreaInfo
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
+import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
 import com.ajkerdeal.app.essential.databinding.FragmentProfileBinding
 import com.ajkerdeal.app.essential.services.ProfileUpdateWorker
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
@@ -42,6 +42,7 @@ class ProfileFragment : Fragment() {
     private var thanaId = 0
     private var districtName = ""
     private var thanaName = ""
+    private var areaName = ""
     private var areaId = 0
     private var postCode = 0
     private var profileMobile: String? = ""
@@ -265,11 +266,20 @@ class ProfileFragment : Fragment() {
             isDrivingLicense = !drivingUri.isNullOrEmpty()
             isNID = !nidUri.isNullOrEmpty()
         }
+        val modelDT = ProfileDataDT().apply {
+            bondhuId = SessionManager.userId
+            name = binding!!.name.text.toString().trim()
+            mobile = profileMobile
+            alternativeMobile = binding!!.alterMobile.text.toString().trim()
+            bkashMobileNumber = binding!!.bKashAccount.text.toString().trim()
+            areaInfo = listOf(com.ajkerdeal.app.essential.api.models.profile.profile_DT.AreaInfo(districtId, districtName, thanaId, thanaName, postCode, areaId))
+        }
         //viewModel.updateProfile(model)
         SessionManager.bkashMobileNumber = binding!!.bKashAccount.text.toString().trim()
 
         val data = Data.Builder()
             .putString("Data", gson.toJson(model))
+            .putString("DataDT", gson.toJson(modelDT))
             .putString("profileUri", profileUri)
             .putString("nidUri", nidUri)
             .putString("drivingUri", drivingUri)

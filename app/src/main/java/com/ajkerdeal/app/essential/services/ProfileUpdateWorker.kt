@@ -11,6 +11,7 @@ import androidx.work.WorkerParameters
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.ProgressRequestBody
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
+import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
 import com.ajkerdeal.app.essential.repository.AppRepository
 
 import com.ajkerdeal.app.essential.utils.SessionManager
@@ -46,6 +47,7 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
 
         val data = parameters.inputData
         val model = data.getString("Data") ?: "{\"BondhuId\":${SessionManager.userId}}"
+        val modelDT = data.getString("DataDT") ?: "{\"BondhuId\":${SessionManager.userId}}"
         val profileUri = data.getString("profileUri") ?: ""
         val nidUri = data.getString("nidUri") ?: ""
         val drivingUri = data.getString("drivingUri") ?: ""
@@ -59,6 +61,29 @@ class ProfileUpdateWorker(private val context: Context, private val parameters: 
                 is NetworkResponse.Success -> {
                     resultMsg = responseProfileData.body.data?.message
                     isSuccess = true
+                }
+                is NetworkResponse.ServerError -> {
+                    resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                }
+                is NetworkResponse.NetworkError -> {
+                    resultMsg = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                }
+                is NetworkResponse.UnknownError -> {
+                    resultMsg = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                    Timber.d(responseProfileData.error)
+                }
+            }.exhaustive
+        } catch (e: Exception) {
+            Timber.d(e)
+        }
+
+        try {
+            val responseBodyModelDT: ProfileDataDT = gson.fromJson(modelDT, ProfileDataDT::class.java)
+            val responseProfileData = repository.updateDeliveryManInfo(responseBodyModelDT)
+            when (responseProfileData) {
+                is NetworkResponse.Success -> {
+                    resultMsg = "Updated"
+                    isSuccess = responseProfileData.body.model
                 }
                 is NetworkResponse.ServerError -> {
                     resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"

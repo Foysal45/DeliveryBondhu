@@ -12,6 +12,7 @@ import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequ
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
+import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
@@ -57,6 +58,11 @@ interface ApiInterfaceADCORE {
 
     @PUT("/api/Bondhu/UpdateBondhuOrder")
     suspend fun updateStatusDT(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
+
+    @PUT("api/Bondhu/UpdateDeliveryManInfo")
+    suspend fun updateDeliveryManInfo(@Body requestBody: ProfileDataDT): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
 
     //Quick Order
     @GET("api/QuickOrder/CheckIsQuickOrder/{orderId}")
