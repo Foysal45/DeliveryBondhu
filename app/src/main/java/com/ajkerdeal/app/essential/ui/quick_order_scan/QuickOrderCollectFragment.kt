@@ -66,6 +66,7 @@ class QuickOrderCollectFragment : Fragment() {
     private var collectionDistrictId: Int = 0
     private var collectionThanaId: Int = 0
     private var status: Int = 0
+    private var comment: String = ""
     private var operationFlag: Int = 0
 
     private lateinit var deliveryTypeAdapter: DeliveryTypeAdapter
@@ -117,6 +118,7 @@ class QuickOrderCollectFragment : Fragment() {
         collectionDistrictId = arguments?.getInt("collectionDistrictId", 0) ?: 0
         collectionThanaId = arguments?.getInt("collectionThanaId", 0) ?: 0
         status = arguments?.getInt("status", 0) ?: 0
+        comment = arguments?.getString("comment") ?: ""
         operationFlag = arguments?.getInt("operationFlag", 0) ?: 0
 
         Timber.d("BundleLog ${arguments?.bundleToString()}")
@@ -835,7 +837,7 @@ class QuickOrderCollectFragment : Fragment() {
         val amount = amountText.toDoubleOrNull() ?: 0.0
         val requestBody = QuickOrderUpdateRequest(
             courierOrdersId, currentOrderRequestId, courierUserId,
-            status,
+            status, comment,
             districtId, thanaId, areaId,
             collectionDistrictId, collectionThanaId,
             deliveryRangeId,SessionManager.dtUserId,
@@ -847,7 +849,8 @@ class QuickOrderCollectFragment : Fragment() {
             orderType,
             if (isCollection) amount else 0.0,
             amount,
-            calculateCODCharge()
+            calculateCODCharge(),
+            SessionManager.dtUserId
         )
 
         viewModel.updateQuickOrder(requestBody).observe(viewLifecycleOwner, Observer {

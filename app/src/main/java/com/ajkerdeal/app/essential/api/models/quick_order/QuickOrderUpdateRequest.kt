@@ -12,6 +12,8 @@ data class QuickOrderUpdateRequest(
     var merchantId: Int = 0,
     @SerializedName("status")
     var status: Int = 0,
+    @SerializedName("comment")
+    var comment: String = "",
     @SerializedName("districtId")
     var districtId: Int = 0,
     @SerializedName("thanaId")
@@ -47,5 +49,9 @@ data class QuickOrderUpdateRequest(
     @SerializedName("ActualPackagePrice")
     var actualPackagePrice: Double = 0.0,
     @SerializedName("CodCharge")
-    var codCharge: Double = 0.0
+    var codCharge: Double = 0.0,
+    @SerializedName("updatedBy")
+    var updatedBy: Int = 0,
+    @SerializedName("isConfirmedBy")
+    var isConfirmedBy: String = "deliveryman"
 )

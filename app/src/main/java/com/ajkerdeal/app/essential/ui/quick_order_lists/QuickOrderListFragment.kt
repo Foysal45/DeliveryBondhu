@@ -87,6 +87,7 @@ class QuickOrderListFragment : Fragment() {
                             "collectionDistrictId" to model.districtsViewModel.districtId,
                             "collectionThanaId" to model.districtsViewModel.thanaId,
                             "status" to actionModel.statusUpdate,
+                            "comment" to actionModel.statusMessage,
                             "operationFlag" to 1
                         )
                         findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
@@ -131,6 +132,7 @@ class QuickOrderListFragment : Fragment() {
                             "collectionDistrictId" to model.districtsViewModel.districtId,
                             "collectionThanaId" to model.districtsViewModel.thanaId,
                             "status" to actionModel.statusUpdate,
+                            "comment" to actionModel.statusMessage,
                             "operationFlag" to 1
                         )
                         findNavController().navigate(R.id.nav_quickOrderList_orderCollection, bundle)
