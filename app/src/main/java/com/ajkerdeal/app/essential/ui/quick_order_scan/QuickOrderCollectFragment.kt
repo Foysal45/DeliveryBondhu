@@ -188,7 +188,6 @@ class QuickOrderCollectFragment : Fragment() {
         }
 
         binding?.updateBtn?.setOnClickListener {
-            //ToDo test
             //orderRequestIdChange()
             //uploadParcelImage("DT-1")
 
