@@ -448,6 +448,7 @@ class OrderListFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
                     0 -> {
+                        dataAdapter.isOrderFromAD = false
                         tabLayoutSelected = 0
                         userId = SessionManager.dtUserId // DT user id
                         if (SessionManager.isOffline && isUnavailableShow) {
