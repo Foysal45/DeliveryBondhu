@@ -72,7 +72,7 @@
         <ImageView
             android:id="@+id/isAdvancedPaymentIcon"
             android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_height="20dp"
             android:layout_marginTop="5dp"
             android:contentDescription="@string/cd"
             android:src="@drawable/ic_adv_payment"
@@ -80,7 +80,6 @@
             app:layout_constraintEnd_toStartOf="@+id/weightUpdateButton"
             app:layout_constraintTop_toBottomOf="@+id/priorityShowLayout"
             app:layout_constraintStart_toStartOf="@id/qrcodeBtn"
-            app:tint="@color/colorPrimary"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
