@@ -111,7 +111,8 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             if (model.priorityService > 0){
                 holder.binding.priorityShowLayout.visibility = View.VISIBLE
-                holder.binding.priorityAmountText.text = model.priorityService.toString()
+                val msg = if (model.priorityService == 1) "Urgent" else model.priorityService.toString()
+                holder.binding.priorityAmountText.text = msg
             }else{
                 holder.binding.priorityShowLayout.visibility = View.GONE
             }
