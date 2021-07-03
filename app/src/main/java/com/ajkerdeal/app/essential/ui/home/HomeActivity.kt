@@ -547,7 +547,11 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         appUpdateManager = AppUpdateManagerFactory.create(this)
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE,this,requestCodeAppUpdate)
+                try {
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE,this,requestCodeAppUpdate)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -556,7 +560,11 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             // For IMMEDIATE
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE,this,requestCodeAppUpdate)
+                try {
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE,this,requestCodeAppUpdate)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
