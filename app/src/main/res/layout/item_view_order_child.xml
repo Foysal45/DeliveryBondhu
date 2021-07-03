@@ -68,6 +68,21 @@
             app:tint="@color/colorPrimary"
             tools:visibility="visible" />
 
+
+        <ImageView
+            android:id="@+id/isAdvancedPaymentIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/cd"
+            android:src="@drawable/ic_adv_payment"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/weightUpdateButton"
+            app:layout_constraintTop_toBottomOf="@+id/priorityShowLayout"
+            app:layout_constraintStart_toStartOf="@id/qrcodeBtn"
+            app:tint="@color/colorPrimary"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/priorityShowLayout"
             android:layout_width="wrap_content"
@@ -228,14 +243,14 @@
 
         <LinearLayout
             android:id="@+id/timerLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:orientation="horizontal"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/isAdvancedPaymentIcon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/productPrice"
             tools:visibility="visible">

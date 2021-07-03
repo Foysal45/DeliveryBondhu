@@ -470,6 +470,7 @@ class OrderListFragment : Fragment() {
                     }
                     1 -> {
                         tabLayoutSelected = 1
+                        dataAdapter.isOrderFromAD = true
                         userId = SessionManager.userId // AD user id
                         if (SessionManager.isOffline && isUnavailableShow) {
                             binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"

@@ -25,6 +25,8 @@ data class OrderModel(
     var sizes: String? = "",
     @SerializedName("deliveryType")
     var deliveryType: String? = "",
+    @SerializedName("isAdvancePayment")
+    var isAdvancePayment: Boolean = false,
 
     @SerializedName("comments")
     var comments: String? = "",

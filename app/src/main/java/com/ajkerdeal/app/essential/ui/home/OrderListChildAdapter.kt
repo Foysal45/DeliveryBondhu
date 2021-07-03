@@ -37,6 +37,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
+    var isOrderFromAD: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -165,6 +166,13 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.weightUpdateButton.visibility = View.VISIBLE
             }else{
                 holder.binding.weightUpdateButton.visibility = View.GONE
+            }
+
+            Timber.d("isAdvancedPaymentDebug ${model.isAdvancePayment} $isOrderFromAD")
+            if(isOrderFromAD && model.isAdvancePayment){
+                holder.binding.isAdvancedPaymentIcon.visibility = View.VISIBLE
+            }else{
+                holder.binding.isAdvancedPaymentIcon.visibility = View.GONE
             }
 
             // Collection time
