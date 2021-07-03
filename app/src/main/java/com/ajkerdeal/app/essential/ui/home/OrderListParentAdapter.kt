@@ -41,6 +41,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var allowImageUpload: Boolean = false
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
+    var isOrderFromAD: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -112,6 +113,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val dataAdapter = OrderListChildAdapter()
             dataAdapter.isCollectionTimerShow = isCollectionTimerShow
             dataAdapter.isWeightUpdateEnable = isWeightUpdateEnable
+            dataAdapter.isOrderFromAD = isOrderFromAD
             dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
             with(holder.binding.recyclerView) {
                 setHasFixedSize(false)
