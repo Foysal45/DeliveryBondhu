@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.district.LocationData
 import com.ajkerdeal.app.essential.api.models.profile.AreaInfo
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
 import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
@@ -30,6 +31,7 @@ import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.File
+import java.util.*
 
 class ProfileFragment : Fragment() {
 
@@ -114,16 +116,30 @@ class ProfileFragment : Fragment() {
             viewModel.loadLocationList().observe(viewLifecycleOwner, Observer { response ->
 
                 val districtModelList = response.districtInfo
-                val districtNameList = districtModelList.map { it.districtBng }
 
-                val dialog = LocationSelectionDialog.newInstance(districtNameList as MutableList<String>)
+                val locationList: MutableList<LocationData> = mutableListOf()
+                districtModelList.forEach { model ->
+                    locationList.add(LocationData(
+                        model.districtId,
+                        model.districtBng,
+                        model.district,
+                        "0",
+                        model.district.lowercase(Locale.US) ?: "",
+                        false
+                    ))
+                }
+
+                val dialog = LocationSelectionDialog.newInstance(locationList)
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                dialog.onLocationPicked = { position, value ->
-                    districtName = value
-                    binding?.district?.setText(value)
-                    if (position in 0..districtModelList.size) {
-                        districtId = districtModelList[position].districtId
-                    }
+                dialog.onLocationPicked = { model ->
+                    districtName = model.displayNameBangla ?: ""
+                    binding?.district?.setText(model.displayNameBangla ?: "")
+                    districtId = model.id
+
+                    thanaId = 0
+                    postCode = 0
+                    binding?.thana?.setText("")
+                    thanaName = ""
                 }
                 binding!!.district.isEnabled = true
             })
@@ -138,20 +154,28 @@ class ProfileFragment : Fragment() {
                 viewModel.loadLocationList(districtId).observe(viewLifecycleOwner, Observer { response ->
 
                     val thanaModelList = response.districtInfo[0].thanaHome
-                    val thanaNameList = thanaModelList.map { it.thanaBng }
 
-                    val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
+                    val locationList: MutableList<LocationData> = mutableListOf()
+                    thanaModelList.forEach { model ->
+                        locationList.add(LocationData(
+                            model.thanaId,
+                            model.thanaBng,
+                            model.thana,
+                            model.postalCode,
+                            model.thana.lowercase(Locale.US) ?: "",
+                            false
+                        ))
+                    }
+
+                    val dialog = LocationSelectionDialog.newInstance(locationList)
                     dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                    dialog.onLocationPicked = { position, value ->
+                    dialog.onLocationPicked = { model ->
                         //context?.toast(value)
-                        thanaName = value
-                        binding?.thana?.setText(value)
-                        if (position in 0..thanaModelList.size) {
-                            val model = thanaModelList[position]
-                            thanaId = model.thanaId
-                            postCode = model.postalCode.toIntOrNull() ?: 0
-                            //areaId = 0
-                        }
+                        thanaName = model.displayNameBangla ?: ""
+                        binding?.thana?.setText(model.displayNameBangla ?: "")
+                        thanaId = model.id
+                        postCode = model.displayPostalCode?.toIntOrNull() ?: 0
+                        //areaId = 0
                     }
                     binding!!.thana.isEnabled = true
                 })

@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.district.LocationData
 import com.ajkerdeal.app.essential.databinding.FragmentSignUpBinding
 import com.ajkerdeal.app.essential.ui.dialog.LocationSelectionDialog
 import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.ajkerdeal.app.essential.utils.toast
 import org.koin.android.ext.android.inject
+import java.util.*
 
 class SignUpFragment : Fragment() {
 
@@ -66,29 +68,39 @@ class SignUpFragment : Fragment() {
             viewModel.loadLocationList().observe(viewLifecycleOwner, Observer { response ->
 
                 val districtModelList = response.districtInfo
-                val districtNameList = districtModelList.map { it.districtBng }
                 binding?.thanaProgress?.visibility = View.GONE
 
-                val dialog = LocationSelectionDialog.newInstance(districtNameList as MutableList<String>)
+                val locationList: MutableList<LocationData> = mutableListOf()
+                districtModelList.forEach { model ->
+                    locationList.add(LocationData(
+                        model.districtId,
+                        model.districtBng,
+                        model.district,
+                        "0",
+                        model.district.lowercase(Locale.US) ?: "",
+                        false
+                    ))
+                }
+
+                val dialog = LocationSelectionDialog.newInstance(locationList)
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                dialog.onLocationPicked = { position, value ->
+                dialog.onLocationPicked = { model ->
                     //context?.toast(value)
-                    districtName = value
-                    binding?.districtET?.text = value
+                    districtName = model.displayNameBangla ?: ""
+                    binding?.districtET?.text = model.displayNameBangla ?: ""
                     binding?.thanaET?.text = ""
-                    if (position in 0..districtModelList.size) {
-                        districtId = districtModelList[position].districtId
-                        viewModel.districtId.value = districtId
-                        viewModel.address.value = districtName
-                        viewModel.districtName.value = districtName
+                    districtId = model.id
+                    viewModel.districtId.value = districtId
+                    viewModel.address.value = districtName
+                    viewModel.districtName.value = districtName
 
-                        binding?.thanaLayout?.visibility = View.VISIBLE
-                        viewModel.thanaName.value = ""
-                        viewModel.thanaId.value = 0
+                    binding?.thanaLayout?.visibility = View.VISIBLE
+                    viewModel.thanaName.value = ""
+                    viewModel.thanaId.value = 0
 
-                        thanaName = ""
-                        thanaId = 0
-                    }
+                    thanaName = ""
+                    thanaId = 0
+
                 }
 
                 binding?.districtET?.isEnabled = true
@@ -102,23 +114,32 @@ class SignUpFragment : Fragment() {
             viewModel.loadLocationList(districtId).observe(viewLifecycleOwner, Observer { response ->
 
                 val thanaModelList = response.districtInfo[0].thanaHome
-                val thanaNameList = thanaModelList.map { it.thanaBng }
                 binding?.thanaProgress?.visibility = View.GONE
 
-                val dialog = LocationSelectionDialog.newInstance(thanaNameList as MutableList<String>)
+                val locationList: MutableList<LocationData> = mutableListOf()
+                thanaModelList.forEach { model ->
+                    locationList.add(LocationData(
+                        model.thanaId,
+                        model.thanaBng,
+                        model.thana,
+                        model.postalCode,
+                        model.thana.lowercase(Locale.US) ?: "",
+                        false
+                    ))
+                }
+
+                val dialog = LocationSelectionDialog.newInstance(locationList)
                 dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-                dialog.onLocationPicked = { position, value ->
+                dialog.onLocationPicked = { model ->
                     //context?.toast(value)
-                    thanaName = value
-                    binding?.thanaET?.text = value
-                    if (position in 0..thanaModelList.size) {
-                        val model = thanaModelList[position]
-                        thanaId = model.thanaId
-                        viewModel.thanaId.value = thanaId
-                        viewModel.postCode.value = model.postalCode.toIntOrNull() ?: 0
-                        viewModel.address.value = "$thanaName, $districtName"
-                        viewModel.thanaName.value = thanaName
-                    }
+                    thanaName = model.displayNameBangla ?: ""
+                    binding?.thanaET?.text = model.displayNameBangla ?: ""
+
+                    thanaId = model.id
+                    viewModel.thanaId.value = thanaId
+                    viewModel.postCode.value = model.displayPostalCode?.toIntOrNull() ?: 0
+                    viewModel.address.value = "$thanaName, $districtName"
+                    viewModel.thanaName.value = thanaName
                 }
 
                 binding?.thanaET?.isEnabled = true

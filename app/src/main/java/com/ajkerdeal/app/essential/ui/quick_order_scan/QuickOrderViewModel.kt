@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajkerdeal.app.essential.api.models.PagingModel
 import com.ajkerdeal.app.essential.api.models.charge.BreakableChargeData
-import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
+import com.ajkerdeal.app.essential.api.models.district.AllDistrictListsModel
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
@@ -21,7 +21,6 @@ import com.ajkerdeal.app.essential.utils.ViewState
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.haroldadmin.cnradapter.NetworkResponse
 import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.default
 import id.zelory.compressor.constraint.quality
 import id.zelory.compressor.constraint.resolution
 import kotlinx.coroutines.Dispatchers
@@ -130,9 +129,9 @@ class QuickOrderViewModel(private val repository: AppRepository): ViewModel() {
         return responseData
     }
 
-    fun loadAllDistrictsById(id: Int): LiveData<List<DistrictThanaAreaDataModel>> {
+    fun loadAllDistrictsById(id: Int): LiveData<List<AllDistrictListsModel>> {
 
-        val responseData: MutableLiveData<List<DistrictThanaAreaDataModel>> = MutableLiveData()
+        val responseData: MutableLiveData<List<AllDistrictListsModel>> = MutableLiveData()
         viewState.value = ViewState.ProgressState(true)
         viewModelScope.launch(Dispatchers.IO){
             val response = repository.loadAllDistrictsById(id)

@@ -3,6 +3,7 @@ package com.ajkerdeal.app.essential.ui.dialog
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,9 +13,12 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.district.LocationData
+import com.ajkerdeal.app.essential.databinding.FragmentLocationSelectionDialogBinding
 import com.ajkerdeal.app.essential.utils.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -24,35 +28,39 @@ import kotlin.concurrent.thread
 
 class LocationSelectionDialog : BottomSheetDialogFragment() {
 
+    private var binding: FragmentLocationSelectionDialogBinding? = null
+
     private lateinit var crossBtn: ImageView
     private lateinit var searchEditText: EditText
     private lateinit var searchBtn: ImageView
     private lateinit var placeListRV: RecyclerView
     private var progressBar: ProgressBar? = null
-    private lateinit var extraSpace: View
+    //private lateinit var extraSpace: View
 
 
-    private var handler = Handler()
+    private var handler = Handler(Looper.getMainLooper())
     private var workRunnable: Runnable? = null
 
-    private var dataList: MutableList<String> = mutableListOf()
-    private var dataListCopy: MutableList<String> = mutableListOf()
+    private var dataList: MutableList<LocationData> = mutableListOf()
+    private var dataListCopy: MutableList<LocationData> = mutableListOf()
 
-    var onLocationPicked: ((position: Int, value: String) -> Unit)? = null
+    var onLocationPicked: ((model: LocationData) -> Unit)? = null
 
     companion object {
 
         @JvmStatic
-        fun newInstance(dataList: MutableList<String>): LocationSelectionDialog = LocationSelectionDialog().apply {
-                this.dataList = dataList
-            }
+        fun newInstance(dataList: MutableList<LocationData>): LocationSelectionDialog = LocationSelectionDialog().apply {
+            this.dataList = dataList
+        }
 
         @JvmField
-        val tag = LocationSelectionDialog::class.java.name
+        val tag: String = LocationSelectionDialog::class.java.name
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_location_selection_dialog, container, false)
+        return FragmentLocationSelectionDialogBinding.inflate(inflater, container, false).also {
+            binding = it
+        }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,17 +71,19 @@ class LocationSelectionDialog : BottomSheetDialogFragment() {
         searchBtn = view.findViewById(R.id.search_btn)
         placeListRV = view.findViewById(R.id.place_list_rv)
         progressBar = view.findViewById(R.id.progress_bar)
-        extraSpace = view.findViewById(R.id.extraSpace)
+        //extraSpace = view.findViewById(R.id.extraSpace)
 
 
-        val locationAdapter = LocationDistrictAdapter(dataList)
+        val locationAdapter = LocationDistrictAdapter()
+        locationAdapter.setDataList(dataList)
         with(placeListRV) {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
             adapter = locationAdapter
         }
         locationAdapter.onItemClicked = { position, value ->
             hideKeyboard()
-            onLocationPicked?.invoke(position,value)
+            onLocationPicked?.invoke(value)
             dismiss()
         }
 
@@ -122,8 +132,9 @@ class LocationSelectionDialog : BottomSheetDialogFragment() {
             progressBar?.visibility = View.GONE
             return
         }
+        val lowerCaseSearchKey = searchKey.lowercase(Locale.US)
         val filteredList = dataListCopy.filter { model ->
-            (model.toLowerCase(Locale.US).contains(searchKey.toLowerCase(Locale.US))) || (model.contains(searchKey))
+            (model.searchKey.contains(lowerCaseSearchKey))
         }
         (placeListRV.adapter as LocationDistrictAdapter).setDataList(filteredList)
         progressBar?.visibility = View.GONE
@@ -160,5 +171,14 @@ class LocationSelectionDialog : BottomSheetDialogFragment() {
         //extraSpace.minimumHeight = (metrics.heightPixels)
     }
 
+    override fun onStop() {
+        super.onStop()
+        workRunnable?.let { handler.removeCallbacks(it) }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 
 }

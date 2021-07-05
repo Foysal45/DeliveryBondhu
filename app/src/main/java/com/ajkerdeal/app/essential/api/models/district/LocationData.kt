@@ -12,7 +12,7 @@ data class LocationData(
 ) {
 
     companion object {
-        fun from(model: DistrictThanaAreaDataModel): LocationData {
+        fun from(model: AllDistrictListsModel): LocationData {
             return LocationData(
                 model.districtId,
                 model.districtBng,

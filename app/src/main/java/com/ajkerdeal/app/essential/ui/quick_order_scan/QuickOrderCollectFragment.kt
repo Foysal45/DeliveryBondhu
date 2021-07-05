@@ -23,7 +23,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.district.DistrictThanaAreaDataModel
+import com.ajkerdeal.app.essential.api.models.district.AllDistrictListsModel
 import com.ajkerdeal.app.essential.api.models.district.LocationData
 import com.ajkerdeal.app.essential.api.models.district.LocationType
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
@@ -74,9 +74,9 @@ class QuickOrderCollectFragment : Fragment() {
     private var weightDataAdapter: WeightSelectionAdapter = WeightSelectionAdapter()
     private var isLocationLoading: Boolean = false
 
-    private var filteredDistrictLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
-    private var filteredThanaLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
-    private var filteredAreaLists: MutableList<DistrictThanaAreaDataModel> = mutableListOf()
+    private var filteredDistrictLists: MutableList<AllDistrictListsModel> = mutableListOf()
+    private var filteredThanaLists: MutableList<AllDistrictListsModel> = mutableListOf()
+    private var filteredAreaLists: MutableList<AllDistrictListsModel> = mutableListOf()
 
     private var isAriaAvailable = true
     private var weightRangeId: Int = 0
@@ -368,22 +368,20 @@ class QuickOrderCollectFragment : Fragment() {
 
     }
 
-    private fun goToLocationSelectionDialog(list: MutableList<DistrictThanaAreaDataModel>, locationType: LocationType) {
+    private fun goToLocationSelectionDialog(list: MutableList<AllDistrictListsModel>, locationType: LocationType) {
 
         val locationList: MutableList<LocationData> = mutableListOf()
-        val locationListName: MutableList<String> = mutableListOf()
         list.forEach { model ->
             locationList.add(LocationData.from(model))
-            locationListName.add(model.districtBng ?: "")
         }
 
-        val dialog = LocationSelectionDialog.newInstance(locationListName)
+        val dialog = LocationSelectionDialog.newInstance(locationList)
         dialog.show(childFragmentManager, LocationSelectionDialog.tag)
-        dialog.onLocationPicked = { position, value ->
+        dialog.onLocationPicked = { model ->
             when (locationType) {
                 LocationType.DISTRICT -> {
-                    districtId = list[position].districtId
-                    binding?.district?.setText(value)
+                    districtId = model.id
+                    binding?.district?.setText(model.displayNameBangla)
                     thanaId = 0
                     binding?.thana?.setText("")
                     areaId = 0
@@ -391,34 +389,45 @@ class QuickOrderCollectFragment : Fragment() {
                     binding?.areaLayout?.visibility = View.GONE
                     filteredThanaLists.clear()
                     filteredAreaLists.clear()
-                    updateUIAfterDistrict(districtId, value)
-                    val locationModel = list[position]
-                    showLocationAlert(locationModel, LocationType.DISTRICT)
+                    updateUIAfterDistrict(districtId, model.displayNameBangla ?: "")
+
+                    if (list.isNotEmpty()) {
+                        val locationModel = list.find { it.districtId == model.id }
+                        locationModel?.let {
+                            showLocationAlert(it, LocationType.DISTRICT)
+                        }
+                    }
                 }
                 LocationType.THANA -> {
-                    thanaId = list[position].districtId
-                    binding?.thana?.setText(value)
+                    thanaId = model.id
+                    binding?.thana?.setText(model.displayNameBangla)
                     areaId = 0
                     binding?.area?.setText("")
                     filteredAreaLists.clear()
 
-                    val locationModel = list[position]
-                    showLocationAlert(locationModel, LocationType.THANA)
                     getDeliveryCharge(districtId, thanaId, 0, serviceType)
-                    if (filteredAreaLists.isEmpty()) {
-                        fetchLocationById(thanaId, LocationType.AREA, true)
-                    }
+                    fetchLocationById(thanaId, LocationType.AREA, true)
 
+                    if (list.isNotEmpty()) {
+                        val locationModel = list.find { it.districtId == model.id }
+                        locationModel?.let {
+                            showLocationAlert(it, LocationType.THANA)
+                        }
+                    }
                 }
                 LocationType.AREA -> {
-                    areaId = list[position].districtId
-                    val areaName = value
+                    areaId = model.id
+                    val areaName = model.displayNameBangla
                     binding?.area?.setText(areaName)
 
-                    val locationModel = list[position]
-                    showLocationAlert(locationModel, LocationType.AREA)
-
                     getDeliveryCharge(districtId, thanaId, areaId, serviceType)
+
+                    if (list.isNotEmpty()) {
+                        val locationModel = list.find { it.districtId == model.id }
+                        locationModel?.let {
+                            showLocationAlert(it, LocationType.AREA)
+                        }
+                    }
                 }
             }
         }
@@ -482,7 +491,7 @@ class QuickOrderCollectFragment : Fragment() {
         calculateTotalPrice()*/
     }
 
-    private fun showLocationAlert(model: DistrictThanaAreaDataModel, locationType: LocationType) {
+    private fun showLocationAlert(model: AllDistrictListsModel, locationType: LocationType) {
         if (model.isActiveForCorona) {
             val msg = when (locationType) {
                 LocationType.DISTRICT -> "${model.districtBng} জেলায় ডেলিভারি সার্ভিস সাময়িকভাবে বন্ধ রয়েছে।"
@@ -741,12 +750,12 @@ class QuickOrderCollectFragment : Fragment() {
         if (!validation()){
             return
         }
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             //courierOrdersId = "DT-513798"
             //binding?.scanResult?.text = courierOrdersId
             uploadParcelImage(quickOrderId)
             return
-        }
+        }*/
         checkValidOrderId(quickOrderId)
     }
 
