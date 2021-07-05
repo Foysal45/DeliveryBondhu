@@ -64,16 +64,19 @@ class QuickOrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
                 binding.customerAddress.text = model.address
             }
 
-            binding.parcelCountText.text = "${DigitConverter.toBanglaDigit(model.orderRequestList.first().requestOrderAmount)} টি"
             val requestDate = model.orderRequestList.last().requestDate?.split("T")?.first()
             binding.requestDate.text = DigitConverter.toBanglaDate(requestDate, "yyyy-MM-dd")
 
             if (currentStatus == 44) {
+                binding.parcelCountTitle.text = "কালেক্টেড পার্সেল: "
+                binding.parcelCountText.text = "${DigitConverter.toBanglaDigit(model.orderRequestList.first().totalOrder)} টি"
                 holder.binding.timerLayout.visibility = View.GONE
                 if (holder.countDownTimer != null) {
                     holder.countDownTimer?.cancel()
                 }
             } else {
+                binding.parcelCountTitle.text = "পার্সেল সংখ্যা: "
+                binding.parcelCountText.text = "${DigitConverter.toBanglaDigit(model.orderRequestList.first().requestOrderAmount)} টি"
                 holder.binding.timerLayout.visibility = View.VISIBLE
                 collectionTimer(holder, model.orderRequestList.first())
             }

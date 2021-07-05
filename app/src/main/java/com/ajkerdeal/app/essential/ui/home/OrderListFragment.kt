@@ -85,6 +85,7 @@ class OrderListFragment : Fragment() {
 
     private var imageUploadMerchantId: String = ""
     private var imageUploadOrderIdList: String = ""
+    private var imageUploadOrderIdListDT: List<String>? = listOf()
 
     private var isUnavailableShow = false
     private var userId: Int = 0
@@ -288,6 +289,9 @@ class OrderListFragment : Fragment() {
         dataAdapter.onUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
             imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+            if (isOrderFromDT()){
+                imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+            }
             addPictureDialog() {
                 when (it) {
                     1 -> {
@@ -1081,12 +1085,18 @@ class OrderListFragment : Fragment() {
     }
 
     private fun uploadFile(imageUrl: String) {
+        var imageUploadOrderIdListDTArray: Array<String>  = arrayOf()
+        if (!imageUploadOrderIdListDT.isNullOrEmpty()){
+            imageUploadOrderIdListDTArray = imageUploadOrderIdListDT!!.toTypedArray()
+        }
 
         binding?.progressBar?.visibility = View.VISIBLE
         val data = Data.Builder()
             .putString("merchantId", imageUploadMerchantId)
             .putString("orderIds", imageUploadOrderIdList)
+            .putStringArray("orderIdsDT", imageUploadOrderIdListDTArray)
             .putString("imageUrl", imageUrl)
+            .putBoolean("isOrderFromDT", isOrderFromDT())
             .build()
 
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()

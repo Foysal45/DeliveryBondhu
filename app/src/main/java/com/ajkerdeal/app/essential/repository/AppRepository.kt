@@ -27,6 +27,7 @@ import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
+import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import okhttp3.MultipartBody
@@ -129,6 +130,8 @@ class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val ap
     suspend fun isAcceptedQuickOrder(orderRequestId: Int) = apiInterfaceADCORE.isAcceptedQuickOrder(orderRequestId)
 
     suspend fun updateQuickOrderStatus(requestBody: List<QuickOrderStatusUpdateRequest>) = apiInterfaceADCORE.updateQuickOrderStatus(requestBody)
+
+    suspend fun updateDocumentUrlDT(requestBody: List<UpdateDocRequestDT>) = apiInterfaceADCORE.updateDocumentUrlDT(requestBody)
 
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 }
