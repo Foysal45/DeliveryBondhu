@@ -53,7 +53,7 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
         val imageUrl = data.getString("imageUrl") ?: ""
         val merchantId = data.getString("merchantId") ?: "merchantId"
         val orderIds = data.getString("orderIds") ?: "orderIds"
-        val orderIdsDT = data.getStringArray("orderIdsDT")?.clone()
+        val orderIdsDT = data.getStringArray("orderIdsDT") ?: arrayOf()
         val isOrderFromDT = data.getBoolean("isOrderFromDT", false)
 
         val file = File(imageUrl)
@@ -77,11 +77,13 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
                         serverImageUrl = "https://static.ajkerdeal.com/images/returnproducts/${fileName}"
                         Timber.d("serverImageUrl $serverImageUrl , $isOrderFromDT")
 
-                        if (isOrderFromDT && !orderIdsDT.isNullOrEmpty()){
+                        if (isOrderFromDT){
+
                             val requestBodyDT : MutableList<UpdateDocRequestDT> = mutableListOf()
-                            orderIdsDT?.forEach {
+                            orderIdsDT.forEach {
                                 requestBodyDT.add(UpdateDocRequestDT(it, serverImageUrl))
                             }
+
                             when (val responseDT = repository.updateDocumentUrlDT(requestBodyDT)) {
                                 is NetworkResponse.Success -> {
                                     if (responseDT.body.model > 0) {

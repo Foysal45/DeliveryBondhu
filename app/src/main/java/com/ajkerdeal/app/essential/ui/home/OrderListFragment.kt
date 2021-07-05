@@ -288,9 +288,10 @@ class OrderListFragment : Fragment() {
         }
         dataAdapter.onUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
-            imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
             if (isOrderFromDT()){
                 imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+            } else {
+                imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
             }
             addPictureDialog() {
                 when (it) {
@@ -1085,7 +1086,7 @@ class OrderListFragment : Fragment() {
     }
 
     private fun uploadFile(imageUrl: String) {
-        var imageUploadOrderIdListDTArray: Array<String>  = arrayOf()
+        var imageUploadOrderIdListDTArray: Array<String> = arrayOf()
         if (!imageUploadOrderIdListDT.isNullOrEmpty()){
             imageUploadOrderIdListDTArray = imageUploadOrderIdListDT!!.toTypedArray()
         }
