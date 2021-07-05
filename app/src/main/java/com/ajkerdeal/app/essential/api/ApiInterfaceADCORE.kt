@@ -22,6 +22,7 @@ import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_requ
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatus
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
+import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.Retrofit
@@ -88,5 +89,8 @@ interface ApiInterfaceADCORE {
 
     @GET("api/Fetch/GetBreakableCharge")
     suspend fun getBreakableCharge(): NetworkResponse<GenericResponse<BreakableChargeData>, ErrorResponse>
+
+    @PUT("api/Bondhu/UpdateDocumentUrl")
+    suspend fun updateDocumentUrlDT(@Body requestBody: List<UpdateDocRequestDT>): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
 }

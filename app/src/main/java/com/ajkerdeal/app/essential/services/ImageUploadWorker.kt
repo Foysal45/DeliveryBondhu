@@ -10,7 +10,9 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.ProgressRequestBody
+import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
+import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.utils.exhaustive
 import com.google.gson.Gson
@@ -51,6 +53,8 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
         val imageUrl = data.getString("imageUrl") ?: ""
         val merchantId = data.getString("merchantId") ?: "merchantId"
         val orderIds = data.getString("orderIds") ?: "orderIds"
+        val orderIdsDT = data.getStringArray("orderIdsDT")?.clone()
+        val isOrderFromDT = data.getBoolean("isOrderFromDT", false)
 
         val file = File(imageUrl)
         if (file.exists()) {
@@ -71,30 +75,55 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
                     if (response.body) {
                         resultMsg = "সফলভাবে ফাইল আপলোড হয়েছে"
                         serverImageUrl = "https://static.ajkerdeal.com/images/returnproducts/${fileName}"
-                        Timber.d("serverImageUrl $serverImageUrl")
+                        Timber.d("serverImageUrl $serverImageUrl , $isOrderFromDT")
 
-                        val response1 = repository.updateDocumentUrl(UpdateDocRequest(orderIds, serverImageUrl))
-                        when (response1) {
-                            is NetworkResponse.Success -> {
-                                if (response1.body.data == true) {
-                                    isSuccess = true
-                                    resultMsg = "সফলভাবে ফাইল আপলোড হয়েছে"
-                                } else {
-                                    resultMsg = "কোথাও কোনো সমস্যা হচ্ছে"
+                        if (isOrderFromDT && !orderIdsDT.isNullOrEmpty()){
+                            val requestBodyDT : MutableList<UpdateDocRequestDT> = mutableListOf()
+                            orderIdsDT?.forEach {
+                                requestBodyDT.add(UpdateDocRequestDT(it, serverImageUrl))
+                            }
+                            when (val responseDT = repository.updateDocumentUrlDT(requestBodyDT)) {
+                                is NetworkResponse.Success -> {
+                                    if (responseDT.body.model > 0) {
+                                        resultMsg = "সফলভাবে ফাইল আপলোড হয়েছে"
+                                    } else {
+                                        resultMsg = "কোথাও কোনো সমস্যা হচ্ছে"
+                                    }
+                                }
+                                is NetworkResponse.ServerError -> {
+                                    resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                                }
+                                is NetworkResponse.NetworkError -> {
+                                    resultMsg = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                                }
+                                is NetworkResponse.UnknownError -> {
+                                    resultMsg = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                                    Timber.d(responseDT.error)
                                 }
                             }
-                            is NetworkResponse.ServerError -> {
-                                resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
-                            }
-                            is NetworkResponse.NetworkError -> {
-                                resultMsg = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
-                            }
-                            is NetworkResponse.UnknownError -> {
-                                resultMsg = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                                Timber.d(response1.error)
+                        }else {
+                            val response1 = repository.updateDocumentUrl(UpdateDocRequest(orderIds, serverImageUrl))
+                            when (response1) {
+                                is NetworkResponse.Success -> {
+                                    if (response1.body.data == true) {
+                                        isSuccess = true
+                                        resultMsg = "সফলভাবে ফাইল আপলোড হয়েছে"
+                                    } else {
+                                        resultMsg = "কোথাও কোনো সমস্যা হচ্ছে"
+                                    }
+                                }
+                                is NetworkResponse.ServerError -> {
+                                    resultMsg = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                                }
+                                is NetworkResponse.NetworkError -> {
+                                    resultMsg = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                                }
+                                is NetworkResponse.UnknownError -> {
+                                    resultMsg = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                                    Timber.d(response1.error)
+                                }
                             }
                         }
-
 
                     } else {
                         resultMsg = "কোথাও কোনো সমস্যা হচ্ছে"
