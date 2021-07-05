@@ -40,6 +40,8 @@ data class QuickOrderUpdateRequest(
     var deliveryCharge: Double = 0.0,
     @SerializedName("collectionTimeSlotId")
     var collectionTimeSlotId: Int = 0,
+    @SerializedName("collectionTime")
+    var collectionTime: String? = "",
     @SerializedName("quickOrderImageUrl")
     var quickOrderImageUrl: String? = "",
     @SerializedName("OrderType")

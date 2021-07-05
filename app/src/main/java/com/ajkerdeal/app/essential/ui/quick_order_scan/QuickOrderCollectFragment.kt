@@ -62,6 +62,7 @@ class QuickOrderCollectFragment : Fragment() {
     private var orderRequestSelfList: List<OrderIdWiseAmount> = listOf()
     private var requestOrderAmountTotal: Int = 0
     private var collectionTimeSlotId: Int = 0
+    private var collectionTime: String = ""
     private var courierUserId: Int = 0
     private var collectionDistrictId: Int = 0
     private var collectionThanaId: Int = 0
@@ -115,6 +116,7 @@ class QuickOrderCollectFragment : Fragment() {
         requestOrderAmountTotal = arguments?.getInt("requestOrderAmountTotal", 0) ?: 0
         courierUserId = arguments?.getInt("courierUserId", 0) ?: 0
         collectionTimeSlotId = arguments?.getInt("collectionTimeSlotId", 0) ?: 0
+        collectionTime = arguments?.getString("collectionTime") ?: ""
         collectionDistrictId = arguments?.getInt("collectionDistrictId", 0) ?: 0
         collectionThanaId = arguments?.getInt("collectionThanaId", 0) ?: 0
         status = arguments?.getInt("status", 0) ?: 0
@@ -844,7 +846,7 @@ class QuickOrderCollectFragment : Fragment() {
             weightRangeId, selectedWeight,
             deliveryType, serviceType,
             deliveryCharge,
-            collectionTimeSlotId,
+            collectionTimeSlotId, collectionTime,
             parcelImage,
             orderType,
             if (isCollection) amount else 0.0,
