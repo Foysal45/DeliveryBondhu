@@ -53,7 +53,7 @@ class DashboardFragment : Fragment() {
         binding?.lifecycleOwner = viewLifecycleOwner
 
         viewModel.updateUserStatus().observe(viewLifecycleOwner, Observer { userStatus ->
-            when(userStatus.riderType) {
+            when (userStatus.riderType) {
                 "" -> {
                     binding?.button1?.visibility = View.VISIBLE
                     binding?.button2?.visibility = View.VISIBLE
@@ -82,7 +82,7 @@ class DashboardFragment : Fragment() {
 
             if (!userStatus.isProfileImage || !userStatus.isNID) {
                 val msg = "নতুন অর্ডার পেতে আপনার ছবি, ভোটার আই.ডি কার্ড অথবা ড্রাইভিং লাইসেন্স এর ছবি আপলোড করুন"
-                snackbar = binding?.parent?.snackbar(msg,actionName = "আপডেট") {
+                snackbar = binding?.parent?.snackbar(msg, actionName = "আপডেট") {
                     findNavController().navigate(R.id.nav_action_dashboard_profile)
                 }
                 snackbar?.show()
@@ -94,7 +94,8 @@ class DashboardFragment : Fragment() {
                 }
             }
 
-            val profileImage = if(userStatus.profileImage.isNullOrEmpty()) "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.userId}/profileimage.jpg" else userStatus.profileImage
+            val profileImage =
+                if (userStatus.profileImage.isNullOrEmpty()) "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.userId}/profileimage.jpg" else userStatus.profileImage
 
             Glide.with(this)
                 .load(profileImage)
@@ -119,7 +120,7 @@ class DashboardFragment : Fragment() {
         })
 
         binding?.userName?.text = SessionManager.userName
-        val sdf = SimpleDateFormat("dd MMM (EEEE)", Locale("bn","BD"))
+        val sdf = SimpleDateFormat("dd MMM (EEEE)", Locale("bn", "BD"))
         binding?.dateStamp?.text = sdf.format(Calendar.getInstance().timeInMillis)
 
         binding?.button1?.setOnClickListener {
@@ -127,6 +128,8 @@ class DashboardFragment : Fragment() {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
+            } else {
+                showLocationRequiredDialog()
             }
         }
         binding?.button2?.setOnClickListener {
@@ -134,6 +137,8 @@ class DashboardFragment : Fragment() {
                 snackbar?.dismiss()
                 //val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY)
                 findNavController().navigate(R.id.nav_quick_order_lists)
+            } else {
+                showLocationRequiredDialog()
             }
         }
         binding?.button3?.setOnClickListener {
@@ -141,6 +146,8 @@ class DashboardFragment : Fragment() {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_DELIVERY)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
+            } else {
+                showLocationRequiredDialog()
             }
         }
         binding?.button5?.setOnClickListener {
@@ -148,6 +155,8 @@ class DashboardFragment : Fragment() {
                 snackbar?.dismiss()
                 val bundle = bundleOf("serviceType" to AppConstant.SERVICE_TYPE_RETURN)
                 findNavController().navigate(R.id.nav_action_dashboard_orderList, bundle)
+            } else {
+                showLocationRequiredDialog()
             }
         }
 
@@ -155,6 +164,8 @@ class DashboardFragment : Fragment() {
             if (isLocationPermission() && checkLocationEnable()) {
                 snackbar?.dismiss()
                 findNavController().navigate(R.id.nav_action_dashboard_parcelList)
+            } else {
+                showLocationRequiredDialog()
             }
         }
         binding?.profileLayout?.setOnClickListener {
@@ -234,6 +245,13 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    private fun showLocationRequiredDialog() {
+        snackbar = binding?.parent?.snackbar(message = "Turn on location and accept location permission", actionName = "Ok") {
+            (activity as HomeActivity).turnOnGPS()
+        }
+        snackbar?.show()
+    }
+
 
     private fun showLocationPermissionDialog() {
         snackbar?.dismiss()
@@ -277,26 +295,26 @@ class DashboardFragment : Fragment() {
 
         val lm: LocationManager? = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-            var gpsEnabled = false
-            var networkEnabled = false
-            try {
-                gpsEnabled = lm?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            try {
-                networkEnabled = lm?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return gpsEnabled && networkEnabled
+        var gpsEnabled = false
+        var networkEnabled = false
+        try {
+            gpsEnabled = lm?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            networkEnabled = lm?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return gpsEnabled && networkEnabled
     }
 
     private fun isCheckPermission(): Boolean {
         val permission1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
         val permission2 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return when {
-            permission1 == PackageManager.PERMISSION_GRANTED  && permission2 == PackageManager.PERMISSION_GRANTED -> {
+            permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED -> {
                 true
             }
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
