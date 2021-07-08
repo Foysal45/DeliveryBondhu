@@ -54,12 +54,11 @@ interface ApiInterfaceADCORE {
     @POST("api/Update/UpdatePriceWithWeight")
     suspend fun isUpdatePriceWithWeight(@Body requestBody: UpdatePriceWithWeightRequest): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
-    @POST("api/Bondhu/LoadOrderForBondhuApp")
+    @POST("api/Bondhu/LoadOrderForBondhuAppByTimeSlot")
     suspend fun loadOrderListDT(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
 
     @PUT("/api/Bondhu/UpdateBondhuOrder")
     suspend fun updateStatusDT(@Body requestBody: List<DTStatusUpdateModel>): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
-
 
     @PUT("api/Bondhu/UpdateDeliveryManInfo")
     suspend fun updateDeliveryManInfo(@Body requestBody: ProfileDataDT): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
