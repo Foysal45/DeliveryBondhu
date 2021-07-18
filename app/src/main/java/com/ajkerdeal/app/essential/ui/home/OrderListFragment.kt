@@ -207,16 +207,11 @@ class OrderListFragment : Fragment() {
                     goToPaymentGateway(couponIds, bondhuCharge, requestBody)
                 }
                 // Go to custom comment layer update status
-                actionModel.updateStatus == 47 || actionModel.updateStatus == 48 -> {
-                    if (isOrderFromDT()){
-                        goToaCustomCommentStatusUpdate(0, orderModel?.couponId, actionModel.updateStatus, instructions)
-                    }
+                actionModel.updateStatus == 47 || actionModel.updateStatus == 48 || actionModel.updateStatus == 360 -> {
+                   goToaCustomCommentStatusUpdate(0, requestBodyDT, requestBody, instructions)
                 }
-                actionModel.updateStatus == 42 -> {
-                    if (isOrderFromDT()){
-                        goToaCustomCommentStatusUpdate(1, orderModel?.couponId, actionModel.updateStatus, instructions)
-                    }
-
+                actionModel.updateStatus == 42 || actionModel.updateStatus == 341 || actionModel.updateStatus == 546   -> {
+                    goToaCustomCommentStatusUpdate(1, requestBodyDT, requestBody, instructions)
                 }
 
                 // Show popup dialog first the update status
@@ -754,22 +749,30 @@ class OrderListFragment : Fragment() {
         })
     }
 
-    private fun goToaCustomCommentStatusUpdate(flag: Int, couponId: String?, updateStatus: Int ,instructions: String?) {
+    private fun goToaCustomCommentStatusUpdate(flag: Int, requestBodyDT: MutableList<DTStatusUpdateModel>, requestBody: MutableList<StatusUpdateModel>, instructions: String?) {
         val tag: String = ActionCommentSelectionBottomSheet.tag
         val dialog: ActionCommentSelectionBottomSheet = ActionCommentSelectionBottomSheet.newInstance(flag)
         dialog.show(childFragmentManager, tag)
-        val requestBodyDT: MutableList<DTStatusUpdateModel> = mutableListOf()
         dialog.onItemSelected = { comment ->
-            dialog.dismiss()
-            requestBodyDT.clear()
-            val statusModelDT = DTStatusUpdateModel(
-                userId,
-                couponId,
-                updateStatus,
-                comment
-            )
-            requestBodyDT.add(statusModelDT)
-            updateStatusDT(requestBodyDT, instructions)
+
+            if (!requestBodyDT.isNullOrEmpty()){
+                requestBodyDT.forEachIndexed { index, _ ->
+                    requestBodyDT[index].comment = comment
+                }
+            }
+            if (!requestBody.isNullOrEmpty()){
+                requestBody.forEachIndexed { index, _ ->
+                    requestBody[index].comments = comment
+                }
+            }
+
+            if (isOrderFromDT()) {
+                updateStatusDT(requestBodyDT, instructions)
+                dialog.dismiss()
+            } else {
+                updateStatus(requestBody, instructions)
+                dialog.dismiss()
+            }
         }
 
     }
