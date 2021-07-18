@@ -38,6 +38,7 @@ import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightReques
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.home.action_bottomsheet.ActionCommentSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
 import com.ajkerdeal.app.essential.utils.*
@@ -205,6 +206,19 @@ class OrderListFragment : Fragment() {
                 actionModel.isPaymentType == 1 -> {
                     goToPaymentGateway(couponIds, bondhuCharge, requestBody)
                 }
+                // Go to custom comment layer update status
+                actionModel.updateStatus == 47 || actionModel.updateStatus == 48 -> {
+                    if (isOrderFromDT()){
+                        goToaCustomCommentStatusUpdate(0, orderModel?.couponId, actionModel.updateStatus, instructions)
+                    }
+                }
+                actionModel.updateStatus == 42 -> {
+                    if (isOrderFromDT()){
+                        goToaCustomCommentStatusUpdate(1, orderModel?.couponId, actionModel.updateStatus, instructions)
+                    }
+
+                }
+
                 // Show popup dialog first the update status
                 actionModel.popUpDialogType == 1 -> {
                     alert("কনফার্ম করুন", "আপনি কি মার্চেন্টের কাছে গিয়েছেন?", true, "হ্যাঁ", "না") {
@@ -738,6 +752,26 @@ class OrderListFragment : Fragment() {
 
             }
         })
+    }
+
+    private fun goToaCustomCommentStatusUpdate(flag: Int, couponId: String?, updateStatus: Int ,instructions: String?) {
+        val tag: String = ActionCommentSelectionBottomSheet.tag
+        val dialog: ActionCommentSelectionBottomSheet = ActionCommentSelectionBottomSheet.newInstance(flag)
+        dialog.show(childFragmentManager, tag)
+        val requestBodyDT: MutableList<DTStatusUpdateModel> = mutableListOf()
+        dialog.onItemSelected = { comment ->
+            dialog.dismiss()
+            requestBodyDT.clear()
+            val statusModelDT = DTStatusUpdateModel(
+                userId,
+                couponId,
+                updateStatus,
+                comment
+            )
+            requestBodyDT.add(statusModelDT)
+            updateStatusDT(requestBodyDT, instructions)
+        }
+
     }
 
     private fun goToPaymentGateway(couponIds: String, paybackChange: Int, requestBody: MutableList<StatusUpdateModel>) {
