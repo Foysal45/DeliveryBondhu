@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentActionCommentSelectionBottomSheetBinding
@@ -103,8 +104,12 @@ class ActionCommentSelectionBottomSheet: BottomSheetDialogFragment() {
             actionCommentList.add("মুল্য ঠিক নেই")
             actionCommentList.add("সাইজ ঠিক নাই")
         }
-        val spinnerAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_view_spinner_item, actionCommentList)
-        binding?.spinnerActionType?.adapter = spinnerAdapter
+
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, actionCommentList)
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding?.spinnerActionType?.adapter = arrayAdapter
+        //val spinnerAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_view_spinner_item, actionCommentList)
+        //binding?.spinnerActionType?.adapter = spinnerAdapter
         binding?.spinnerActionType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -112,7 +117,6 @@ class ActionCommentSelectionBottomSheet: BottomSheetDialogFragment() {
                 if (position != 0){
                     onItemSelected?.invoke(actionCommentList[position])
                 }
-
             }
         }
 

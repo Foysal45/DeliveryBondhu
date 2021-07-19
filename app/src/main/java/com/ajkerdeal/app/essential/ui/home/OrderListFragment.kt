@@ -206,11 +206,12 @@ class OrderListFragment : Fragment() {
                 actionModel.isPaymentType == 1 -> {
                     goToPaymentGateway(couponIds, bondhuCharge, requestBody)
                 }
-                // Go to custom comment layer update status
-                actionModel.updateStatus == 47 || actionModel.updateStatus == 48 || actionModel.updateStatus == 360 -> {
-                   goToaCustomCommentStatusUpdate(0, requestBodyDT, requestBody, instructions)
+                // "কাস্টমার হোল্ড করেছে" use custom comment
+                actionModel.updateStatus in arrayOf(47, 48, 360) -> {
+                    goToaCustomCommentStatusUpdate(0, requestBodyDT, requestBody, instructions)
                 }
-                actionModel.updateStatus == 42 || actionModel.updateStatus == 341 || actionModel.updateStatus == 546   -> {
+                // "কাস্টমার আগ্রহী না" use custom comment
+                actionModel.updateStatus in arrayOf(42, 341, 546) -> {
                     goToaCustomCommentStatusUpdate(1, requestBodyDT, requestBody, instructions)
                 }
 
@@ -297,7 +298,7 @@ class OrderListFragment : Fragment() {
         }
         dataAdapter.onUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
-            if (isOrderFromDT()){
+            if (isOrderFromDT()) {
                 imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
             } else {
                 imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
@@ -522,9 +523,25 @@ class OrderListFragment : Fragment() {
                     binding!!.appBarLayout.chipsGroup.visibility = View.GONE
                     binding!!.appBarLayout.countTV.text = "০টি"
                     if (isOrderFromDT()) {
-                        viewModel.loadOrderOrSearchDT(userId, flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                        viewModel.loadOrderOrSearchDT(
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            serviceType = serviceTye,
+                            customType = customType,
+                            type = SearchType.None
+                        )
                     } else {
-                        viewModel.loadOrderOrSearchAD(userId, flag = collectionFlag, statusId = filterStatus, dtStatusId = dtStatus, serviceType = serviceTye, customType = customType, type = SearchType.None)
+                        viewModel.loadOrderOrSearchAD(
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            serviceType = serviceTye,
+                            customType = customType,
+                            type = SearchType.None
+                        )
                     }
                 }
                 binding!!.appBarLayout.searchKey.setOnCloseIconClickListener {
@@ -754,27 +771,24 @@ class OrderListFragment : Fragment() {
         val dialog: ActionCommentSelectionBottomSheet = ActionCommentSelectionBottomSheet.newInstance(flag)
         dialog.show(childFragmentManager, tag)
         dialog.onItemSelected = { comment ->
-
-            if (!requestBodyDT.isNullOrEmpty()){
-                requestBodyDT.forEachIndexed { index, _ ->
-                    requestBodyDT[index].comment = comment
-                }
-            }
-            if (!requestBody.isNullOrEmpty()){
-                requestBody.forEachIndexed { index, _ ->
-                    requestBody[index].comments = comment
-                }
-            }
-
             if (isOrderFromDT()) {
+                if (requestBodyDT.isNotEmpty()) {
+                    requestBodyDT.forEach { model ->
+                        model.comment = comment
+                    }
+                }
                 updateStatusDT(requestBodyDT, instructions)
                 dialog.dismiss()
             } else {
+                if (requestBody.isNotEmpty()) {
+                    requestBody.forEach { model ->
+                        model.comments = comment
+                    }
+                }
                 updateStatus(requestBody, instructions)
                 dialog.dismiss()
             }
         }
-
     }
 
     private fun goToPaymentGateway(couponIds: String, paybackChange: Int, requestBody: MutableList<StatusUpdateModel>) {
@@ -1124,7 +1138,7 @@ class OrderListFragment : Fragment() {
 
     private fun uploadFile(imageUrl: String) {
         var imageUploadOrderIdListDTArray: Array<String> = arrayOf()
-        if (!imageUploadOrderIdListDT.isNullOrEmpty()){
+        if (!imageUploadOrderIdListDT.isNullOrEmpty()) {
             imageUploadOrderIdListDTArray = imageUploadOrderIdListDT!!.toTypedArray()
         }
 
