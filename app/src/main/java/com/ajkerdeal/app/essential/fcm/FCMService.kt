@@ -19,6 +19,7 @@ import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -34,16 +35,44 @@ class FCMService : FirebaseMessagingService() {
 
     private val repository: AppRepository by inject()
     private val gson = GsonBuilder().setPrettyPrinting().create()
+    private val notificationId: Int = 2607
 
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
-        Timber.d(p0.data.toString())
+        Timber.d("FCMServiceTag ${p0.data}")
 
-        val title = p0.data["title"] ?: ""
-        val description = p0.data["description"] ?: ""
-        val type = p0.data["notificationType"] ?: "0"
-        val imageLink = p0.data["imageLink"] ?: ""
-        val bigText = p0.data["bigText"] ?: ""
+
+        var title = ""
+        var body = ""
+        var imageUrl = ""
+        var type = ""
+        var bigText = ""
+
+        p0.notification?.let {
+            Timber.d("Message Notification Title: ${it.title}")
+            Timber.d("Message Notification Body: ${it.body}")
+            Timber.d("Message Notification Image: ${it.imageUrl}")
+
+            title = it.title ?: ""
+            body = it.body ?: ""
+            imageUrl = it.imageUrl.toString()
+        }
+
+        if (p0.data.isNotEmpty()) {
+            Timber.d("Message data payload: ${p0.data}")
+
+            p0.data["title"]?.let {
+                title = it
+            }
+            p0.data["body"]?.let {
+                body = it
+            }
+            p0.data["imageUrl"]?.let {
+                imageUrl = it
+            }
+            type = p0.data["notificationType"] ?: ""
+            bigText = p0.data["bigText"] ?: ""
+        }
 
 
         val jsonElement = gson.toJsonTree(p0.data)
@@ -59,7 +88,7 @@ class FCMService : FirebaseMessagingService() {
         with(builder) {
             setSmallIcon(R.drawable.ic_logo_hand)
             setContentTitle(title)
-            setContentText(description)
+            setContentText(body)
             setAutoCancel(true)
             color = ContextCompat.getColor(this@FCMService, R.color.colorPrimary)
             setDefaults(NotificationCompat.DEFAULT_ALL)
@@ -78,7 +107,7 @@ class FCMService : FirebaseMessagingService() {
 
             val channel = NotificationChannel(getString(R.string.default_notification_channel_id), "Promotion", NotificationManager.IMPORTANCE_HIGH)
             with(channel) {
-                setDescription("Essential delivery offers and promotions")
+                description = "Essential delivery offers and promotions"
                 setShowBadge(true)
                 enableLights(true)
                 lightColor = Color.GREEN
@@ -91,23 +120,22 @@ class FCMService : FirebaseMessagingService() {
         when (type) {
             // Default
             "0" -> {
-                notificationManager.notify(1, builder.build())
+                notificationManager.notify(notificationId, builder.build())
             }
             // Big text
             "1" -> {
-                builder.setStyle(NotificationCompat.BigTextStyle().bigText("$description\n$bigText"))
-                notificationManager.notify(1, builder.build())
+                builder.setStyle(NotificationCompat.BigTextStyle().bigText("$body\n$bigText"))
+                notificationManager.notify(notificationId, builder.build())
             }
             //Banner
             "2" -> {
-
                 Glide.with(applicationContext)
                     .asBitmap()
-                    .load(imageLink)
+                    .load(imageUrl)
                     .into(object : CustomTarget<Bitmap?>() {
 
                         override fun onLoadCleared(placeholder: Drawable?) {
-                            notificationManager.notify(1, builder.build())
+                            notificationManager.notify(notificationId, builder.build())
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
@@ -115,35 +143,61 @@ class FCMService : FirebaseMessagingService() {
                             notificationStyle.bigPicture(resource)
                             notificationStyle.bigLargeIcon(null)
                             builder.setStyle(notificationStyle)
-                            notificationManager.notify(1, builder.build())
+                            notificationManager.notify(notificationId, builder.build())
                         }
                     })
             }
             // BigTextWithSideImage
             "3" -> {
-
                 Glide.with(applicationContext)
                     .asBitmap()
-                    .load(imageLink)
+                    .load(imageUrl)
                     .into(object : CustomTarget<Bitmap?>() {
 
                         override fun onLoadCleared(placeholder: Drawable?) {
-                            notificationManager.notify(1, builder.build())
+                            notificationManager.notify(notificationId, builder.build())
                         }
 
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
                             builder.setLargeIcon(resource)
-                            builder.setStyle(NotificationCompat.BigTextStyle().bigText("$description\n$bigText"))
-                            notificationManager.notify(1, builder.build())
+                            builder.setStyle(NotificationCompat.BigTextStyle().bigText("$body\n$bigText"))
+                            notificationManager.notify(notificationId, builder.build())
                         }
                     })
+            }
+            // Notification message handle
+            else -> {
+                Timber.d("Notification message handle called")
+                builder.setContentTitle(title).setContentText(body)
+                if (imageUrl.isNotEmpty()) {
+                    Glide.with(applicationContext)
+                        .asBitmap()
+                        .load(imageUrl)
+                        .apply(RequestOptions().timeout(8000))
+                        .into(object : CustomTarget<Bitmap?>() {
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                notificationManager.notify(notificationId, builder.build())
+                            }
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                                builder.setLargeIcon(resource)
+                                val notificationStyle = NotificationCompat.BigPictureStyle()
+                                with(notificationStyle) {
+                                    bigPicture(resource)
+                                    bigLargeIcon(null)
+                                }
+                                builder.setStyle(notificationStyle)
+                                notificationManager.notify(notificationId, builder.build())
+                            }
+                        })
+                } else {
+                    notificationManager.notify(notificationId, builder.build())
+                }
             }
         }
     }
 
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
-
         SessionManager.firebaseToken = p0
         CoroutineScope(Dispatchers.IO).launch {
             repository.updateFirebaseToken(UpdateTokenRequest(SessionManager.userId, p0))

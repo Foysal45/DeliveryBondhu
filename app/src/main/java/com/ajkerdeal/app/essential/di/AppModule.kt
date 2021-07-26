@@ -9,6 +9,7 @@ import com.ajkerdeal.app.essential.api.RetrofitUtils.createOkHttpClient
 import com.ajkerdeal.app.essential.api.RetrofitUtils.createOkHttpClientFile
 import com.ajkerdeal.app.essential.api.RetrofitUtils.getGson
 import com.ajkerdeal.app.essential.api.RetrofitUtils.retrofitInstance
+import com.ajkerdeal.app.essential.database.AppDatabase
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.ui.auth.AuthViewModel
 import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
@@ -39,7 +40,9 @@ val appModule = module {
     single { ApiInterfaceADM(get(named("adm"))) }
     single { ApiInterfaceADCORE(get(named("adcore"))) }
 
-    single { AppRepository(get(), get(), get(), get()) }
+    single { AppDatabase.invoke(get()) }
+
+    single { AppRepository(get(), get(), get(), get(), get()) }
 
     single { AuthViewModel(get()) }
     single { HomeActivityViewModel(get()) }

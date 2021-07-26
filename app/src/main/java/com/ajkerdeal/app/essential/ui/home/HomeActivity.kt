@@ -116,8 +116,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         drawerListener()
         onNewIntent(intent)
 
-        FirebaseMessaging.getInstance().subscribeToTopic("BondhuTopic").addOnSuccessListener {
-            Timber.d("Firebase subscribeToTopic: BondhuTopic")
+        FirebaseMessaging.getInstance().subscribeToTopic("BondhuTopic")
+        if (BuildConfig.DEBUG) {
+            FirebaseMessaging.getInstance().subscribeToTopic("BondhuTopicTest")
         }
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -203,13 +204,37 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null) {
-            val model = intent.getParcelableExtra<FCMData>("data")
+            Timber.d("BundleLog ${intent.extras?.bundleToString()}")
+            val model: FCMData? = intent.getParcelableExtra("data")
             Timber.d("onNewIntent $model")
             if (model != null) {
                 if (model.serviceType?.isNotEmpty() == true) {
                     val bundle = bundleOf("serviceType" to model.serviceType)
-                    navController.navigate(R.id.nav_action_dashboard_orderList, bundle)
+                    navController.navigate(R.id.nav_orderList, bundle)
                 }
+                intent.removeExtra("data")
+            } else {
+                val bundleExt = intent.extras
+                if (bundleExt != null) {
+                    val notificationType = bundleExt.getString("notificationType")
+                    if (!notificationType.isNullOrEmpty()) {
+                        val fcmModel: FCMData = FCMData(
+                            0,
+                            bundleExt.getString("notificationType"),
+                            bundleExt.getString("title"),
+                            bundleExt.getString("body"),
+                            bundleExt.getString("imageUrl"),
+                            bundleExt.getString("bigText"),
+                            "",
+                            bundleExt.getString("serviceType")
+                        )
+                        Timber.d("BundleLog FCMData $fcmModel")
+                        //goToNotificationPreview(fcmModel)
+                        val bundle = bundleOf("fcmData" to fcmModel)
+                        navController.navigate(R.id.nav_notification_preview, bundle)
+                    }
+                }
+                intent.removeExtra("notificationType")
             }
         }
     }

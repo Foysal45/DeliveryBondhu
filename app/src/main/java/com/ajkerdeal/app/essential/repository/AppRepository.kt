@@ -30,11 +30,44 @@ import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequest
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
+import com.ajkerdeal.app.essential.database.AppDatabase
+import com.ajkerdeal.app.essential.database.dao.NotificationDao
+import com.ajkerdeal.app.essential.fcm.FCMData
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
 
-class AppRepository(private val apiInterfaceAPI: ApiInterfaceAPI, private val apiInterfaceANA: ApiInterfaceANA, private val apiInterfaceADM: ApiInterfaceADM, private val apiInterfaceADCORE: ApiInterfaceADCORE) {
+class AppRepository(
+    private val apiInterfaceAPI: ApiInterfaceAPI,
+    private val apiInterfaceANA: ApiInterfaceANA,
+    private val apiInterfaceADM: ApiInterfaceADM,
+    private val apiInterfaceADCORE: ApiInterfaceADCORE,
+    private val database: AppDatabase
+    ) {
+
+    //#region AppDatabase
+    private val notificationDao: NotificationDao = database.notificationDao()
+
+    suspend fun insert(model: FCMData): Long {
+        return if (model.uid == 0) {
+            notificationDao.upsert(model)
+        } else {
+            updateNotification(model).toLong()
+        }
+    }
+
+    private suspend fun updateNotification(model: FCMData): Int = notificationDao.updateNotification(model)
+
+    suspend fun getAllNotification() = notificationDao.getAllNotification()
+
+    fun getAllNotificationFlow() = notificationDao.getAllNotificationFlow()
+
+    suspend fun getNotificationById(id: Int) = notificationDao.getNotificationById(id)
+
+    suspend fun deleteNotificationById(id: Int) = notificationDao.deleteNotificationById(id)
+
+    suspend fun deleteAllNotification() = notificationDao.deleteAllNotification()
+    //#endregion
 
     suspend fun features() = apiInterfaceAPI.features()
 

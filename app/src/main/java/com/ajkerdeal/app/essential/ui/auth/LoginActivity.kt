@@ -44,8 +44,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun goToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
+        Intent(this, HomeActivity::class.java).apply {
+            if (intent.extras != null) {
+                putExtras(intent.extras!!)
+            }
+        }.also {
+            startActivity(it)
+        }
         finish()
     }
 
