@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Delivery Bondhu</string>
 
+    <string name="app_name_folder">DeliveryBondhu</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cd">image</string>
     <string name="subTitle">Essentials</string>

@@ -28,6 +28,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
+import androidx.work.*
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
@@ -36,6 +37,7 @@ import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationR
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.fcm.FCMData
+import com.ajkerdeal.app.essential.services.LocationUpdateWorker
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
 import com.ajkerdeal.app.essential.utils.*
@@ -52,7 +54,10 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 import timber.log.Timber
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
 
@@ -142,6 +147,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         gpsUtils = GpsUtils(this)
         turnOnGPS()
         appUpdateManager()
+        periodicLocationUpdate()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -279,6 +285,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     fun logout() {
 
+        cancelPeriodicLocationUpdate()
         viewModel.clearFirebaseToken(SessionManager.userId)
         SessionManager.clearSession()
         val intent = Intent(this@HomeActivity, LoginActivity::class.java)
@@ -593,4 +600,53 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
         }
     }
+
+    @KoinApiExtension
+    private fun periodicLocationUpdate() {
+
+        if (SessionManager.workManagerUUID.isNotEmpty()) return
+
+        val data = Data.Builder()
+            .putString("action", "updateLocationAfter15Min")
+            .build()
+
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+        /*val request = OneTimeWorkRequestBuilder<LocationUpdateWorker>()
+            .setConstraints(constraints)
+            .setInputData(data)
+            .addTag("updateLocation").setInitialDelay(1, TimeUnit.MINUTES)
+            .build()*/
+        val request = PeriodicWorkRequestBuilder<LocationUpdateWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .setInputData(data)
+            .addTag("updateLocation").setInitialDelay(1, TimeUnit.MINUTES)
+            .build()
+
+        val requestUUID = request.id
+        val workManager = WorkManager.getInstance(this)
+        workManager.cancelAllWork()
+        //workManager.beginUniqueWork("updateLocation", ExistingWorkPolicy.REPLACE, request).enqueue()
+        workManager.enqueue(request)
+        workManager.getWorkInfoByIdLiveData(requestUUID).observe(this, Observer { workInfo ->
+            if (workInfo != null) {
+                val result = workInfo.outputData.getString("work_result")
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    Timber.d("WorkManager getWorkInfoByIdLiveDataObserve onSuccess resultMsg: $result")
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    Timber.d("WorkManager getWorkInfoByIdLiveDataObserve onFailed resultMsg: $result")
+                }
+            }
+        })
+        SessionManager.workManagerUUID = requestUUID.toString()
+    }
+
+    private fun cancelPeriodicLocationUpdate() {
+        if (SessionManager.workManagerUUID.isNotEmpty()) {
+            val workManager = WorkManager.getInstance(this)
+            workManager.cancelWorkById(UUID.fromString(SessionManager.workManagerUUID))
+            SessionManager.workManagerUUID = ""
+        }
+    }
+
 }

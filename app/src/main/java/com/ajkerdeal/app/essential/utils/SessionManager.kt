@@ -227,4 +227,14 @@ object SessionManager {
             }
         }
 
+    var workManagerUUID: String
+        get() {
+            return pref.getString("workManagerUUID", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("workManagerUUID", value)
+            }
+        }
+
 }
