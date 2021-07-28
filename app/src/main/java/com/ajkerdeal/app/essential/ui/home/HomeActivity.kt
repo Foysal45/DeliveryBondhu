@@ -78,7 +78,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private var mBound: Boolean = false
     private var toggle: Boolean = false
     private var snackBar: Snackbar? = null
-    private lateinit var connectivityReceiver : ConnectivityReceiver
+    private lateinit var connectivityReceiver: ConnectivityReceiver
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var currentLocation: Location? = null
@@ -172,12 +172,12 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     }
 
     private fun drawerListener() {
-        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener{
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {}
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {}
             override fun onDrawerClosed(drawerView: View) {
-                when(navigationMenuId) {
+                when (navigationMenuId) {
                     R.id.nav_dashboard -> {
                         NavigationUI.onNavDestinationSelected(menuItem!!, navController)
                     }
@@ -349,17 +349,18 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder =  service as LocationUpdatesService.LocalBinder
+            val binder = service as LocationUpdatesService.LocalBinder
             foregroundService = binder.getServerInstance()
             mBound = true
         }
+
         override fun onServiceDisconnected(name: ComponentName?) {
             foregroundService = null
             mBound = false
         }
     }
 
-    inner class MyReceiver: BroadcastReceiver() {
+    inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val location: Location? = intent?.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
@@ -463,27 +464,27 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
     }
 
-   /* fun updateMerchantLocation(model: MerchantLocationRequest) {
+    /* fun updateMerchantLocation(model: MerchantLocationRequest) {
 
-        foregroundService?.recreateLocationRequest()
-        Handler().postDelayed({
-            Timber.tag("LocationLog").d("location refreshed")
-            if (currentLocation != null) {
-                model.latitude = currentLocation?.latitude.toString()
-                model.longitude = currentLocation?.longitude.toString()
-                viewModel.updateMerchantLocation(model).observe(this, Observer {
-                    if (it) {
-                        this.toast("সফলভাবে আপডেট হয়েছে")
-                    } else {
-                        this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
-                    }
-                })
-            } else {
-                this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
-            }
-        }, 300L)
+         foregroundService?.recreateLocationRequest()
+         Handler().postDelayed({
+             Timber.tag("LocationLog").d("location refreshed")
+             if (currentLocation != null) {
+                 model.latitude = currentLocation?.latitude.toString()
+                 model.longitude = currentLocation?.longitude.toString()
+                 viewModel.updateMerchantLocation(model).observe(this, Observer {
+                     if (it) {
+                         this.toast("সফলভাবে আপডেট হয়েছে")
+                     } else {
+                         this.toast("কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন")
+                     }
+                 })
+             } else {
+                 this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
+             }
+         }, 300L)
 
-    }*/
+     }*/
 
     fun updateLocationAD(model: LocationUpdateRequestAD) {
 
@@ -547,7 +548,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             } else {
                 this.toast("লোকেশন এখনো পাওয়া যায়নি, একটু পর আবার চেষ্টা করুন")
             }
-        },300L)
+        }, 300L)
 
     }
 
@@ -580,7 +581,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
                 try {
-                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE,this,requestCodeAppUpdate)
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE, this, requestCodeAppUpdate)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -593,7 +594,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             // For IMMEDIATE
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 try {
-                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE,this,requestCodeAppUpdate)
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, requestCodeAppUpdate)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -617,7 +618,10 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             .setInputData(data)
             .addTag("updateLocation").setInitialDelay(1, TimeUnit.MINUTES)
             .build()*/
-        val request = PeriodicWorkRequestBuilder<LocationUpdateWorker>(15, TimeUnit.MINUTES)
+        val request = PeriodicWorkRequestBuilder<LocationUpdateWorker>(
+            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
+        )
             .setConstraints(constraints)
             .setInputData(data)
             .addTag("updateLocation").setInitialDelay(1, TimeUnit.MINUTES)
@@ -639,6 +643,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
         })
         SessionManager.workManagerUUID = requestUUID.toString()
+        Timber.d("LocationUpdateWorker enqueue with $requestUUID")
     }
 
     private fun cancelPeriodicLocationUpdate() {
