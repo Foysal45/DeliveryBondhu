@@ -268,4 +268,20 @@ object DigitConverter {
         }
         return if (number == 0) soFar else DigitConverter.numNames.get(number).toString() + " hundred" + soFar
     }
+
+    fun isValidTimeRange(currentDate: String, timeRangeStart24H: String?, timeRangeEnd24H: String?, pattern: String = "yyyy-MM-dd HH:mm:ss"): Boolean {
+        timeRangeStart24H ?: return false
+        timeRangeEnd24H ?: return false
+        return try {
+            val sdf = SimpleDateFormat(pattern, Locale.US)
+            val currentTimeStamp: Date = Date()
+            val liveStartStamp: Date? = sdf.parse("$currentDate $timeRangeStart24H")
+            val liveEndStamp: Date? = sdf.parse("$currentDate $timeRangeEnd24H")
+            !(currentTimeStamp.before(liveStartStamp) || currentTimeStamp.after(liveEndStamp))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 }

@@ -9,6 +9,8 @@ import com.ajkerdeal.app.essential.api.models.collection.CollectionData
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.QuickOrderTimeSlotData
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.TimeSlotRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.FilterStatus
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
@@ -31,9 +33,16 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     val pagingState = MutableLiveData<PagingModel<MutableList<OrderCustomer>>>()
     val filterStatusList = MutableLiveData<MutableList<FilterStatus>>()
 
-    fun loadOrderOrSearchDT(deliveryUserId: Int, index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
-
-        val requestBody = OrderRequest(deliveryUserId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
+    fun loadOrderOrSearchDT(
+        deliveryUserId: Int, index: Int = 0, count: Int = 20,
+        flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1",
+        type: SearchType = SearchType.None, serviceType: String, customType: String, collectionSlotId: Int = 0
+    ) {
+        val requestBody = OrderRequest(
+            deliveryUserId.toString(), index, count,
+            flag = flag, statusId = statusId, dtStatusId = dtStatusId,
+            serviceType = serviceType, customType = customType, riderType = SessionManager.riderType, collectionSlotId = collectionSlotId
+        )
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
             is SearchType.Order -> requestBody.orderId = searchKey
@@ -90,9 +99,25 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun loadOrderOrSearchAD(deliveryUserId: Int, index: Int = 0, count: Int = 20, flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1", searchKey: String = "-1", type: SearchType = SearchType.None, serviceType: String, customType: String) {
+    fun loadOrderOrSearchAD(
+        deliveryUserId: Int, index: Int = 0, count: Int = 20,
+        flag: Int = 0, statusId: String = "-1", dtStatusId: String = "-1",
+        searchKey: String = "-1",
+        type: SearchType = SearchType.None, serviceType: String, customType: String, collectionSlotId: Int = 0
+    ) {
 
-        val requestBody = OrderRequest(deliveryUserId.toString(), index, count, flag = flag, statusId = statusId, dtStatusId = dtStatusId, serviceType = serviceType, customType = customType, riderType = SessionManager.riderType)
+        val requestBody = OrderRequest(
+            deliveryUserId.toString(),
+            index,
+            count,
+            flag = flag,
+            statusId = statusId,
+            dtStatusId = dtStatusId,
+            serviceType = serviceType,
+            customType = customType,
+            riderType = SessionManager.riderType,
+            collectionSlotId = collectionSlotId
+        )
         when (type) {
             is SearchType.Product -> requestBody.productTitle = searchKey
             is SearchType.Order -> requestBody.orderId = searchKey
@@ -339,5 +364,38 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         return responseBody
     }
 
+    fun fetchCollectionTimeSlot(): LiveData<List<QuickOrderTimeSlotData>> {
+
+        viewState.value = ViewState.ProgressState(true)
+        val responseData = MutableLiveData<List<QuickOrderTimeSlotData>>()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.fetchCollectionTimeSlot()
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        if (response.body.model != null) {
+                            responseData.value = response.body.model!!
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }
+            }
+        }
+        return responseData
+    }
 
 }

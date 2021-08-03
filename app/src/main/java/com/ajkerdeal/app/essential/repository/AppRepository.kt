@@ -22,6 +22,7 @@ import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.TimeSlotRequest
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
@@ -149,6 +150,8 @@ class AppRepository(
 
     //Quick Order
     suspend fun loadAllDistrictsById(id: Int) = apiInterfaceADCORE.loadAllDistrictsById(id)
+
+    suspend fun fetchCollectionTimeSlot() = apiInterfaceADCORE.fetchCollectionTimeSlot()
 
     suspend fun checkIsQuickOrder(id: String) = apiInterfaceADCORE.checkIsQuickOrder(id)
 

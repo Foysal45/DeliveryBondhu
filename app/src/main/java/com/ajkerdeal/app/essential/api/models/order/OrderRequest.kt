@@ -25,5 +25,7 @@ data class OrderRequest(
     @SerializedName("RiderType")
     var riderType: String = "",
     @SerializedName("OrderId")
-    var orderId: String = "-1"
+    var orderId: String = "-1",
+    @SerializedName("CollectionSlotId")
+    var collectionSlotId: Int = 0
 )

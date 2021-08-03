@@ -36,6 +36,7 @@ app/schemas
 /.idea/compiler.xml
 /.idea/.name
 /.idea/shelf
+/.idea/deploymentTargetDropDown.xml
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.

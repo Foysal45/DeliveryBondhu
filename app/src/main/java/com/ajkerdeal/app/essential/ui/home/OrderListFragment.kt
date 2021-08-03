@@ -17,6 +17,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -31,6 +32,7 @@ import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.print.PrintData
 import com.ajkerdeal.app.essential.api.models.print.PrintModel
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.TimeSlotRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status.StatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
@@ -54,6 +56,8 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import org.koin.android.ext.android.inject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 
 @SuppressLint("SetTextI18n")
 class OrderListFragment : Fragment() {
@@ -90,6 +94,9 @@ class OrderListFragment : Fragment() {
 
     private var isUnavailableShow = false
     private var userId: Int = 0
+    private var selectedTimeSlotId = -1
+
+    private val dataAdapter = OrderListParentAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentOrderListBinding.inflate(inflater, container, false).also {
@@ -104,12 +111,28 @@ class OrderListFragment : Fragment() {
         userId = SessionManager.dtUserId // DT user id first tab DT
         Timber.d("userIdDT ${SessionManager.dtUserId}")
         Timber.d("userIdAD ${SessionManager.userId}")
+        when (serviceTye) {
+            AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY -> {
+                collectionFlag = 1 // default
+                //binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
+            }
+            AppConstant.SERVICE_TYPE_COLLECTION -> {
+                collectionFlag = 1
+                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
+            }
+            AppConstant.SERVICE_TYPE_DELIVERY -> {
+                collectionFlag = 0
+                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
+            }
+            AppConstant.SERVICE_TYPE_RETURN -> {
+                collectionFlag = 0
+            }
+        }
 
-        val dataAdapter = OrderListParentAdapter()
-        val layoutManagerLinear = LinearLayoutManager(requireContext())
+
         with(binding!!.recyclerView) {
             setHasFixedSize(true)
-            layoutManager = layoutManagerLinear
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = dataAdapter
         }
         dataAdapter.onCall = { number: String?, altNumber: String? ->
@@ -315,7 +338,7 @@ class OrderListFragment : Fragment() {
             }
         }
 
-        //viewModel.loadOrderOrSearch()
+
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
             if (it.isInitLoad) {
                 Timber.d("pagingState init")
@@ -333,93 +356,6 @@ class OrderListFragment : Fragment() {
             }
             totalCount = it.totalCount
             binding!!.appBarLayout.countTV.text = "${DigitConverter.toBanglaDigit(totalCount)}টি"
-        })
-
-        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list ->
-            Timber.d("$list")
-            val filterList = list.filter { it.flag == 1 }
-            val statusName = filterList.map { it.statusName }
-            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
-            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding!!.appBarLayout.spinner.adapter = arrayAdapter
-
-            Timber.d("lastFilterIndex $lastFilterIndex")
-            if (lastFilterIndex != -1 && (lastFilterIndex in 0..filterList.size)) {
-                binding!!.appBarLayout.spinner.setSelection(lastFilterIndex)
-            }
-
-            binding!!.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
-
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-                    if (position in 0..filterList.size) {
-                        val model = filterList[position]
-                        val selectedStatus = model.status
-                        val selectedDTStatus = model.dtStatus
-                        lastFilterIndex = position
-
-                        filterStatus = selectedStatus
-                        dtStatus = selectedDTStatus
-                        dataAdapter.clearData()
-                        Timber.d("loadOrderOrSearch called from filter spinner")
-
-                        binding!!.appBarLayout.filterName.text = model.statusName
-                        collectionFlag = model.collectionFilter
-                        customType = model.customType
-                        /*val collectionSwitchFlag = model.collectionFilter
-                        if (collectionSwitchFlag == 1) {
-                            binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
-                            collectionFlag = 1
-                        } else {
-                            binding!!.appBarLayout.tabLayout.visibility = View.GONE
-                            collectionFlag = 0
-                            binding!!.appBarLayout.tabLayout.getTabAt(0)?.select()
-                        }*/
-
-                        dataAdapter.isCollectionPoint = collectionFlag
-                        dataAdapter.isCollectionPointGroup = model.collectionFilter
-                        dataAdapter.allowLocationAdd = model.allowLocationAdd
-                        dataAdapter.allowPrint = model.allowPrint
-                        dataAdapter.allowImageUpload = model.allowImageUpload
-                        dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
-                        dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
-                        isUnavailableShow = model.isUnavailableShow
-                        if (SessionManager.isOffline && model.isUnavailableShow) {
-                            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
-                            binding!!.emptyView.visibility = View.VISIBLE
-                        } else {
-                            binding!!.emptyView.visibility = View.GONE
-                            if (isOrderFromDT()) {
-                                viewModel.loadOrderOrSearchDT(
-                                    userId,
-                                    flag = collectionFlag,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
-                                )
-                            } else {
-                                viewModel.loadOrderOrSearchAD(
-                                    userId,
-                                    flag = collectionFlag,
-                                    statusId = filterStatus,
-                                    dtStatusId = dtStatus,
-                                    searchKey = searchKey,
-                                    type = searchType,
-                                    serviceType = serviceTye,
-                                    customType = customType
-                                )
-                            }
-
-                        }
-
-                    }
-                }
-            }
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { state ->
@@ -480,7 +416,8 @@ class OrderListFragment : Fragment() {
                                 searchKey = searchKey,
                                 type = searchType,
                                 serviceType = serviceTye,
-                                customType = customType
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
                             )
                         }
                     }
@@ -502,12 +439,14 @@ class OrderListFragment : Fragment() {
                                 searchKey = searchKey,
                                 type = searchType,
                                 serviceType = serviceTye,
-                                customType = customType
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
                             )
 
                         }
                     }
                 }
+                visibilityCheckTimeSlot()
             }
         })
 
@@ -530,7 +469,8 @@ class OrderListFragment : Fragment() {
                             dtStatusId = dtStatus,
                             serviceType = serviceTye,
                             customType = customType,
-                            type = SearchType.None
+                            type = SearchType.None,
+                            collectionSlotId = selectedTimeSlotId
                         )
                     } else {
                         viewModel.loadOrderOrSearchAD(
@@ -540,7 +480,8 @@ class OrderListFragment : Fragment() {
                             dtStatusId = dtStatus,
                             serviceType = serviceTye,
                             customType = customType,
-                            type = SearchType.None
+                            type = SearchType.None,
+                            collectionSlotId = selectedTimeSlotId
                         )
                     }
                 }
@@ -568,7 +509,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -579,7 +521,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 }
 
@@ -600,7 +543,8 @@ class OrderListFragment : Fragment() {
                     searchKey = searchKey,
                     type = searchType,
                     serviceType = serviceTye,
-                    customType = customType
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId
                 )
             } else {
                 viewModel.loadOrderOrSearchAD(
@@ -611,7 +555,8 @@ class OrderListFragment : Fragment() {
                     searchKey = searchKey,
                     type = searchType,
                     serviceType = serviceTye,
-                    customType = customType
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId
                 )
             }
 
@@ -626,8 +571,8 @@ class OrderListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     Timber.d("addOnScrollListener onScrolled: $dx $dy")
-                    val currentItemCount = layoutManagerLinear.itemCount
-                    val lastVisibleItem = layoutManagerLinear.findLastVisibleItemPosition()
+                    val currentItemCount = (recyclerView.layoutManager as LinearLayoutManager).itemCount
+                    val lastVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                     Timber.d("onScrolled: \nItemCount: $currentItemCount  <= lastVisible: $lastVisibleItem firstCall : $firstCall  < TotalDeal : $totalCount  ${!isLoading}")
                     if (!isLoading && currentItemCount <= lastVisibleItem + visibleThreshold && firstCall < totalCount) {
                         isLoading = true
@@ -643,7 +588,8 @@ class OrderListFragment : Fragment() {
                                 searchKey = searchKey,
                                 type = searchType,
                                 serviceType = serviceTye,
-                                customType = customType
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
                             )
                         } else {
                             viewModel.loadOrderOrSearchAD(
@@ -656,7 +602,8 @@ class OrderListFragment : Fragment() {
                                 searchKey = searchKey,
                                 type = searchType,
                                 serviceType = serviceTye,
-                                customType = customType
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
                             )
                         }
 
@@ -679,23 +626,102 @@ class OrderListFragment : Fragment() {
             } else false
         })
 
-        when (serviceTye) {
-            AppConstant.SERVICE_TYPE_COLLECTION_DELIVERY -> {
-                collectionFlag = 1 // default
-                //binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
+        fetchOrderFilter()
+    }
+
+    private fun fetchOrderFilter() {
+        viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list ->
+            Timber.d("$list")
+            val filterList = list.filter { it.flag == 1 }
+            val statusName = filterList.map { it.statusName }
+            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.spinner_item_selected, statusName)
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding!!.appBarLayout.spinner.adapter = arrayAdapter
+
+            Timber.d("lastFilterIndex $lastFilterIndex")
+            if (lastFilterIndex != -1 && (lastFilterIndex in 0..filterList.size)) {
+                binding!!.appBarLayout.spinner.setSelection(lastFilterIndex)
             }
-            AppConstant.SERVICE_TYPE_COLLECTION -> {
-                collectionFlag = 1
-                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
+
+            binding!!.appBarLayout.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    if (position in 0..filterList.size) {
+                        val model = filterList[position]
+                        val selectedStatus = model.status
+                        val selectedDTStatus = model.dtStatus
+                        lastFilterIndex = position
+
+                        filterStatus = selectedStatus
+                        dtStatus = selectedDTStatus
+                        dataAdapter.clearData()
+                        Timber.d("loadOrderOrSearch called from filter spinner")
+
+                        binding!!.appBarLayout.filterName.text = model.statusName
+                        collectionFlag = model.collectionFilter
+                        customType = model.customType
+                        /*val collectionSwitchFlag = model.collectionFilter
+                        if (collectionSwitchFlag == 1) {
+                            binding!!.appBarLayout.tabLayout.visibility = View.VISIBLE
+                            collectionFlag = 1
+                        } else {
+                            binding!!.appBarLayout.tabLayout.visibility = View.GONE
+                            collectionFlag = 0
+                            binding!!.appBarLayout.tabLayout.getTabAt(0)?.select()
+                        }*/
+
+                        dataAdapter.isCollectionPoint = collectionFlag
+                        dataAdapter.isCollectionPointGroup = model.collectionFilter
+                        dataAdapter.allowLocationAdd = model.allowLocationAdd
+                        dataAdapter.allowPrint = model.allowPrint
+                        dataAdapter.allowImageUpload = model.allowImageUpload
+                        dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
+                        dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
+                        isUnavailableShow = model.isUnavailableShow
+                        if (SessionManager.isOffline && model.isUnavailableShow) {
+                            binding!!.emptyView.text = "আপনি এখন Unavailable আছেন"
+                            binding!!.emptyView.visibility = View.VISIBLE
+                        } else {
+                            binding!!.emptyView.visibility = View.GONE
+
+                            if (selectedTimeSlotId == -1 && isOrderFromDT() && dtStatus == AppConstant.DT_STATUS_NEW_ORDER && serviceTye == AppConstant.SERVICE_TYPE_COLLECTION) {
+                                fetchTimeSlot()
+                            } else {
+                                if (isOrderFromDT()) {
+                                    viewModel.loadOrderOrSearchDT(
+                                        userId,
+                                        flag = collectionFlag,
+                                        statusId = filterStatus,
+                                        dtStatusId = dtStatus,
+                                        searchKey = searchKey,
+                                        type = searchType,
+                                        serviceType = serviceTye,
+                                        customType = customType,
+                                        collectionSlotId = selectedTimeSlotId
+                                    )
+                                } else {
+                                    viewModel.loadOrderOrSearchAD(
+                                        userId,
+                                        flag = collectionFlag,
+                                        statusId = filterStatus,
+                                        dtStatusId = dtStatus,
+                                        searchKey = searchKey,
+                                        type = searchType,
+                                        serviceType = serviceTye,
+                                        customType = customType,
+                                        collectionSlotId = selectedTimeSlotId
+                                    )
+                                }
+                            }
+                        }
+                        visibilityCheckTimeSlot()
+                    }
+                }
             }
-            AppConstant.SERVICE_TYPE_DELIVERY -> {
-                collectionFlag = 0
-                //binding!!.appBarLayout.tabLayout.visibility = View.GONE
-            }
-            AppConstant.SERVICE_TYPE_RETURN -> {
-                collectionFlag = 0
-            }
-        }
+        })
     }
 
     private fun updateStatusDT(requestBody: MutableList<DTStatusUpdateModel>, message: String?) {
@@ -713,7 +739,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -724,7 +751,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 }
 
@@ -747,7 +775,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -758,7 +787,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 }
 
@@ -834,7 +864,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -845,7 +876,8 @@ class OrderListFragment : Fragment() {
                         searchKey = searchKey,
                         type = searchType,
                         serviceType = serviceTye,
-                        customType = customType
+                        customType = customType,
+                        collectionSlotId = selectedTimeSlotId
                     )
                 }
 
@@ -1221,7 +1253,8 @@ class OrderListFragment : Fragment() {
                             searchKey = searchKey,
                             type = searchType,
                             serviceType = serviceTye,
-                            customType = customType
+                            customType = customType,
+                            collectionSlotId = selectedTimeSlotId
                         )
                     } else {
                         viewModel.loadOrderOrSearchAD(
@@ -1232,7 +1265,8 @@ class OrderListFragment : Fragment() {
                             searchKey = searchKey,
                             type = searchType,
                             serviceType = serviceTye,
-                            customType = customType
+                            customType = customType,
+                            collectionSlotId = selectedTimeSlotId
                         )
                     }
 
@@ -1240,6 +1274,80 @@ class OrderListFragment : Fragment() {
             })
             dialog.dismiss()
         }
+    }
+
+    private fun visibilityCheckTimeSlot() {
+        if (isOrderFromDT() && dtStatus == AppConstant.DT_STATUS_NEW_ORDER) {
+            binding?.appBarLayout?.timeSlotFilterCard?.isVisible = true
+        } else {
+            binding?.appBarLayout?.timeSlotFilterCard?.isVisible = false
+        }
+    }
+
+    private fun fetchTimeSlot() {
+
+        viewModel.fetchCollectionTimeSlot().observe(viewLifecycleOwner, Observer { list ->
+            if (list.isEmpty()) return@Observer
+
+            val timeSlotNameList: MutableList<String> = mutableListOf()
+            val slotName = list.map { "${it.slotName} (${it.formattingStartTime} - ${it.formattingEndTime})" }
+            timeSlotNameList.addAll(slotName)
+            timeSlotNameList.add("সকল টাইম স্লট")
+
+            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_selected, timeSlotNameList)
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding?.appBarLayout?.timeSlotSpinner?.adapter = arrayAdapter
+
+            binding?.appBarLayout?.timeSlotSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    val model = list.getOrNull(position)
+                    selectedTimeSlotId = model?.collectionTimeSlotId ?: 0
+
+                    if (isOrderFromDT()) {
+                        viewModel.loadOrderOrSearchDT(
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType,
+                            collectionSlotId = selectedTimeSlotId
+                        )
+                    } else {
+                        viewModel.loadOrderOrSearchAD(
+                            userId,
+                            flag = collectionFlag,
+                            statusId = filterStatus,
+                            dtStatusId = dtStatus,
+                            searchKey = searchKey,
+                            type = searchType,
+                            serviceType = serviceTye,
+                            customType = customType,
+                            collectionSlotId = selectedTimeSlotId
+                        )
+                    }
+                }
+            }
+
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val currentDate = sdf.format(Date().time)
+            var currentTimeSlot = -1
+            list.forEachIndexed { index, slot ->
+                val validSlot = DigitConverter.isValidTimeRange(currentDate, slot.startTime, slot.endTime)
+                if (validSlot) {
+                    currentTimeSlot = index
+                    return@forEachIndexed
+                }
+            }
+            if (currentTimeSlot != -1) {
+                binding?.appBarLayout?.timeSlotSpinner?.setSelection(currentTimeSlot)
+            } else {
+                binding?.appBarLayout?.timeSlotSpinner?.setSelection(timeSlotNameList.lastIndex)
+            }
+        })
     }
 
 }

@@ -19,4 +19,6 @@ object AppConstant {
 
     const val LOCATION_REQUEST = 1000
     const val GPS_REQUEST = 1001
+
+    const val DT_STATUS_NEW_ORDER = "40"
 }

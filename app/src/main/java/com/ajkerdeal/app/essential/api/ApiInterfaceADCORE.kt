@@ -19,6 +19,8 @@ import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.Delive
 import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.DeliveryChargeResponse
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.QuickOrderTimeSlotData
+import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.TimeSlotRequest
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatus
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
@@ -54,7 +56,7 @@ interface ApiInterfaceADCORE {
     @POST("api/Update/UpdatePriceWithWeight")
     suspend fun isUpdatePriceWithWeight(@Body requestBody: UpdatePriceWithWeightRequest): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
-    @POST("api/Bondhu/LoadOrderForBondhuAppByTimeSlot")
+    @POST("api/Bondhu/LoadOrderForBondhuAppByTimeSlotNew")
     suspend fun loadOrderListDT(@Body requestBody: OrderRequest): NetworkResponse<GenericResponse<OrderResponse>, ErrorResponse>
 
     @PUT("/api/Bondhu/UpdateBondhuOrder")
@@ -65,6 +67,9 @@ interface ApiInterfaceADCORE {
 
 
     //Quick Order
+    @GET("api/Fetch/GetCollectionTimeSlot")
+    suspend fun fetchCollectionTimeSlot(): NetworkResponse<GenericResponse<List<QuickOrderTimeSlotData>>, ErrorResponse>
+
     @GET("api/QuickOrder/CheckIsQuickOrder/{orderId}")
     suspend fun checkIsQuickOrder(@Path("orderId") orderId: String): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
