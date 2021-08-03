@@ -280,10 +280,12 @@ class DashboardFragment : Fragment() {
             if (isChecked) {
                 Timber.d("Checked")
                 viewModel.updateUserStatus("false", 1)
+                viewModel.updateUserStatusDT("false")
                 binding?.activeSwitch?.text = "Available"
 
             } else {
                 viewModel.updateUserStatus("true", 1)
+                viewModel.updateUserStatusDT("true")
                 binding?.activeSwitch?.text = "Not Available"
             }
             (activity as HomeActivity).availabilityState(isChecked)

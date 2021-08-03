@@ -169,5 +169,7 @@ class AppRepository(
 
     suspend fun updateDocumentUrlDT(requestBody: List<UpdateDocRequestDT>) = apiInterfaceADCORE.updateDocumentUrlDT(requestBody)
 
+    suspend fun updateUserStatusDT(bondhuId: Int, isNowOffline: String) = apiInterfaceADCORE.updateUserStatusDT(bondhuId, isNowOffline)
+
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 }

@@ -20,11 +20,12 @@ import com.ajkerdeal.app.essential.api.models.quick_order.delivery_charge.Delive
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderList
 import com.ajkerdeal.app.essential.api.models.quick_order.fetch_quick_order_request.QuickOrderRequest
 import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.QuickOrderTimeSlotData
-import com.ajkerdeal.app.essential.api.models.quick_order.time_slot.TimeSlotRequest
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatus
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
+import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
+import com.ajkerdeal.app.essential.api.models.user_status.UserStatusDT
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
 import retrofit2.Retrofit
@@ -96,5 +97,9 @@ interface ApiInterfaceADCORE {
 
     @PUT("api/Bondhu/UpdateDocumentUrl")
     suspend fun updateDocumentUrlDT(@Body requestBody: List<UpdateDocRequestDT>): NetworkResponse<GenericResponse<Int>, ErrorResponse>
+
+    @GET("api/Bondhu/UserAccess/{bondhuId}/{isNowOffline}")
+    suspend fun updateUserStatusDT(@Path("bondhuId") bondhuId: Int, @Path("isNowOffline") isNowOffline: String): NetworkResponse<GenericResponse<UserStatusDT>, ErrorResponse>
+
 
 }
