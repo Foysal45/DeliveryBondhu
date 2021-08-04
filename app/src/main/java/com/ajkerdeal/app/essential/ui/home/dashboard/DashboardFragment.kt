@@ -194,14 +194,14 @@ class DashboardFragment : Fragment() {
             }
         })
 
-        isCheckPermission()
+        //isCheckPermission()
 
     }
 
     override fun onResume() {
         super.onResume()
         snackbar?.show()
-        checkLocationEnable()
+        //checkLocationEnable()
     }
 
     override fun onPause() {
@@ -228,14 +228,10 @@ class DashboardFragment : Fragment() {
     private fun isLocationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permission1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            if (permission1 != PackageManager.PERMISSION_GRANTED) {
-                showLocationPermissionDialog()
-                false
-            } else true
+            permission1 == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
-
     }
 
     private fun checkLocationEnable(): Boolean {

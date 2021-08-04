@@ -16,10 +16,12 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -40,6 +42,7 @@ import com.ajkerdeal.app.essential.fcm.FCMData
 import com.ajkerdeal.app.essential.services.LocationUpdateWorker
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
+import com.ajkerdeal.app.essential.ui.location.LocationUsesBottomSheet
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -145,9 +148,10 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         navHeaderData()
 
         gpsUtils = GpsUtils(this)
-        turnOnGPS()
+        //turnOnGPS()
         appUpdateManager()
         periodicLocationUpdate()
+        showLocationConsent()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -317,6 +321,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(LocationUpdatesService.ACTION_BROADCAST))
         checkStalledUpdate()
+        checkLocationEnable()
     }
 
     override fun onPause() {
@@ -396,6 +401,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty()) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        turnOnGPS()
                         startLocationUpdate()
                     } else {
                         val permission1Rationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -415,6 +421,49 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     }
                 }
             }
+        }
+    }
+
+    private fun isCheckPermission(): Boolean {
+        val permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        val permission2 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val permissionArray = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        return when {
+            permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED -> {
+                true
+            }
+            ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA) || ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
+                requestMultiplePermissions.launch(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+                false
+            }
+            else -> {
+                requestMultiplePermissions.launch(permissionArray)
+                false
+            }
+        }
+    }
+
+    private val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        var isCameraGranted: Boolean = false
+        var isStorageGranted: Boolean = false
+        permissions.entries.forEach { permission ->
+            if (permission.key == Manifest.permission.CAMERA) {
+                isCameraGranted = permission.value
+            }
+            if (permission.key == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                isStorageGranted = permission.value
+            }
+        }
+        if (isCameraGranted /*&& isStorageGranted*/) {
+
         }
     }
 
@@ -556,6 +605,38 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         gpsUtils.turnGPSOn {
             isGPS = it
             viewModel.isGPS.value = it
+            isCheckPermission()
+        }
+    }
+
+    private fun showLocationConsent() {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        val permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (permission1 == PackageManager.PERMISSION_GRANTED) return
+        if (SessionManager.isLocationConsentShown) return
+
+        val tag = LocationUsesBottomSheet.tag
+        val dialog = LocationUsesBottomSheet.newInstance()
+        dialog.show(supportFragmentManager, tag)
+        dialog.onItemSelected = { flag ->
+            dialog.dismiss()
+            if (flag) {
+                SessionManager.isLocationConsentShown = true
+                if (isLocationPermission()) {
+                    turnOnGPS()
+                }
+            } else {
+                this.toast("App need location permission to work properly", Toast.LENGTH_LONG)
+            }
+        }
+    }
+
+    private fun checkLocationEnable() {
+        if (SessionManager.isLocationConsentShown) {
+            if (isLocationPermission()) {
+                turnOnGPS()
+            }
         }
     }
 
@@ -565,6 +646,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             if (resultCode == Activity.RESULT_OK) {
                 isGPS = true
                 viewModel.isGPS.value = true
+                isCheckPermission()
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 isGPS = false
                 viewModel.isGPS.value = false
