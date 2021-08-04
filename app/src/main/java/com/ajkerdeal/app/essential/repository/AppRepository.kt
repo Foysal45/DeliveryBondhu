@@ -171,5 +171,7 @@ class AppRepository(
 
     suspend fun updateUserStatusDT(bondhuId: Int, isNowOffline: String) = apiInterfaceADCORE.updateUserStatusDT(bondhuId, isNowOffline)
 
+    suspend fun getUserStatusDT(bondhuId: Int) = apiInterfaceADCORE.getUserStatusDT(bondhuId)
+
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 }

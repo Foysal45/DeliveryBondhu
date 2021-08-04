@@ -109,6 +109,8 @@ class DashboardFragment : Fragment() {
 
         })
 
+        viewModel.getUserStatusDT()
+
         viewModelHomeActivity.isOfflineLive.observe(viewLifecycleOwner, Observer {
             Timber.d("viewModelHomeActivity isOfflineLive $it")
             binding?.activeSwitch?.setOnCheckedChangeListener(null)

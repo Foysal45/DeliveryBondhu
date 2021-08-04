@@ -101,5 +101,8 @@ interface ApiInterfaceADCORE {
     @GET("api/Bondhu/UserAccess/{bondhuId}/{isNowOffline}")
     suspend fun updateUserStatusDT(@Path("bondhuId") bondhuId: Int, @Path("isNowOffline") isNowOffline: String): NetworkResponse<GenericResponse<UserStatusDT>, ErrorResponse>
 
+    @GET("api/Bondhu/GetBondhuInfo/{bondhuId}")
+    suspend fun getUserStatusDT(@Path("bondhuId") bondhuId: Int): NetworkResponse<GenericResponse<UserStatusDT>, ErrorResponse>
+
 
 }
