@@ -66,8 +66,8 @@ class LocationUpdateWorker(private val context: Context, private val parameters:
                 super.onLocationResult(result)
                 val location = result.lastLocation
                 Timber.d("LocationUpdateWorker location ${location.latitude}, ${location.longitude}")
-                //ToDo: remove after test
-                logInFile(applicationContext, "${sdf.format(Date().time)} location ${location.latitude}, ${location.longitude}")
+                //remove after test
+                //logInFile(applicationContext, "${sdf.format(Date().time)} location ${location.latitude}, ${location.longitude}")
                 if (SessionManager.userId > 0) {
                     CoroutineScope(Dispatchers.IO).launch {
                         val requestBody = LocationUpdateRequest(SessionManager.userId, location.latitude.toString(), location.longitude.toString())

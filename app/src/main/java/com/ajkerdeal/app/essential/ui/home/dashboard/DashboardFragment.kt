@@ -109,7 +109,7 @@ class DashboardFragment : Fragment() {
 
         })
 
-        viewModel.getUserStatusDT()
+        //viewModel.getUserStatusDT()
 
         viewModelHomeActivity.isOfflineLive.observe(viewLifecycleOwner, Observer {
             Timber.d("viewModelHomeActivity isOfflineLive $it")
