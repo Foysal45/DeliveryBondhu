@@ -17,10 +17,13 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 15 // Google play 14
-        versionName "2.4.7-debug" // Google play 2.4.6
+        versionName "2.4.7" // Google play 2.4.6
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        ndk {
+            debugSymbolLevel 'SYMBOL_TABLE'
+        }
     }
 
     signingConfigs {
