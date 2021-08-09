@@ -10,6 +10,7 @@ import com.ajkerdeal.app.essential.api.models.district.AllDistrictListsModel
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateResponseDT
+import com.ajkerdeal.app.essential.api.models.order.AcceptStatusRequestDT
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.order.OrderResponse
 import com.ajkerdeal.app.essential.api.models.profile.profile_DT.ProfileDataDT
@@ -24,7 +25,6 @@ import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatu
 import com.ajkerdeal.app.essential.api.models.quick_order_status.QuickOrderStatusUpdateRequest
 import com.ajkerdeal.app.essential.api.models.status.DTStatusUpdateModel
 import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
-import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatusDT
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -65,6 +65,9 @@ interface ApiInterfaceADCORE {
 
     @PUT("api/Bondhu/UpdateDeliveryManInfo")
     suspend fun updateDeliveryManInfo(@Body requestBody: ProfileDataDT): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+
+    @POST("api/Bondhu/GetBondhuAcceptStatus")
+    suspend fun checkAcceptStatus(@Body requestBody: AcceptStatusRequestDT): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
 
 
     //Quick Order

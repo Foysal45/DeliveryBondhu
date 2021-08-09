@@ -68,6 +68,6 @@
     <string name="orderType1">শুধু ডেলিভারি (প্রি-পেইড)</string>
     <string name="orderType2">ডেলিভারি+টাকা কালেকশন (COD)</string>
     <string name="why_location_required">To get new order based on your current location automatically, allow Delivery Bondhu to use your location all of the time.</string>
-    <string name="how_location_used">Delivery Bondhu will use location in the background to show order based on location and overall operation pregress.</string>
+    <string name="how_location_used">Delivery Bondhu will use location in the background to show order based on location and overall operation progress.</string>
 
 </resources>

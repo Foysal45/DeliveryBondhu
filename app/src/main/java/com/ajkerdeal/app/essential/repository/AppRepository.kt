@@ -15,6 +15,7 @@ import com.ajkerdeal.app.essential.api.models.location_log.LocationLogRequest
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
+import com.ajkerdeal.app.essential.api.models.order.AcceptStatusRequestDT
 import com.ajkerdeal.app.essential.api.models.order.OrderRequest
 import com.ajkerdeal.app.essential.api.models.pod.PodOrderRequest
 import com.ajkerdeal.app.essential.api.models.profile.ProfileData
@@ -147,6 +148,8 @@ class AppRepository(
     suspend fun updateStatusDT(requestBody: List<DTStatusUpdateModel>) = apiInterfaceADCORE.updateStatusDT(requestBody)
 
     suspend fun updateDeliveryManInfo(requestBody: ProfileDataDT) = apiInterfaceADCORE.updateDeliveryManInfo(requestBody)
+
+    suspend fun checkAcceptStatus(requestBody: AcceptStatusRequestDT) = apiInterfaceADCORE.checkAcceptStatus(requestBody)
 
     //Quick Order
     suspend fun loadAllDistrictsById(id: Int) = apiInterfaceADCORE.loadAllDistrictsById(id)

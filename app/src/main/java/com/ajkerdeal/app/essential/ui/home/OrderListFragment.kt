@@ -28,6 +28,7 @@ import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
+import com.ajkerdeal.app.essential.api.models.order.AcceptStatusRequestDT
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.api.models.print.PrintData
@@ -228,6 +229,10 @@ class OrderListFragment : Fragment() {
                 // Go to payment is success then update status
                 actionModel.isPaymentType == 1 -> {
                     goToPaymentGateway(couponIds, bondhuCharge, requestBody)
+                }
+                // "অ্যাকসেপ্ট" 41 Check before accept
+                actionModel.updateStatus in arrayOf(41) -> {
+                    checkAcceptStatus(requestBodyDT, requestBody, instructions)
                 }
                 // "কাস্টমার হোল্ড করেছে" use custom comment
                 actionModel.updateStatus in arrayOf(47, 48, 360) -> {
@@ -792,6 +797,20 @@ class OrderListFragment : Fragment() {
                     )
                 }
 
+            }
+        })
+    }
+
+    private fun checkAcceptStatus(requestBodyDT: MutableList<DTStatusUpdateModel>, requestBody: MutableList<StatusUpdateModel>, instructions: String?) {
+        val firstModel = requestBodyDT.first()
+        val checkRequestBody = AcceptStatusRequestDT(SessionManager.dtUserId, firstModel.courierOrdersId, selectedTimeSlotId)
+        viewModel.checkAcceptStatus(checkRequestBody).observe(viewLifecycleOwner, Observer { shouldAccept ->
+            if (shouldAccept) {
+                updateStatusDT(requestBodyDT, instructions)
+            } else {
+                alert(getString(R.string.instruction), "অর্ডারটি ইতিমধ্যে অন্য কোনো রাইডার অ্যাকসেপ্ট করেছে।") {
+                    if (it == AlertDialog.BUTTON_POSITIVE) {}
+                }.show()
             }
         })
     }
