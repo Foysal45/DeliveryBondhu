@@ -39,6 +39,7 @@ import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationR
 import com.ajkerdeal.app.essential.api.models.status_location.StatusLocationRequest
 import com.ajkerdeal.app.essential.broadcast.ConnectivityReceiver
 import com.ajkerdeal.app.essential.fcm.FCMData
+import com.ajkerdeal.app.essential.services.DistrictCacheWorker
 import com.ajkerdeal.app.essential.services.LocationUpdateWorker
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
@@ -151,6 +152,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         //turnOnGPS()
         appUpdateManager()
         periodicLocationUpdate()
+        syncDistrict()
         showLocationConsent()
     }
 
@@ -192,6 +194,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
                     R.id.nav_quick_order_lists -> {
                         navController.navigate(R.id.nav_quick_order_lists)
+                    }
+                    R.id.nav_setting -> {
+                        navController.navigate(R.id.nav_setting)
                     }
                     R.id.nav_policy -> {
 
@@ -290,6 +295,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     fun logout() {
 
         cancelPeriodicLocationUpdate()
+        cancelSyncDistrict()
         viewModel.clearFirebaseToken(SessionManager.userId)
         SessionManager.clearSession()
         val intent = Intent(this@HomeActivity, LoginActivity::class.java)
@@ -728,11 +734,57 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         Timber.d("LocationUpdateWorker enqueue with $requestUUID")
     }
 
+    private fun syncDistrict() {
+
+        if (SessionManager.workManagerDistrictUUID.isNotEmpty()) return
+
+        val data = Data.Builder()
+            .putBoolean("sync", true)
+            .build()
+
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+        /*val request = OneTimeWorkRequestBuilder<DistrictCacheWorker>()
+            .setConstraints(constraints)
+            .setInputData(data)
+            .addTag("districtSync").setInitialDelay(5, TimeUnit.SECONDS)
+            .build()*/
+        val request = PeriodicWorkRequestBuilder<DistrictCacheWorker>(1, TimeUnit.DAYS)
+            .setConstraints(constraints)
+            .setInputData(data)
+            .addTag("districtSync").setInitialDelay(5, TimeUnit.SECONDS)
+            .build()
+
+        val requestUUID = request.id
+        val workManager = WorkManager.getInstance(this)
+        //workManager.beginUniqueWork("districtSync", ExistingWorkPolicy.REPLACE, request).enqueue()
+        workManager.enqueue(request)
+        workManager.getWorkInfoByIdLiveData(requestUUID).observe(this, Observer { workInfo ->
+            if (workInfo != null) {
+                val result = workInfo.outputData.getString("work_result")
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    Timber.d("WorkManager getWorkInfoByIdLiveDataObserve onSuccess resultMsg: $result")
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    Timber.d("WorkManager getWorkInfoByIdLiveDataObserve onFailed resultMsg: $result")
+                }
+            }
+        })
+        SessionManager.workManagerDistrictUUID = requestUUID.toString()
+    }
+
     private fun cancelPeriodicLocationUpdate() {
         if (SessionManager.workManagerUUID.isNotEmpty()) {
             val workManager = WorkManager.getInstance(this)
             workManager.cancelWorkById(UUID.fromString(SessionManager.workManagerUUID))
             SessionManager.workManagerUUID = ""
+        }
+    }
+
+    private fun cancelSyncDistrict() {
+        if (SessionManager.workManagerDistrictUUID.isNotEmpty()) {
+            val workManager = WorkManager.getInstance(this)
+            workManager.cancelWorkById(UUID.fromString(SessionManager.workManagerDistrictUUID))
+            SessionManager.workManagerDistrictUUID = ""
         }
     }
 

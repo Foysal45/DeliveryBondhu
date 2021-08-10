@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ajkerdeal.app.essential.api.models.district.DistrictData
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatus
 import com.ajkerdeal.app.essential.api.models.user_status.UserStatusDT
 import com.ajkerdeal.app.essential.repository.AppRepository
@@ -109,6 +110,19 @@ class DashboardViewModel(private var repository: AppRepository): ViewModel() {
                         Timber.d(response.error)
                     }
                 }.exhaustive
+            }
+        }
+        return responseData
+    }
+
+    fun getDistrictByParentId(parentId: Int): LiveData<List<DistrictData>> {
+        val responseData: MutableLiveData<List<DistrictData>> = MutableLiveData()
+        viewState.value = ViewState.ProgressState(true)
+        viewModelScope.launch(Dispatchers.IO){
+            val dataList = repository.getDistrictByParentId(parentId)
+            withContext(Dispatchers.Main) {
+                viewState.value = ViewState.ProgressState(false)
+                responseData.value = dataList
             }
         }
         return responseData

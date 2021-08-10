@@ -237,6 +237,16 @@ object SessionManager {
             }
         }
 
+    var workManagerDistrictUUID: String
+        get() {
+            return pref.getString("workManagerDistrictUUID", "")!!
+        }
+        set(value) {
+            pref.edit {
+                putString("workManagerDistrictUUID", value)
+            }
+        }
+
     var isLocationConsentShown: Boolean
         get() {
             return pref.getBoolean("locationConsent", false)

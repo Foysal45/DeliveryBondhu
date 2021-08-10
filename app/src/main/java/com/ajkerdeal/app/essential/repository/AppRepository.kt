@@ -11,6 +11,7 @@ import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileReq
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
+import com.ajkerdeal.app.essential.api.models.district.DistrictData
 import com.ajkerdeal.app.essential.api.models.location_log.LocationLogRequest
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
@@ -33,6 +34,7 @@ import com.ajkerdeal.app.essential.api.models.update_doc.UpdateDocRequestDT
 import com.ajkerdeal.app.essential.api.models.user_status.LocationUpdateRequest
 import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightRequest
 import com.ajkerdeal.app.essential.database.AppDatabase
+import com.ajkerdeal.app.essential.database.dao.DistrictDao
 import com.ajkerdeal.app.essential.database.dao.NotificationDao
 import com.ajkerdeal.app.essential.fcm.FCMData
 import okhttp3.MultipartBody
@@ -49,7 +51,9 @@ class AppRepository(
 
     //#region AppDatabase
     private val notificationDao: NotificationDao = database.notificationDao()
+    private val districtDao: DistrictDao = database.districtDao()
 
+    //#region NotificationDao
     suspend fun insert(model: FCMData): Long {
         return if (model.uid == 0) {
             notificationDao.upsert(model)
@@ -69,6 +73,33 @@ class AppRepository(
     suspend fun deleteNotificationById(id: Int) = notificationDao.deleteNotificationById(id)
 
     suspend fun deleteAllNotification() = notificationDao.deleteAllNotification()
+    //#endregion
+
+    //#region DistrictDao
+    suspend fun insert(list: List<DistrictData>): List<Long> {
+        return districtDao.insertAll(list)
+    }
+
+    suspend fun insert(model: DistrictData): Long {
+        return if (model.uid == 0) {
+            districtDao.upsert(model)
+        } else {
+            updateDistrict(model).toLong()
+        }
+    }
+
+    private suspend fun updateDistrict(model: DistrictData): Int = districtDao.updateDistrict(model)
+
+    suspend fun getAllDistrict() = districtDao.getAllDistrict()
+
+    suspend fun getDistrictById(districtId: Int) = districtDao.getDistrictById(districtId)
+
+    suspend fun getDistrictByParentId(parentId: Int) = districtDao.getDistrictByParentId(parentId)
+
+    suspend fun deleteDistrictById(id: Int) = districtDao.deleteDistrictById(id)
+
+    suspend fun deleteAllDistrict() = districtDao.deleteAllDistrict()
+    //#endregion
     //#endregion
 
     suspend fun features() = apiInterfaceAPI.features()
@@ -153,6 +184,8 @@ class AppRepository(
 
     //Quick Order
     suspend fun loadAllDistrictsById(id: Int) = apiInterfaceADCORE.loadAllDistrictsById(id)
+
+    suspend fun loadAllDistricts() = apiInterfaceADCORE.loadAllDistricts()
 
     suspend fun fetchCollectionTimeSlot() = apiInterfaceADCORE.fetchCollectionTimeSlot()
 

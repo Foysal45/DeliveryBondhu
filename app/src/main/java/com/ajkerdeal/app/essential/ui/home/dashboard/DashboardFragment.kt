@@ -18,8 +18,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.work.*
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
+import com.ajkerdeal.app.essential.services.DistrictCacheWorker
+import com.ajkerdeal.app.essential.services.LocationUpdateWorker
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.utils.*
@@ -31,6 +34,7 @@ import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DashboardFragment : Fragment() {
 
@@ -352,6 +356,12 @@ class DashboardFragment : Fragment() {
         if (isCameraGranted /*&& isStorageGranted*/) {
 
         }
+    }
+
+    private fun fetchDistrictFromDB() {
+        viewModel.getDistrictByParentId(14).observe(viewLifecycleOwner, Observer { list ->
+            Timber.d("districtList ${list.map { "${it.districtBng} (${it.districtId})"}}")
+        })
     }
 
 }

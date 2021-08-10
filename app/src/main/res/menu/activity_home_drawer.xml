@@ -19,6 +19,11 @@
             android:title="প্রোফাইল" />
 
         <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings"
+            android:title="সেটিংস" />
+
+        <item
             android:id="@+id/nav_policy"
             android:icon="@drawable/ic_policy"
             android:title="প্রাইভেসি পলিসি" />

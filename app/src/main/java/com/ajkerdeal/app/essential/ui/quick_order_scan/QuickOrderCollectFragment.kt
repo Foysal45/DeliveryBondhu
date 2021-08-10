@@ -21,9 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.district.AllDistrictListsModel
+import com.ajkerdeal.app.essential.api.models.district.DistrictData
 import com.ajkerdeal.app.essential.api.models.district.LocationData
 import com.ajkerdeal.app.essential.api.models.district.LocationType
 import com.ajkerdeal.app.essential.api.models.quick_order.QuickOrderUpdateRequest
@@ -74,9 +73,9 @@ class QuickOrderCollectFragment : Fragment() {
     private var weightDataAdapter: WeightSelectionAdapter = WeightSelectionAdapter()
     private var isLocationLoading: Boolean = false
 
-    private var filteredDistrictLists: MutableList<AllDistrictListsModel> = mutableListOf()
-    private var filteredThanaLists: MutableList<AllDistrictListsModel> = mutableListOf()
-    private var filteredAreaLists: MutableList<AllDistrictListsModel> = mutableListOf()
+    private var filteredDistrictLists: MutableList<DistrictData> = mutableListOf()
+    private var filteredThanaLists: MutableList<DistrictData> = mutableListOf()
+    private var filteredAreaLists: MutableList<DistrictData> = mutableListOf()
 
     private var isAriaAvailable = true
     private var weightRangeId: Int = 0
@@ -368,7 +367,7 @@ class QuickOrderCollectFragment : Fragment() {
 
     }
 
-    private fun goToLocationSelectionDialog(list: MutableList<AllDistrictListsModel>, locationType: LocationType) {
+    private fun goToLocationSelectionDialog(list: MutableList<DistrictData>, locationType: LocationType) {
 
         val locationList: MutableList<LocationData> = mutableListOf()
         list.forEach { model ->
@@ -491,7 +490,7 @@ class QuickOrderCollectFragment : Fragment() {
         calculateTotalPrice()*/
     }
 
-    private fun showLocationAlert(model: AllDistrictListsModel, locationType: LocationType) {
+    private fun showLocationAlert(model: DistrictData, locationType: LocationType) {
         if (model.isActiveForCorona) {
             val msg = when (locationType) {
                 LocationType.DISTRICT -> "${model.districtBng} জেলায় ডেলিভারি সার্ভিস সাময়িকভাবে বন্ধ রয়েছে।"

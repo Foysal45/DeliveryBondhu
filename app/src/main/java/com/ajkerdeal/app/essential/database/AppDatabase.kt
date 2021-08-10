@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ajkerdeal.app.essential.api.models.district.DistrictData
+import com.ajkerdeal.app.essential.database.dao.DistrictDao
 import com.ajkerdeal.app.essential.database.dao.NotificationDao
 import com.ajkerdeal.app.essential.fcm.FCMData
 
-@Database(entities = [FCMData::class], version = 1, exportSchema = false)
+@Database(entities = [FCMData::class, DistrictData::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun notificationDao(): NotificationDao
+    abstract fun districtDao(): DistrictDao
 
     companion object {
 
