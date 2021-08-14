@@ -152,7 +152,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         //turnOnGPS()
         appUpdateManager()
         periodicLocationUpdate()
-        syncDistrict()
+        //syncDistrict()
         showLocationConsent()
     }
 
@@ -295,7 +295,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     fun logout() {
 
         cancelPeriodicLocationUpdate()
-        cancelSyncDistrict()
+        //cancelSyncDistrict()
         viewModel.clearFirebaseToken(SessionManager.userId)
         SessionManager.clearSession()
         val intent = Intent(this@HomeActivity, LoginActivity::class.java)
@@ -734,6 +734,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         Timber.d("LocationUpdateWorker enqueue with $requestUUID")
     }
 
+    @KoinApiExtension
     private fun syncDistrict() {
 
         if (SessionManager.workManagerDistrictUUID.isNotEmpty()) return
