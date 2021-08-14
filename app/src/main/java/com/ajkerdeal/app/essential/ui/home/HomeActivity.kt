@@ -149,10 +149,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         navHeaderData()
 
         gpsUtils = GpsUtils(this)
-        //turnOnGPS()
         appUpdateManager()
         periodicLocationUpdate()
-        //syncDistrict()
+        syncDistrict()
         showLocationConsent()
     }
 
@@ -295,7 +294,7 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     fun logout() {
 
         cancelPeriodicLocationUpdate()
-        //cancelSyncDistrict()
+        cancelSyncDistrict()
         viewModel.clearFirebaseToken(SessionManager.userId)
         SessionManager.clearSession()
         val intent = Intent(this@HomeActivity, LoginActivity::class.java)
