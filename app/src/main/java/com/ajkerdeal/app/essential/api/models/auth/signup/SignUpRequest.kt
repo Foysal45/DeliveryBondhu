@@ -28,6 +28,9 @@ data class SignUpRequest(
     var thanaName: String? = "",
     @SerializedName("Version")
     var version: String? = "",
+    @SerializedName("DtId")
+    var dtId: Int = 0,
+
     @SerializedName("RegistrationFrom")
     var registrationFrom: String? = "android",
     @SerializedName("IsActive")

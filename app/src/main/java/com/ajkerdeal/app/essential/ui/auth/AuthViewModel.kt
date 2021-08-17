@@ -197,8 +197,11 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 districtName.value, thanaName.value,
                 appVersion.value
             )
+            val responseDT = repository.deliveryManRegistration(requestBody)
+            if (responseDT is NetworkResponse.Success) {
+                requestBody.dtId = responseDT.body.model?.customerId ?: 0
+            }
             val response = repository.signUpUser(requestBody)
-            val response1 = repository.deliveryManRegistration(requestBody)
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
