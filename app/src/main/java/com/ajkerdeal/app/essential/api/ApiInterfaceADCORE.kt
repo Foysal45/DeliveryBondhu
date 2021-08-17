@@ -4,6 +4,7 @@ import com.ajkerdeal.app.essential.api.models.ErrorResponse
 import com.ajkerdeal.app.essential.api.models.GenericResponse
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
+import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpDTResponse
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.charge.BreakableChargeData
 import com.ajkerdeal.app.essential.api.models.district.DistrictData
@@ -43,7 +44,7 @@ interface ApiInterfaceADCORE {
     suspend fun dtLogin(@Body requestBody: LoginRequest): NetworkResponse<GenericResponse<LoginResponse>, ErrorResponse>
 
     @POST("api/Bondhu/DeliveryManRegistration")
-    suspend fun deliveryManRegistration(@Body requestBody: SignUpRequest): NetworkResponse<GenericResponse<Boolean>, ErrorResponse>
+    suspend fun deliveryManRegistration(@Body requestBody: SignUpRequest): NetworkResponse<GenericResponse<SignUpDTResponse>, ErrorResponse>
 
     @POST("api/Update/UpdatePickupLocationsForLatLong")
     suspend fun updateLocationUpdateRequestDT(@Body requestBody: LocationUpdateRequestDT): NetworkResponse<GenericResponse<LocationUpdateResponseDT>, ErrorResponse>
