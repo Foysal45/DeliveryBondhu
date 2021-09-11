@@ -108,3 +108,5 @@
 -keep class com.google.firebase.crashlytics.** { *; }
 -dontwarn com.google.firebase.crashlytics.**
 
+-keepclassmembers class com.ajkerdeal.app.essential.api.models.chat.* { *; }
+

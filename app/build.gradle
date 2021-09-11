@@ -24,6 +24,7 @@ android {
         ndk {
             debugSymbolLevel 'SYMBOL_TABLE'
         }
+        buildConfigField("String", "FirebaseWebApiKey", firebaseWebApiKey)
     }
 
     signingConfigs {
