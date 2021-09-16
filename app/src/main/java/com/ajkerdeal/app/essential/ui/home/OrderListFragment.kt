@@ -1259,38 +1259,42 @@ class OrderListFragment : Fragment() {
         val dialog = WeightSelectionBottomSheet.newInstance()
         dialog.show(childFragmentManager, tag)
         dialog.onActionClicked = { weightRangeId ->
-            val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, weightRangeId, model.couponId, model.deliveryRangeId)
-            viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
-                if (isUpdatePrice) {
-                    Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
-                    if (isOrderFromDT()) {
-                        viewModel.loadOrderOrSearchDT(
-                            userId,
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType,
-                            collectionSlotId = selectedTimeSlotId
-                        )
-                    } else {
-                        viewModel.loadOrderOrSearchAD(
-                            userId,
-                            flag = collectionFlag,
-                            statusId = filterStatus,
-                            dtStatusId = dtStatus,
-                            searchKey = searchKey,
-                            type = searchType,
-                            serviceType = serviceTye,
-                            customType = customType,
-                            collectionSlotId = selectedTimeSlotId
-                        )
-                    }
+            if(model.weightRangeId < weightRangeId){
+                val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, weightRangeId, model.couponId, model.deliveryRangeId)
+                viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
+                    if (isUpdatePrice) {
+                        Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()
+                        if (isOrderFromDT()) {
+                            viewModel.loadOrderOrSearchDT(
+                                userId,
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
+                            )
+                        } else {
+                            viewModel.loadOrderOrSearchAD(
+                                userId,
+                                flag = collectionFlag,
+                                statusId = filterStatus,
+                                dtStatusId = dtStatus,
+                                searchKey = searchKey,
+                                type = searchType,
+                                serviceType = serviceTye,
+                                customType = customType,
+                                collectionSlotId = selectedTimeSlotId
+                            )
+                        }
 
-                }
-            })
+                    }
+                })
+            }else{
+                context?.toast("ওজন কমাতে পারবেন না")
+            }
             dialog.dismiss()
         }
     }
