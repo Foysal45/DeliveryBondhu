@@ -3,8 +3,8 @@ package com.ajkerdeal.app.essential.ui.chat
 import android.content.Context
 import android.content.Intent
 import androidx.core.os.bundleOf
-import com.bd.deliverytiger.app.api.model.chat.ChatUserData
-import com.bd.deliverytiger.app.api.model.chat.FirebaseCredential
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 
 class ChatConfigure constructor(
     private val documentName: String,

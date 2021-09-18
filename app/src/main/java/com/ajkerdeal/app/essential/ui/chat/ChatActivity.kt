@@ -49,9 +49,9 @@ class ChatActivity: AppCompatActivity() {
         }
 
         sender = ChatUserData(
-            SessionManager.courierUserId.toString(), SessionManager.userName, SessionManager.mobile,
-            imageUrl = "https://static.ajkerdeal.com/delivery_tiger/profile/${SessionManager.courierUserId}.jpg",
-            role = "dt",
+            SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = SessionManager.userPic,
+            role = "bondhu",
             fcmToken = SessionManager.firebaseToken
         )
         credential = FirebaseCredential(firebaseWebApiKey = BuildConfig.FirebaseWebApiKey)

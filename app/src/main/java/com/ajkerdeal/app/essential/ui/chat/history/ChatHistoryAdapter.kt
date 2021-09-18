@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bd.deliverytiger.app.R
-import com.bd.deliverytiger.app.api.model.chat.HistoryData
-import com.bd.deliverytiger.app.databinding.ItemViewChatHistoryBinding
-import com.bd.deliverytiger.app.utils.generateNameInitial
+import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.HistoryData
+import com.ajkerdeal.app.essential.databinding.ItemViewChatHistoryBinding
+import com.ajkerdeal.app.essential.utils.generateNameInitial
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import java.text.SimpleDateFormat
@@ -21,7 +21,10 @@ class ChatHistoryAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     var onItemClicked: ((model: HistoryData) -> Unit)? = null
 
     private val sdf = SimpleDateFormat("dd MMM, yy", Locale.US)
-    private var option = RequestOptions().circleCrop()
+    private var option = RequestOptions()
+        .placeholder(R.drawable.ic_person_circle)
+        .error(R.drawable.ic_person_circle)
+        .circleCrop()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ItemViewChatHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -50,16 +53,17 @@ class ChatHistoryAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                 e.printStackTrace()
             }
 
-            if (model.receiverProfile.isNotEmpty()) {
-                Glide.with(binding.logo)
-                    .load(model.receiverProfile)
-                    .apply(option)
-                    .into(binding.logo)
+            Glide.with(binding.logo)
+                .load(model.receiverProfile)
+                .apply(option)
+                .into(binding.logo)
+
+            /*if (model.receiverProfile.isNotEmpty()) {
                 binding.nameInitial.isVisible = false
             } else {
                 binding.nameInitial.isVisible = true
                 binding.nameInitial.text = generateNameInitial(model.receiverName)
-            }
+            }*/
 
 
 
