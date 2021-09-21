@@ -1390,19 +1390,6 @@ class OrderListFragment : Fragment() {
         })
     }
 
-    /*private fun datePicker() {
-        val builder = MaterialDatePicker.Builder.datePicker()
-        builder.setTheme(R.style.CustomMaterialCalendarTheme)
-        builder.setTitleText("Select date")
-        val picker = builder.build()
-        picker.show(childFragmentManager, "Picker")
-        picker.addOnPositiveButtonClickListener { date->
-            selectedDate = sdf.format(date)
-            setDatePickerTitle()
-        }
-
-    }
-*/
     private fun datePicker() {
         var calender = Calendar.getInstance()
         val calendarConstraints = CalendarConstraints.Builder().apply {
