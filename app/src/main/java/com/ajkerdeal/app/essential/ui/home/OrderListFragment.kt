@@ -102,10 +102,11 @@ class OrderListFragment : Fragment() {
     private var selectedTimeSlotId = -1
 
     //Date picker
-    private val sdf = SimpleDateFormat("dd MMM", Locale.US)
-    private val sdf1 = SimpleDateFormat("dd MMM, yyyy", Locale.US)
+    private val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    private val sdf1 = SimpleDateFormat("dd MMM", Locale.US)
 
-    private var selectedDate = "2001-01-01"
+    private var selectedDate = ""
+    private var showSelectedDate = ""
 
     private val dataAdapter = OrderListParentAdapter()
 
@@ -1354,7 +1355,9 @@ class OrderListFragment : Fragment() {
                             type = searchType,
                             serviceType = serviceTye,
                             customType = customType,
-                            collectionSlotId = selectedTimeSlotId
+                            collectionSlotId = selectedTimeSlotId ,
+                            fromDAte = selectedDate,
+                            toDate = selectedDate
                         )
                     } else {
                         viewModel.loadOrderOrSearchAD(
@@ -1425,15 +1428,43 @@ class OrderListFragment : Fragment() {
 
         val picker = builder.build()
         picker.show(childFragmentManager, "Picker")
-        picker.addOnPositiveButtonClickListener {
-            selectedDate = sdf.format(it)
-            Timber.d("selectedDate $selectedDate")
+        picker.addOnPositiveButtonClickListener { date->
+            selectedDate = sdf.format(date)
+            showSelectedDate = sdf1.format(date)
             setDatePickerTitle()
+
+            if (isOrderFromDT()) {
+                viewModel.loadOrderOrSearchDT(
+                    userId,
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId,
+                    fromDAte = selectedDate,
+                    toDate = selectedDate
+                )
+            } else {
+                viewModel.loadOrderOrSearchAD(
+                    userId,
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId
+                )
+            }
         }
     }
 
     private fun setDatePickerTitle(){
-        binding?.appBarLayout?.datePicker?.text = selectedDate
+        binding?.appBarLayout?.datePicker?.text = showSelectedDate
     }
 
 }

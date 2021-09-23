@@ -27,5 +27,9 @@ data class OrderRequest(
     @SerializedName("OrderId")
     var orderId: String = "-1",
     @SerializedName("CollectionSlotId")
-    var collectionSlotId: Int = 0
+    var collectionSlotId: Int = 0,
+    @SerializedName("fromDate")
+    var fromDate: String = "",
+    @SerializedName("toDate")
+    var toDate: String = ""
 )
