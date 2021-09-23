@@ -63,5 +63,8 @@ data class OrderModel(
     var collectionTimeSlot: CollectionTimeSlot? = CollectionTimeSlot(),
 
     @SerializedName("sourceInfo")
-    var collectionSource: CollectionSource? = null
+    var collectionSource: CollectionSource? = null,
+
+    @SerializedName("isHeavyWeight")
+    var isHeavyWeight: Boolean = false
 )

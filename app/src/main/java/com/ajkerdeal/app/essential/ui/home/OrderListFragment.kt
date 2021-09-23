@@ -1260,7 +1260,7 @@ class OrderListFragment : Fragment() {
         dialog.show(childFragmentManager, tag)
         dialog.onActionClicked = { weightRangeId ->
             if(model.weightRangeId < weightRangeId){
-                val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0, weightRangeId, model.couponId, model.deliveryRangeId)
+                val requestBody = UpdatePriceWithWeightRequest(parentModel.collectAddressDistrictId, parentModel.collectAddressThanaId, 0 , weightRangeId, model.couponId, model.deliveryRangeId, parentModel.serviceType)
                 viewModel.updatePriceWithWeight(requestBody).observe(viewLifecycleOwner, Observer { isUpdatePrice ->
                     if (isUpdatePrice) {
                         Toast.makeText(requireContext(), "দাম আপডেট হয়েছে", Toast.LENGTH_SHORT).show()

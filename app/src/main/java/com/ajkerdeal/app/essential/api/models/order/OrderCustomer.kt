@@ -44,6 +44,8 @@ data class OrderCustomer(
     var orderList: List<OrderModel>? = listOf(),
     @SerializedName("customerMessageData")
     var customerMessageData: SourceMessageData? = null,
+    @SerializedName("serviceType")
+    var serviceType: String = "",
 
     // internal
     var state: Boolean = false,

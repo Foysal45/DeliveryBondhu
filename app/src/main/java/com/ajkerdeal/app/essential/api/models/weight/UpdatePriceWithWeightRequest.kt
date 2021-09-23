@@ -14,5 +14,7 @@ data class UpdatePriceWithWeightRequest(
     @SerializedName("courierOrderId")
     var courierOrderId: String? = "",
     @SerializedName("deliveryRangeId")
-    var deliveryRangeId: Int? = 0
+    var deliveryRangeId: Int? = 0,
+    @SerializedName("serviceType")
+    var serviceType: String? = ""
 )

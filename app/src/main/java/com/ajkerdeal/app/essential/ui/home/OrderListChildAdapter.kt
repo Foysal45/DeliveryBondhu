@@ -175,6 +175,11 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }else{
                 holder.binding.isAdvancedPaymentIcon.visibility = View.GONE
             }
+            if(!isOrderFromAD && model.isHeavyWeight){
+                holder.binding.isHeavyWeight.visibility = View.VISIBLE
+            }else{
+                holder.binding.isHeavyWeight.visibility = View.GONE
+            }
 
             // Collection time
             if (isCollectionTimerShow) {
@@ -237,19 +242,19 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
 
             binding.phoneShop.setOnClickListener {
-                val mobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
-                val alternativeMobile = dataList[adapterPosition]?.collectionSource?.sourceMobile
+                val mobile = dataList[absoluteAdapterPosition]?.collectionSource?.sourceMobile
+                val alternativeMobile = dataList[absoluteAdapterPosition]?.collectionSource?.sourceMobile
                 onCall?.invoke(mobile, alternativeMobile)
             }
 
             binding.productImage.setOnClickListener {
-                onPictureClicked?.invoke(dataList[adapterPosition])
+                onPictureClicked?.invoke(dataList[absoluteAdapterPosition])
             }
             binding.qrcodeBtn.setOnClickListener {
-                onQRCodeClicked?.invoke(dataList[adapterPosition])
+                onQRCodeClicked?.invoke(dataList[absoluteAdapterPosition])
             }
             binding.weightUpdateButton.setOnClickListener {
-                onWeightUpdateClicked?.invoke(dataList[adapterPosition])
+                onWeightUpdateClicked?.invoke(dataList[absoluteAdapterPosition])
             }
         }
 

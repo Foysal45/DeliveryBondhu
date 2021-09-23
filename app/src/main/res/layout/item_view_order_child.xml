@@ -82,6 +82,19 @@
             app:layout_constraintStart_toStartOf="@id/qrcodeBtn"
             tools:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/isHeavyWeight"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/cd"
+            android:src="@drawable/ic_heavy_weight"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weightUpdateButton"
+            app:tint="@color/colorPrimary"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/priorityShowLayout"
             android:layout_width="wrap_content"
