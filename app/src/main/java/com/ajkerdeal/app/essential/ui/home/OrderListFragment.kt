@@ -11,10 +11,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcel
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
@@ -50,6 +52,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -96,6 +100,12 @@ class OrderListFragment : Fragment() {
     private var isUnavailableShow = false
     private var userId: Int = 0
     private var selectedTimeSlotId = -1
+
+    //Date picker
+    private val sdf = SimpleDateFormat("dd MMM", Locale.US)
+    private val sdf1 = SimpleDateFormat("dd MMM, yyyy", Locale.US)
+
+    private var selectedDate = "2001-01-01"
 
     private val dataAdapter = OrderListParentAdapter()
 
@@ -618,6 +628,7 @@ class OrderListFragment : Fragment() {
         })
 
         binding!!.appBarLayout.searchET.hint = getString(R.string.search_hint)
+
         binding!!.appBarLayout.searchET.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
 
             val imeAction = when (actionId) {
@@ -630,6 +641,10 @@ class OrderListFragment : Fragment() {
                 true
             } else false
         })
+
+        binding?.appBarLayout?.datePicker?.setOnClickListener {
+            datePicker()
+        }
 
         fetchOrderFilter()
     }
@@ -1302,8 +1317,10 @@ class OrderListFragment : Fragment() {
     private fun visibilityCheckTimeSlot() {
         if (isOrderFromDT() && dtStatus == AppConstant.DT_STATUS_NEW_ORDER) {
             binding?.appBarLayout?.timeSlotFilterCard?.isVisible = true
+            binding?.appBarLayout?.dateFilterCard?.isVisible = true
         } else {
             binding?.appBarLayout?.timeSlotFilterCard?.isVisible = false
+            binding?.appBarLayout?.dateFilterCard?.isVisible = false
         }
     }
 
@@ -1371,6 +1388,52 @@ class OrderListFragment : Fragment() {
                 binding?.appBarLayout?.timeSlotSpinner?.setSelection(timeSlotNameList.lastIndex)
             }
         })
+    }
+
+    private fun datePicker() {
+        var calender = Calendar.getInstance()
+        val calendarConstraints = CalendarConstraints.Builder().apply {
+            calender.add(Calendar.DAY_OF_MONTH, -4)
+            val startDate = calender.timeInMillis
+            setStart(startDate)
+
+            calender = Calendar.getInstance()
+            calender.add(Calendar.DAY_OF_MONTH, 3)
+            val endDate = calender.timeInMillis
+            setEnd(endDate)
+            setValidator(object: CalendarConstraints.DateValidator {
+                override fun describeContents(): Int {
+                    return 0
+                }
+
+                override fun writeToParcel(p0: Parcel?, p1: Int) {
+
+                }
+
+                override fun isValid(date: Long): Boolean {
+                    return date in startDate..endDate
+                }
+
+            })
+        }
+
+        val builder = MaterialDatePicker.Builder.datePicker().apply {
+            setTheme(R.style.CustomMaterialCalendarTheme)
+            setTitleText("Select date")
+            setCalendarConstraints(calendarConstraints.build())
+        }
+
+        val picker = builder.build()
+        picker.show(childFragmentManager, "Picker")
+        picker.addOnPositiveButtonClickListener {
+            selectedDate = sdf.format(it)
+            Timber.d("selectedDate $selectedDate")
+            setDatePickerTitle()
+        }
+    }
+
+    private fun setDatePickerTitle(){
+        binding?.appBarLayout?.datePicker?.text = selectedDate
     }
 
 }
