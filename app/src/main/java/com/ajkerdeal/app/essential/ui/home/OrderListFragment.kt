@@ -304,6 +304,8 @@ class OrderListFragment : Fragment() {
                         parentModel.isLocationUpdated = true
                     }
                 }
+            }else {
+                dataAdapter.clearSelection()
             }
         }
         dataAdapter.onLocationUpdate = { parentModel ->
@@ -335,12 +337,22 @@ class OrderListFragment : Fragment() {
         dataAdapter.onWeightUpdateClicked = { model1, model2 ->
             goToWeightSelectionBottomSheet(model1, model2)
         }
-        dataAdapter.onUploadClicked = { model ->
+
+        dataAdapter.onUploadClicked = {  model, selectedModel ->
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
-                imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                if (selectedModel.isEmpty()){
+                    imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                }else{
+                    imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
+                }
+
             } else {
-                imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+                if (selectedModel.isEmpty()){
+                    imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+                }else{
+                    imageUploadOrderIdList = selectedModel?.joinToString(",") { it.couponId } ?: "orderIds"
+                }
             }
             addPictureDialog() {
                 when (it) {

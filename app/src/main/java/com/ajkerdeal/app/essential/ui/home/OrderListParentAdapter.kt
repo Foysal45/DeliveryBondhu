@@ -29,7 +29,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
-    var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
+    var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
 
@@ -42,6 +42,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+
+    private var selectedOrderLists: List<OrderModel> = listOf()
+
+    private val dataAdapter = OrderListChildAdapter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -110,7 +114,6 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
 
-            val dataAdapter = OrderListChildAdapter()
             dataAdapter.isCollectionTimerShow = isCollectionTimerShow
             dataAdapter.isWeightUpdateEnable = isWeightUpdateEnable
             dataAdapter.isOrderFromAD = isOrderFromAD
@@ -137,6 +140,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             dataAdapter.onWeightUpdateClicked = { model1 ->
                 onWeightUpdateClicked?.invoke(model1, model)
+            }
+            dataAdapter.onItemSelected = { model, position ->
+                dataAdapter.multipleSelection(model, position)
+                selectedOrderLists = dataAdapter.getSelectedItemModelList()
             }
 
             if (model.mobileNumber.isNullOrEmpty()) {
@@ -214,7 +221,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.uploadBtn.setOnClickListener {
-                onUploadClicked?.invoke(dataList[absoluteAdapterPosition])
+                onUploadClicked?.invoke(dataList[absoluteAdapterPosition], selectedOrderLists)
             }
 
             /*if (isCollectionPoint == 1) {
@@ -224,6 +231,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }*/
         }
 
+    }
+
+    fun clearSelection(){
+        dataAdapter.clearSelections()
     }
 
     fun loadInitData(list: MutableList<OrderCustomer>) {

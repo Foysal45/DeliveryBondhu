@@ -3,11 +3,13 @@ package com.ajkerdeal.app.essential.ui.home
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.CountDownTimer
+import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.util.contains
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
@@ -31,6 +33,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
+    var onItemSelected: ((model: OrderModel, position: Int) -> Unit)? = null
 
     private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
     private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
@@ -38,6 +41,12 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+
+    var allowImageUpload: Boolean = false
+    private val selectedItems: SparseBooleanArray = SparseBooleanArray()
+    private var currentSelectedIndex = -1
+    private var reverseAllAnimations = false
+    var enableSelection: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderChildBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -181,6 +190,12 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.isHeavyWeight.visibility = View.GONE
             }
 
+            if (selectedItems[position, false]) {
+                holder.binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor( holder.binding.parent.context, R.color.selection_color))
+            } else {
+                holder.binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor( holder.binding.parent.context, R.color.white))
+            }
+
             // Collection time
             if (isCollectionTimerShow) {
                 collectionTimer(holder, model)
@@ -253,11 +268,50 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.qrcodeBtn.setOnClickListener {
                 onQRCodeClicked?.invoke(dataList[absoluteAdapterPosition])
             }
+            binding.root.setOnLongClickListener {
+                onItemSelected?.invoke(dataList[absoluteAdapterPosition], absoluteAdapterPosition)
+                enableSelection = true
+                return@setOnLongClickListener true
+            }
+            binding.root.setOnClickListener {
+                if (enableSelection){
+                    onItemSelected?.invoke(dataList[absoluteAdapterPosition], absoluteAdapterPosition)
+                }
+            }
             binding.weightUpdateButton.setOnClickListener {
                 onWeightUpdateClicked?.invoke(dataList[absoluteAdapterPosition])
             }
         }
 
+    }
+
+    fun multipleSelection(model : OrderModel, pos: Int) {
+        this.currentSelectedIndex = pos
+        if (selectedItems.contains(pos)){
+            selectedItems.delete(pos)
+        }else{
+            selectedItems.put(pos, true)
+        }
+        notifyItemChanged(pos)
+    }
+
+    fun clearSelections() {
+        reverseAllAnimations = true
+        selectedItems.clear()
+        Timber.d("Cleared data")
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedItemCount(): Int {
+        return selectedItems.size()
+    }
+
+    fun getSelectedItemModelList(): List<OrderModel> {
+        val items: MutableList<OrderModel> = ArrayList<OrderModel>(selectedItems.size())
+        for (i in 0 until selectedItems.size()) {
+            items.add(dataList[selectedItems.keyAt(i)])
+        }
+        return items
     }
 
     fun loadData(list: MutableList<OrderModel>) {

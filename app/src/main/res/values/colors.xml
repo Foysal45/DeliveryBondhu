@@ -35,6 +35,8 @@
 
     <color name="text_primary">#DE0F0F0F</color>
 
+    <color name="selection_color">#c6edd6</color>
+
     <color name="hint">#00000066</color>
     <color name="hint1">#B2B2B2</color>
     <color name="text_second">#929292</color>
