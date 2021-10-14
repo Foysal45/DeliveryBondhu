@@ -190,6 +190,12 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.isHeavyWeight.visibility = View.GONE
             }
 
+            if(!model.documentUrl.isNullOrEmpty()){
+                holder.binding.isDocumentUrl.visibility = View.VISIBLE
+            }else{
+                holder.binding.isDocumentUrl.visibility = View.GONE
+            }
+
             if (selectedItems[position, false]) {
                 holder.binding.parent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor( holder.binding.parent.context, R.color.selection_color))
             } else {
@@ -296,6 +302,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun clearSelections() {
+        enableSelection = false
         reverseAllAnimations = true
         selectedItems.clear()
         Timber.d("Cleared data")

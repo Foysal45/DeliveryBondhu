@@ -366,7 +366,6 @@ class OrderListFragment : Fragment() {
             }
         }
 
-
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
             if (it.isInitLoad) {
                 Timber.d("pagingState init")
@@ -690,6 +689,14 @@ class OrderListFragment : Fragment() {
 
                         filterStatus = selectedStatus
                         dtStatus = selectedDTStatus
+                        Timber.d("isSelectedEnable: $filterStatus, $dtStatus")
+                        if (selectedStatus == "364" || selectedDTStatus == "39"){
+                            dataAdapter.isSelectedEnable = true
+                        }else{
+                            dataAdapter.isSelectedEnable = false
+                            dataAdapter.clearSelection()
+                        }
+
                         dataAdapter.clearData()
                         Timber.d("loadOrderOrSearch called from filter spinner")
 

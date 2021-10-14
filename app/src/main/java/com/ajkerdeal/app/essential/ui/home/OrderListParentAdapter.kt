@@ -42,6 +42,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+    var isSelectedEnable: Boolean = false
 
     private var selectedOrderLists: List<OrderModel> = listOf()
 
@@ -142,8 +143,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 onWeightUpdateClicked?.invoke(model1, model)
             }
             dataAdapter.onItemSelected = { model, position ->
-                dataAdapter.multipleSelection(model, position)
-                selectedOrderLists = dataAdapter.getSelectedItemModelList()
+                if (isSelectedEnable){
+                    dataAdapter.multipleSelection(model, position)
+                    selectedOrderLists = dataAdapter.getSelectedItemModelList()
+                }
             }
 
             if (model.mobileNumber.isNullOrEmpty()) {

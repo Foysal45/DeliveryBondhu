@@ -66,5 +66,8 @@ data class OrderModel(
     var collectionSource: CollectionSource? = null,
 
     @SerializedName("isHeavyWeight")
-    var isHeavyWeight: Boolean = false
+    var isHeavyWeight: Boolean = false,
+    @SerializedName("documentUrl")
+    var documentUrl: String? = ""
+
 )
