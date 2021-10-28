@@ -32,6 +32,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
+    var onImageExistsToast: ((toast: String) -> Unit)? = null
 
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
@@ -144,8 +145,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             dataAdapter.onItemSelected = { model, position ->
                 if (isSelectedEnable){
-                    dataAdapter.multipleSelection(model, position)
-                    selectedOrderLists = dataAdapter.getSelectedItemModelList()
+                    if (model.documentUrl.isNullOrEmpty()){
+                        dataAdapter.multipleSelection(model, position)
+                        selectedOrderLists = dataAdapter.getSelectedItemModelList()
+                    }else{
+                     onImageExistsToast?.invoke("এই অর্ডারটির ডকুমেন্ট আপলোড করা হয়েছে")
+                    }
                 }
             }
 

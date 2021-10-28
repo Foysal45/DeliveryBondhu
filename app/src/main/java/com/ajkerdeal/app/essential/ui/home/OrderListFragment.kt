@@ -296,6 +296,9 @@ class OrderListFragment : Fragment() {
         dataAdapter.onPictureClicked = { orderModel ->
             pictureDialog(orderModel)
         }
+        dataAdapter.onImageExistsToast = { message ->
+            context?.toast(message)
+        }
         dataAdapter.onOrderListExpand = { parentModel, state ->
             if (state) {
                 if (!isValidCoordinate(parentModel.latitude) || !isValidCoordinate(parentModel.longitude)) {
@@ -342,7 +345,8 @@ class OrderListFragment : Fragment() {
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
                 if (selectedModel.isEmpty()){
-                    imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                    context?.toast("আপনি কোনো অর্ডার সিলেক্ট করেননি")
+                    //imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
                 }else{
                     imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
                 }

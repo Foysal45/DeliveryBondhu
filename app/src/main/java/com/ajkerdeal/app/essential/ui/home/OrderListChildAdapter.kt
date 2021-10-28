@@ -292,13 +292,17 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun multipleSelection(model : OrderModel, pos: Int) {
-        this.currentSelectedIndex = pos
-        if (selectedItems.contains(pos)){
-            selectedItems.delete(pos)
+        if (model.documentUrl.isNullOrEmpty()){
+            this.currentSelectedIndex = pos
+            if (selectedItems.contains(pos)){
+                selectedItems.delete(pos)
+            }else{
+                selectedItems.put(pos, true)
+            }
+            notifyItemChanged(pos)
         }else{
-            selectedItems.put(pos, true)
         }
-        notifyItemChanged(pos)
+
     }
 
     fun clearSelections() {
