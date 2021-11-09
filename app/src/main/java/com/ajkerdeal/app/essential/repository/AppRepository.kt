@@ -210,4 +210,6 @@ class AppRepository(
     suspend fun getUserStatusDT(bondhuId: Int) = apiInterfaceADCORE.getUserStatusDT(bondhuId)
 
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
+
+    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequest) = apiInterfaceADCORE.updatePasswordDT(requestBody)
 }

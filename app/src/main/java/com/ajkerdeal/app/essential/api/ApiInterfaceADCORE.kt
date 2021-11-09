@@ -2,10 +2,13 @@ package com.ajkerdeal.app.essential.api
 
 import com.ajkerdeal.app.essential.api.models.ErrorResponse
 import com.ajkerdeal.app.essential.api.models.GenericResponse
+import com.ajkerdeal.app.essential.api.models.ResponseHeader
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.LoginResponse
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpDTResponse
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
+import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpResponse
 import com.ajkerdeal.app.essential.api.models.charge.BreakableChargeData
 import com.ajkerdeal.app.essential.api.models.district.DistrictData
 import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
@@ -110,6 +113,9 @@ interface ApiInterfaceADCORE {
 
     @GET("api/Bondhu/GetBondhuInfo/{bondhuId}")
     suspend fun getUserStatusDT(@Path("bondhuId") bondhuId: Int): NetworkResponse<GenericResponse<UserStatusDT>, ErrorResponse>
+
+    @POST("api/Bondhu/UpdateSelfDeliveryUserPassword")
+    suspend fun updatePasswordDT(@Body requestBody: UpdatePasswordRequest): NetworkResponse<ResponseHeader<SignUpResponse>, ErrorResponse>
 
 
 }
