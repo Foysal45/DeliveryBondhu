@@ -188,8 +188,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.parent.setOnClickListener {
                 val state = dataList[absoluteAdapterPosition].state
                 dataList[absoluteAdapterPosition].state = !state
-                notifyItemChanged(absoluteAdapterPosition)
                 onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
+                notifyItemChanged(absoluteAdapterPosition)
             }
 
             binding.phone.setOnClickListener {
