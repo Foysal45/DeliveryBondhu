@@ -24,7 +24,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
+import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
@@ -41,6 +44,7 @@ import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightReques
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.home.action_bottomsheet.ActionCommentSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
@@ -158,6 +162,11 @@ class OrderListFragment : Fragment() {
             }
 
         }
+
+        dataAdapter.onChat = { id, name, number ->
+            goToChatActivity(id, name, number)
+        }
+
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
@@ -813,6 +822,31 @@ class OrderListFragment : Fragment() {
                 }.show()
             }
         })
+    }
+
+    private fun goToChatActivity(receiverId: Int, name:String, number: String) {
+        val firebaseCredential = FirebaseCredential(
+            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
+        )
+        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.dtUserId}/profileimage.jpg",
+            role = "bondhu",
+            fcmToken = SessionManager.firebaseToken
+        )
+        val receiverData = if (receiverId != null) {
+            ChatUserData(receiverId.toString(), name, number,
+                imageUrl = "https://static.ajkerdeal.com/images/admin_users/dt/${receiverId}.jpg",
+                role = "dt"
+            )
+        } else {
+            ChatUserData()
+        }
+        ChatConfigure(
+            "dt-bondhu",
+            senderData,
+            firebaseCredential = firebaseCredential,
+            receiver = receiverData
+        ).config(requireContext())
     }
 
     private fun goToaCustomCommentStatusUpdate(flag: Int, requestBodyDT: MutableList<DTStatusUpdateModel>, requestBody: MutableList<StatusUpdateModel>, instructions: String?) {

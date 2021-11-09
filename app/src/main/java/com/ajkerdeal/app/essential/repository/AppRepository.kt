@@ -210,6 +210,5 @@ class AppRepository(
 
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 
-    suspend fun sendPushNotifications(authToken: String, @Body requestBody: FCMRequest) =
-        apiInterfaceFCM.sendPushNotifications(authToken, requestBody)
+    suspend fun sendPushNotifications(authToken: String, @Body requestBody: FCMRequest) = apiInterfaceFCM.sendPushNotifications(authToken, requestBody)
 }

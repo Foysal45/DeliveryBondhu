@@ -19,10 +19,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.work.*
+import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.databinding.FragmentDashboardBinding
 import com.ajkerdeal.app.essential.services.DistrictCacheWorker
 import com.ajkerdeal.app.essential.services.LocationUpdateWorker
+import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.utils.*

@@ -31,6 +31,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
+    var onChat: ((id: Int, name: String, number: String) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
 
     var isChildView: Boolean = false
@@ -194,6 +195,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.phone.setOnClickListener {
                 onCall?.invoke(dataList[absoluteAdapterPosition].mobileNumber, dataList[absoluteAdapterPosition].alterMobile)
+            }
+
+            binding.chat.setOnClickListener {
+                onChat?.invoke(dataList[absoluteAdapterPosition].merchantId, dataList[absoluteAdapterPosition].name ?: "", dataList[absoluteAdapterPosition].mobileNumber ?: "")
             }
 
             if (isChildView) {
