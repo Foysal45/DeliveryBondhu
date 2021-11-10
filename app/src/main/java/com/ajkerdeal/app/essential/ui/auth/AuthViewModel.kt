@@ -9,6 +9,7 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequestDT
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.features.FeatureData
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
@@ -516,7 +517,43 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId))
+            val response = repository.updatePasswordDT(UpdatePasswordRequestDT(newPassword.value, deliveryUserId, resetMobile.toString()))
+            withContext(Dispatchers.Main) {
+                progress.value = false
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        val data = response.body.data
+                        if (data != null && data > 0) {
+                            updatePasswordAD()
+                        } else {
+                            val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                            viewState.value = ViewState.ShowMessage(message)
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.value = ViewState.ShowMessage(message)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.value = ViewState.ShowMessage(message)
+                        Timber.d(response.error)
+                    }
+                }.exhaustive
+                viewState.value = ViewState.NONE
+            }
+        }
+
+    }
+
+    private fun updatePasswordAD(){
+        progress.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId, resetMobile.toString()))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
@@ -549,7 +586,6 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 viewState.value = ViewState.NONE
             }
         }
-
     }
 
     fun clearLogin() {

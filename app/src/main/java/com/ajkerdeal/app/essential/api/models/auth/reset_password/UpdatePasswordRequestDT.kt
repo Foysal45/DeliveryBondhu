@@ -7,5 +7,7 @@ data class UpdatePasswordRequestDT(
     @SerializedName("password")
     var password: String? = "",
     @SerializedName("customerId")
-    var customerId: Int? = 0
+    var customerId: Int? = 0,
+    @SerializedName("mobile")
+    var mobile: String? = "",
 )

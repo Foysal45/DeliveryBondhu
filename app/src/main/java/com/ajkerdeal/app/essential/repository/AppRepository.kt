@@ -9,6 +9,7 @@ import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
+import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequestDT
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.district.DistrictData
@@ -211,5 +212,5 @@ class AppRepository(
 
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 
-    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequest) = apiInterfaceADCORE.updatePasswordDT(requestBody)
+    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequestDT) = apiInterfaceADCORE.updatePasswordDT(requestBody)
 }
