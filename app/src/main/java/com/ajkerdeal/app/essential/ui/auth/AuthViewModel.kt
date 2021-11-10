@@ -517,13 +517,13 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.updatePasswordDT(UpdatePasswordRequestDT(newPassword.value, deliveryUserId, resetMobile.toString()))
+            val response = repository.updatePasswordDT(UpdatePasswordRequestDT(newPassword.value, deliveryUserId, resetMobile.value))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
-                        val data = response.body.data
-                        if (data != null && data > 0) {
+                        val model = response.body.model
+                        if (model != null && model > 0) {
                             updatePasswordAD()
                         } else {
                             val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
@@ -553,7 +553,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
     private fun updatePasswordAD(){
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId, resetMobile.toString()))
+            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId, resetMobile.value))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {

@@ -114,7 +114,7 @@ interface ApiInterfaceADCORE {
     suspend fun getUserStatusDT(@Path("bondhuId") bondhuId: Int): NetworkResponse<GenericResponse<UserStatusDT>, ErrorResponse>
 
     @POST("api/Bondhu/UpdateSelfDeliveryUserPassword")
-    suspend fun updatePasswordDT(@Body requestBody: UpdatePasswordRequestDT): NetworkResponse<ResponseHeader<Int>, ErrorResponse>
+    suspend fun updatePasswordDT(@Body requestBody: UpdatePasswordRequestDT): NetworkResponse<GenericResponse<Int>, ErrorResponse>
 
 
 }
