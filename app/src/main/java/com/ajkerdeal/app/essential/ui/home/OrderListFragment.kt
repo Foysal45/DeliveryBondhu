@@ -308,7 +308,9 @@ class OrderListFragment : Fragment() {
                     }
                 }
             }else {
-                dataAdapter.clearSelection()
+                dataAdapter.onClearSelectionCalled = {
+                    it.clearSelections()
+                }
             }
         }
         dataAdapter.onLocationUpdate = { parentModel ->
@@ -698,7 +700,10 @@ class OrderListFragment : Fragment() {
                             dataAdapter.isSelectedEnable = true
                         }else{
                             dataAdapter.isSelectedEnable = false
-                            dataAdapter.clearSelection()
+                            dataAdapter.onClearSelectionCalled = {
+                                it.clearSelections()
+                            }
+                            //dataAdapter.clearSelection()
                         }
 
                         dataAdapter.clearData()

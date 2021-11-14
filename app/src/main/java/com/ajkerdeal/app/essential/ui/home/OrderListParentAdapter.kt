@@ -33,6 +33,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
     var onImageExistsToast: ((toast: String) -> Unit)? = null
+    var onClearSelectionCalled: ((dataAdapter : OrderListChildAdapter) -> Unit)? = null
 
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
@@ -47,7 +48,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var selectedOrderLists: List<OrderModel> = listOf()
 
-    private val dataAdapter = OrderListChildAdapter()
+    //private val dataAdapter = OrderListChildAdapter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -59,9 +60,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ViewHolder) {
-
+            val dataAdapter = OrderListChildAdapter()
             val model = dataList[position]
-
+            onClearSelectionCalled?.invoke(dataAdapter)
             val nameWithDistrict = "${model.name} (<font color='#E86324'>${model.district}</font>)"
             holder.binding.customerName.text = HtmlCompat.fromHtml(nameWithDistrict, HtmlCompat.FROM_HTML_MODE_LEGACY)
             holder.binding.customerAddress.text = model.address
@@ -82,14 +83,14 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.recyclerViewAction.visibility = View.GONE
             } else {
                 holder.binding.recyclerViewAction.visibility = View.VISIBLE
-                val dataAdapter = ActionAdapter()
-                dataAdapter.loadData(model.actions!! as MutableList<Action>)
+                val innerdataAdapter = ActionAdapter()
+                innerdataAdapter.loadData(model.actions!! as MutableList<Action>)
                 with(holder.binding.recyclerViewAction) {
                     setHasFixedSize(false)
                     layoutManager = LinearLayoutManager(holder.binding.recyclerViewAction.context, LinearLayoutManager.HORIZONTAL, false)
-                    adapter = dataAdapter
+                    adapter = innerdataAdapter
                 }
-                dataAdapter.onActionClicked = { actionModel ->
+                innerdataAdapter.onActionClicked = { actionModel ->
                     onActionClicked?.invoke(model, actionModel, null)
                 }
             }
@@ -241,9 +242,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    fun clearSelection(){
-        dataAdapter.clearSelections()
-    }
+    /*fun clearSelection(){
+       dataAdapter.clearSelections()
+    }*/
 
     fun loadInitData(list: MutableList<OrderCustomer>) {
         dataList.clear()
