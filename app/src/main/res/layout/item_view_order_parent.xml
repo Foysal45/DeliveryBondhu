@@ -65,9 +65,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                >
 
-                <!--<LinearLayout
+                <ImageView
+                    android:id="@+id/chatBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_chat1"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+               <!-- <LinearLayout
                     android:id="@+id/showLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,16 +105,6 @@
                         />
 
                 </LinearLayout>-->
-
-                <ImageView
-                    android:id="@+id/chat"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/cd"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_chat1"
-                    android:visibility="gone"
-                    tools:visibility="visible"/>
 
                 <ImageView
                     android:id="@+id/showLocation"

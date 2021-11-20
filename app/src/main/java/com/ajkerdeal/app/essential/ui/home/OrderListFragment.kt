@@ -25,10 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
-import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
-import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
-import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.order.AcceptStatusRequestDT
@@ -43,7 +40,6 @@ import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightReques
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
-import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.home.action_bottomsheet.ActionCommentSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
@@ -771,29 +767,29 @@ class OrderListFragment : Fragment() {
                         val selectedDTStatus = model.dtStatus
                         lastFilterIndex = position
 
-                            filterStatus = selectedStatus
-                            dtStatus = selectedDTStatus
-                            Timber.d("isSelectedEnable: $filterStatus, $dtStatus")
-                            if (selectedStatus == "364" || selectedDTStatus == "39") {
-                                dataAdapter.isSelectedEnable = true
-                            } else {
-                                dataAdapter.isSelectedEnable = false
-                                dataAdapter.onClearSelectionCalled = {
-                                    it.clearSelections()
-                                }
-                                //dataAdapter.clearSelection()
+                        filterStatus = selectedStatus
+                        dtStatus = selectedDTStatus
+                        Timber.d("isSelectedEnable: $filterStatus, $dtStatus")
+                        if (selectedStatus == "364" || selectedDTStatus == "39") {
+                            dataAdapter.isSelectedEnable = true
+                        } else {
+                            dataAdapter.isSelectedEnable = false
+                            dataAdapter.onClearSelectionCalled = {
+                                it.clearSelections()
                             }
+                            //dataAdapter.clearSelection()
+                        }
 
 
-                            dataAdapter.onClearSelectionCalledPosition = { positionw ->
-                                val view2 = binding?.recyclerView?.findViewHolderForAdapterPosition(
-                                    positionw
-                                )?.itemView;
-                                view2?.findViewById<RecyclerView>(R.id.recyclerView)?.visibility =
-                                    View.GONE
-                            }
-                            dataAdapter.clearData()
-                            Timber.d("loadOrderOrSearch called from filter spinner")
+                        dataAdapter.onClearSelectionCalledPosition = { positionw ->
+                            val view2 = binding?.recyclerView?.findViewHolderForAdapterPosition(
+                                positionw
+                            )?.itemView;
+                            view2?.findViewById<RecyclerView>(R.id.recyclerView)?.visibility =
+                                View.GONE
+                        }
+                        dataAdapter.clearData()
+                        Timber.d("loadOrderOrSearch called from filter spinner")
 
                         binding!!.appBarLayout.filterName.text = model.statusName
                         collectionFlag = model.collectionFilter
@@ -836,37 +832,38 @@ class OrderListFragment : Fragment() {
                             } else {
                                 binding!!.emptyView.visibility = View.GONE
 
-                            if (selectedTimeSlotId == -1 && isOrderFromDT() && dtStatus == AppConstant.DT_STATUS_NEW_ORDER && serviceTye == AppConstant.SERVICE_TYPE_COLLECTION) {
-                                fetchTimeSlot()
-                            } else {
-                                if (isOrderFromDT()) {
-                                    viewModel.loadOrderOrSearchDT(
-                                        userId,
-                                        flag = collectionFlag,
-                                        statusId = filterStatus,
-                                        dtStatusId = dtStatus,
-                                        searchKey = searchKey,
-                                        type = searchType,
-                                        serviceType = serviceTye,
-                                        customType = customType,
-                                        collectionSlotId = selectedTimeSlotId
-                                    )
+                                if (selectedTimeSlotId == -1 && isOrderFromDT() && dtStatus == AppConstant.DT_STATUS_NEW_ORDER && serviceTye == AppConstant.SERVICE_TYPE_COLLECTION) {
+                                    fetchTimeSlot()
                                 } else {
-                                    viewModel.loadOrderOrSearchAD(
-                                        userId,
-                                        flag = collectionFlag,
-                                        statusId = filterStatus,
-                                        dtStatusId = dtStatus,
-                                        searchKey = searchKey,
-                                        type = searchType,
-                                        serviceType = serviceTye,
-                                        customType = customType,
-                                        collectionSlotId = selectedTimeSlotId
-                                    )
+                                    if (isOrderFromDT()) {
+                                        viewModel.loadOrderOrSearchDT(
+                                            userId,
+                                            flag = collectionFlag,
+                                            statusId = filterStatus,
+                                            dtStatusId = dtStatus,
+                                            searchKey = searchKey,
+                                            type = searchType,
+                                            serviceType = serviceTye,
+                                            customType = customType,
+                                            collectionSlotId = selectedTimeSlotId
+                                        )
+                                    } else {
+                                        viewModel.loadOrderOrSearchAD(
+                                            userId,
+                                            flag = collectionFlag,
+                                            statusId = filterStatus,
+                                            dtStatusId = dtStatus,
+                                            searchKey = searchKey,
+                                            type = searchType,
+                                            serviceType = serviceTye,
+                                            customType = customType,
+                                            collectionSlotId = selectedTimeSlotId
+                                        )
+                                    }
                                 }
                             }
+                            visibilityCheckTimeSlot()
                         }
-                        visibilityCheckTimeSlot()
                     }
                 }
             }
@@ -985,12 +982,6 @@ class OrderListFragment : Fragment() {
     }
 
     private fun goToaCustomCommentStatusUpdate(flag: Int, requestBodyDT: MutableList<DTStatusUpdateModel>, requestBody: MutableList<StatusUpdateModel>, instructions: String?) {
-    private fun goToaCustomCommentStatusUpdate(
-        flag: Int,
-        requestBodyDT: MutableList<DTStatusUpdateModel>,
-        requestBody: MutableList<StatusUpdateModel>,
-        instructions: String?
-    ) {
         val tag: String = ActionCommentSelectionBottomSheet.tag
         val dialog: ActionCommentSelectionBottomSheet = ActionCommentSelectionBottomSheet.newInstance(flag)
         dialog.show(childFragmentManager, tag)

@@ -7,16 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
 import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
-import com.ajkerdeal.app.essential.api.models.weight.WeightRangeDataModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderParentBinding
-import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionAdapter
 import com.ajkerdeal.app.essential.utils.isValidCoordinate
 
 class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -201,9 +198,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             if (isChatVisible) {
-                holder.binding.chat.visibility = View.VISIBLE
+                holder.binding.chatBtn.visibility = View.VISIBLE
             } else {
-                holder.binding.chat.visibility = View.GONE
+                holder.binding.chatBtn.visibility = View.GONE
             }
 
             if (allowImageUpload) {
@@ -228,7 +225,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 onCall?.invoke(dataList[absoluteAdapterPosition].mobileNumber, dataList[absoluteAdapterPosition].alterMobile)
             }
 
-            binding.chat.setOnClickListener {
+            binding.chatBtn.setOnClickListener {
                 onChat?.invoke(dataList[absoluteAdapterPosition].merchantId, dataList[absoluteAdapterPosition].name ?: "", dataList[absoluteAdapterPosition].mobileNumber ?: "")
             }
 
