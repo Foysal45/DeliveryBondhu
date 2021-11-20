@@ -309,7 +309,7 @@ class OrderListFragment : Fragment() {
                 }
             }else {
                 dataAdapter.onClearSelectionCalled = {
-                    it.clearSelections()
+                    //it.clearSelections()
                 }
             }
         }
@@ -703,7 +703,7 @@ class OrderListFragment : Fragment() {
                         }else{
                             dataAdapter.isSelectedEnable = false
                             dataAdapter.onClearSelectionCalled = {
-                                it.clearSelections()
+                                //it.clearSelections()
                             }
                             //dataAdapter.clearSelection()
                         }
@@ -712,7 +712,6 @@ class OrderListFragment : Fragment() {
                         dataAdapter.onClearSelectionCalledPosition = {positionw->
                             val view2 = binding?.recyclerView?.findViewHolderForAdapterPosition(positionw)?.itemView;
                             view2?.findViewById<RecyclerView>(R.id.recyclerView)?.visibility = View.GONE
-                            context?.toast(positionw.toString())
                         }
                         dataAdapter.clearData()
                         Timber.d("loadOrderOrSearch called from filter spinner")

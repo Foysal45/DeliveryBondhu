@@ -33,7 +33,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
     var onImageExistsToast: ((toast: String) -> Unit)? = null
-    var onClearSelectionCalled: ((dataAdapter : Int) -> Unit)? = null
+    var onClearSelectionCalled: ((dataAdapter : OrderListChildAdapter) -> Unit)? = null
+    var onClearSelectionCalledPosition: ((dataAdapter : Int) -> Unit)? = null
 
     var isChildView: Boolean = false
     var isCollectionPoint: Int = 0
@@ -62,7 +63,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (holder is ViewHolder) {
             val dataAdapter = OrderListChildAdapter()
             val model = dataList[position]
-            onClearSelectionCalled?.invoke(position)
+            onClearSelectionCalledPosition?.invoke(position)
             val nameWithDistrict = "${model.name} (<font color='#E86324'>${model.district}</font>)"
             holder.binding.customerName.text = HtmlCompat.fromHtml(nameWithDistrict, HtmlCompat.FROM_HTML_MODE_LEGACY)
             holder.binding.customerAddress.text = model.address

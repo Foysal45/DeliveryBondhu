@@ -9,7 +9,6 @@ import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.CheckMobileRequest
 import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequest
-import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePasswordRequestDT
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.features.FeatureData
 import com.ajkerdeal.app.essential.api.models.location.LocationResponse
@@ -23,11 +22,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class AuthViewModel(private val repository: AppRepository): ViewModel() {
+class AuthViewModel(private val repository: AppRepository) : ViewModel() {
 
     // Login
     val userId = MutableLiveData<String>("")
     val password = MutableLiveData<String>("")
+
     // SignUp
     val name = MutableLiveData<String>("")
     val userId1 = MutableLiveData<String>("")
@@ -102,7 +102,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                         val data = response.body.model
                         if (data != null && data.deliveryUserId != 0) {
 
-                            SessionManager.createSession(data.deliveryUserId,data.deliveryUserName,data.mobileNumber,data.bkashMobileNumber)
+                            SessionManager.createSession(data.deliveryUserId, data.deliveryUserName, data.mobileNumber, data.bkashMobileNumber)
                             SessionManager.userPic = data.profileImage ?: ""
                             userId.value = ""
                             password.value = ""
@@ -199,11 +199,48 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 appVersion.value
             )
             val responseDT = repository.deliveryManRegistration(requestBody)
-            if (responseDT is NetworkResponse.Success) {
-                requestBody.dtId = responseDT.body.model?.customerId ?: 0
-            }
-            val response = repository.signUpUser(requestBody)
             withContext(Dispatchers.Main) {
+                progress.value = false
+                when (responseDT) {
+                    is NetworkResponse.Success -> {
+
+                        val data = responseDT.body
+
+                        if (data != null && data.model.customerId != 0) {
+                            viewState.value = ViewState.ShowMessage(data.message)
+
+                            //otpType = 2
+                            //sendOTP(userId1.value ?: "")
+                            password1.value = ""
+                            confirmPassword.value = ""
+                            viewState.value = ViewState.NextState()
+                        } else {
+                            viewState.value = ViewState.ShowMessage(data?.message)
+                        }
+                    }
+                    is NetworkResponse.ServerError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
+                        viewState.postValue(ViewState.ShowMessage(message))
+
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
+                        viewState.postValue(ViewState.ShowMessage(message))
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
+                        viewState.postValue(ViewState.ShowMessage(message))
+                        Timber.d(responseDT.error)
+                    }
+                }.exhaustive
+                viewState.value = ViewState.NONE
+            }
+
+            /*if (responseDT is NetworkResponse.Success) {
+                requestBody.dtId = responseDT.body.model?.customerId ?: 0
+            }*/
+            //  val response = repository.signUpUser(requestBody)
+            /*withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
                     is NetworkResponse.Success -> {
@@ -238,7 +275,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                     }
                 }.exhaustive
                 viewState.value = ViewState.NONE
-            }
+            }*/
         }
 
     }
@@ -353,25 +390,25 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 when (response) {
                     is NetworkResponse.Success -> {
 
-                            if (response.body.data?.deliveryUserId == 0) {
-                                deliveryUserId = 0
-                                val message = "এই নম্বরটি দিয়ে রেজিস্ট্রেশন করা হয়নি"
-                                if (otpType == 2) { //Reg
-                                    sendOTP(mobile)
-                                } else {
-                                    viewState.value = ViewState.ShowMessage(message)
-                                }
-
+                        if (response.body.data?.deliveryUserId == 0) {
+                            deliveryUserId = 0
+                            val message = "এই নম্বরটি দিয়ে রেজিস্ট্রেশন করা হয়নি"
+                            if (otpType == 2) { //Reg
+                                sendOTP(mobile)
                             } else {
-                                deliveryUserId = response.body.data?.deliveryUserId ?: 0
-                                val message = "এই নম্বরটি দিয়ে ইতিমধ্যে রেজিস্ট্রেশন করা হয়েছে"
-                                //viewState.value = ViewState.NextState()
-                                if (otpType == 1) {
-                                    sendOTP(mobile)
-                                } else {
-                                    viewState.value = ViewState.ShowMessage(message)
-                                }
+                                viewState.value = ViewState.ShowMessage(message)
                             }
+
+                        } else {
+                            deliveryUserId = response.body.data?.deliveryUserId ?: 0
+                            val message = "এই নম্বরটি দিয়ে ইতিমধ্যে রেজিস্ট্রেশন করা হয়েছে"
+                            //viewState.value = ViewState.NextState()
+                            if (otpType == 1) {
+                                sendOTP(mobile)
+                            } else {
+                                viewState.value = ViewState.ShowMessage(message)
+                            }
+                        }
                         //Timber.d("checkMobile $response")
 
                     }
@@ -517,43 +554,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
 
         progress.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.updatePasswordDT(UpdatePasswordRequestDT(newPassword.value, deliveryUserId, resetMobile.value))
-            withContext(Dispatchers.Main) {
-                progress.value = false
-                when (response) {
-                    is NetworkResponse.Success -> {
-                        val model = response.body.model
-                        if (model != null && model > 0) {
-                            updatePasswordAD()
-                        } else {
-                            val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                            viewState.value = ViewState.ShowMessage(message)
-                        }
-                    }
-                    is NetworkResponse.ServerError -> {
-                        val message = "দুঃখিত, এই মুহূর্তে আমাদের সার্ভার কানেকশনে সমস্যা হচ্ছে, কিছুক্ষণ পর আবার চেষ্টা করুন"
-                        viewState.value = ViewState.ShowMessage(message)
-                    }
-                    is NetworkResponse.NetworkError -> {
-                        val message = "দুঃখিত, এই মুহূর্তে আপনার ইন্টারনেট কানেকশনে সমস্যা হচ্ছে"
-                        viewState.value = ViewState.ShowMessage(message)
-                    }
-                    is NetworkResponse.UnknownError -> {
-                        val message = "কোথাও কোনো সমস্যা হচ্ছে, আবার চেষ্টা করুন"
-                        viewState.value = ViewState.ShowMessage(message)
-                        Timber.d(response.error)
-                    }
-                }.exhaustive
-                viewState.value = ViewState.NONE
-            }
-        }
-
-    }
-
-    private fun updatePasswordAD(){
-        progress.value = true
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId, resetMobile.value))
+            val response = repository.updatePassword(UpdatePasswordRequest(newPassword.value, deliveryUserId))
             withContext(Dispatchers.Main) {
                 progress.value = false
                 when (response) {
@@ -586,6 +587,7 @@ class AuthViewModel(private val repository: AppRepository): ViewModel() {
                 viewState.value = ViewState.NONE
             }
         }
+
     }
 
     fun clearLogin() {
