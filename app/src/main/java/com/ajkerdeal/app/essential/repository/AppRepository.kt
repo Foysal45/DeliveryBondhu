@@ -1,9 +1,6 @@
 package com.ajkerdeal.app.essential.repository
 
-import com.ajkerdeal.app.essential.api.ApiInterfaceADCORE
-import com.ajkerdeal.app.essential.api.ApiInterfaceADM
-import com.ajkerdeal.app.essential.api.ApiInterfaceANA
-import com.ajkerdeal.app.essential.api.ApiInterfaceAPI
+import com.ajkerdeal.app.essential.api.*
 import com.ajkerdeal.app.essential.api.models.auth.LoginRequest
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.api.models.auth.otp.OTPSendRequest
@@ -13,6 +10,7 @@ import com.ajkerdeal.app.essential.api.models.auth.reset_password.UpdatePassword
 import com.ajkerdeal.app.essential.api.models.auth.signup.SignUpRequest
 import com.ajkerdeal.app.essential.api.models.collection.CollectionRequest
 import com.ajkerdeal.app.essential.api.models.district.DistrictData
+import com.ajkerdeal.app.essential.api.models.fcm.FCMRequest
 import com.ajkerdeal.app.essential.api.models.location_log.LocationLogRequest
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
@@ -47,6 +45,7 @@ class AppRepository(
     private val apiInterfaceANA: ApiInterfaceANA,
     private val apiInterfaceADM: ApiInterfaceADM,
     private val apiInterfaceADCORE: ApiInterfaceADCORE,
+    private val apiInterfaceFCM: ApiInterfaceFCM,
     private val database: AppDatabase
     ) {
 
@@ -212,5 +211,7 @@ class AppRepository(
 
     suspend fun getBreakableCharge() = apiInterfaceADCORE.getBreakableCharge()
 
-    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequestDT) = apiInterfaceADCORE.updatePasswordDT(requestBody)
+    suspend fun sendPushNotifications(authToken: String, @Body requestBody: FCMRequest) = apiInterfaceFCM.sendPushNotifications(authToken, requestBody)
+
+    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequest) = apiInterfaceADCORE.updatePasswordDT(requestBody)
 }

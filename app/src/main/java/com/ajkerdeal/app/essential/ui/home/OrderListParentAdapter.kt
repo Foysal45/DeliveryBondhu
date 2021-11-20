@@ -33,6 +33,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
     var onSingleImageUploadClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
+    var onChat: ((id: Int, name: String, number: String) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
     var onImageExistsToast: ((toast: String) -> Unit)? = null
     var onClearSelectionCalled: ((dataAdapter : OrderListChildAdapter) -> Unit)? = null
@@ -216,6 +217,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             binding.phone.setOnClickListener {
                 onCall?.invoke(dataList[absoluteAdapterPosition].mobileNumber, dataList[absoluteAdapterPosition].alterMobile)
+            }
+
+            binding.chat.setOnClickListener {
+                onChat?.invoke(dataList[absoluteAdapterPosition].merchantId, dataList[absoluteAdapterPosition].name ?: "", dataList[absoluteAdapterPosition].mobileNumber ?: "")
             }
 
             if (isChildView) {

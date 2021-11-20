@@ -31,6 +31,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val options = RequestOptions().placeholder(R.drawable.ic_logo_essentials)
     var onActionClicked: ((model: OrderModel, actionModel: Action) -> Unit)? = null
     var onCall: ((number: String?, alternativeNumber: String?) -> Unit)? = null
+    var onMerchantCall: ((number: String?) -> Unit)? = null
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
@@ -44,6 +45,7 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+    var isDelivery: Boolean = false
 
     var allowImageUpload: Boolean = false
     private val selectedItems: SparseBooleanArray = SparseBooleanArray()
@@ -88,6 +90,20 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding
             }
             holder.binding.productDeliveryType.text = "টাইপ: ${model.deliveryType}"
+
+            if (isDelivery){
+                holder.binding.merchantName.visibility = View.VISIBLE
+                holder.binding.merchantMobile.visibility = View.VISIBLE
+                holder.binding.merchantName.text = "মার্চেন্টের নাম : ${model.collectionSource?.sourcePersonName}"
+                holder.binding.merchantName.text = "মোবাইল নাম্বার : ${model.collectionSource?.sourceMobile}"
+                holder.binding.merchantMobile.setOnClickListener{
+                    onMerchantCall?.invoke(model.collectionSource?.sourceMobile)
+                }
+            }else{
+
+                holder.binding.merchantName.visibility = View.GONE
+                holder.binding.merchantMobile.visibility = View.GONE
+            }
 
             val total = model.productPrice * model.productQtn + model.deliveryCharge
             val banglaPrice = DigitConverter.toBanglaDigit(model.productPrice)

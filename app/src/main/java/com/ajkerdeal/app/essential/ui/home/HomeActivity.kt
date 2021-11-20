@@ -33,6 +33,8 @@ import androidx.navigation.ui.*
 import androidx.work.*
 import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
@@ -43,6 +45,7 @@ import com.ajkerdeal.app.essential.services.DistrictCacheWorker
 import com.ajkerdeal.app.essential.services.LocationUpdateWorker
 import com.ajkerdeal.app.essential.services.LocationUpdatesService
 import com.ajkerdeal.app.essential.ui.auth.LoginActivity
+import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.location.LocationUsesBottomSheet
 import com.ajkerdeal.app.essential.utils.*
 import com.bumptech.glide.Glide
@@ -190,7 +193,9 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         navController.navigate(R.id.nav_profile)
                         menuItem?.isChecked = true
                     }
-
+                    R.id.nav_chat -> {
+                        goToChatActivity()
+                    }
                     R.id.nav_quick_order_lists -> {
                         navController.navigate(R.id.nav_quick_order_lists)
                     }
@@ -786,6 +791,22 @@ class HomeActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             workManager.cancelWorkById(UUID.fromString(SessionManager.workManagerDistrictUUID))
             SessionManager.workManagerDistrictUUID = ""
         }
+    }
+
+    private fun goToChatActivity() {
+        val firebaseCredential = FirebaseCredential(
+            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
+        )
+        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = SessionManager.userPic,
+            role = "bondhu",
+            fcmToken = SessionManager.firebaseToken
+        )
+        ChatConfigure(
+            "dt-bondhu",
+            senderData,
+            firebaseCredential = firebaseCredential
+        ).config(this)
     }
 
 }

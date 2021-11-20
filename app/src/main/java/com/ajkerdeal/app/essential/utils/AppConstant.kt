@@ -6,6 +6,7 @@ object AppConstant {
     const val BASE_URL_ANA = "https://analytics.ajkerdeal.com/"
     const val BASE_URL_ADM = "https://adm.ajkerdeal.com/"
     const val BASE_URL_ADCORE = "https://adcore.ajkerdeal.com/"
+    const val BASE_URL_FCM = "https://fcm.googleapis.com/"
 
     const val GATEWAY_bKASH_SINGLE = "https://m.ajkerdeal.com/MSingleOrder/bkashpaymentofdeliverybondhuforapp.aspx"//"?CID=3849331&ID=sdfsd"
     const val POLICY = "http://deliverybondhu.com/privacypolicy.html"

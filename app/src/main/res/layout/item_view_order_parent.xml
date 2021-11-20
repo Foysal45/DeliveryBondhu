@@ -65,12 +65,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                >
+                app:layout_constraintTop_toTopOf="parent">
 
-
-
-                <LinearLayout
+                <!--<LinearLayout
                     android:id="@+id/showLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,9 +90,29 @@
                         android:text="ম্যাপে দেখুন"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         />
 
-                </LinearLayout>
+                </LinearLayout>-->
+
+                <ImageView
+                    android:id="@+id/chat"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_chat1" />
+
+                <ImageView
+                    android:id="@+id/showLocation"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:contentDescription="@string/cd"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_location"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:tint="@color/colorPrimary" />
 
                 <ImageView
                     android:id="@+id/uploadBtn"
