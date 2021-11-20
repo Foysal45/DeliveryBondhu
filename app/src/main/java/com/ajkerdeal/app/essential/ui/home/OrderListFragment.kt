@@ -101,6 +101,9 @@ class OrderListFragment : Fragment() {
     private var userId: Int = 0
     private var selectedTimeSlotId = -1
 
+    private var merchantId: Int = 0
+    private var merchantMobile: Int = 0
+
     private val dataAdapter = OrderListParentAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -127,6 +130,7 @@ class OrderListFragment : Fragment() {
             }
             AppConstant.SERVICE_TYPE_DELIVERY -> {
                 collectionFlag = 0
+                dataAdapter.isDelivery  = true
                 //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
             AppConstant.SERVICE_TYPE_RETURN -> {
@@ -140,6 +144,7 @@ class OrderListFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = dataAdapter
         }
+
         dataAdapter.onCall = { number: String?, altNumber: String? ->
             if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()) {
                 val builder = AlertDialog.Builder(context)
@@ -161,6 +166,32 @@ class OrderListFragment : Fragment() {
                 goToCallOption(number!!)
             }
 
+        }
+        dataAdapter.onMerchantCall = { number: String?->
+            if (!number.isNullOrEmpty()) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("কোন নাম্বার এ কল করতে চান")
+                val numberLists = arrayOf(number)
+                builder.setItems(numberLists) { _, which ->
+                    when (which) {
+                        0 -> {
+                            goToCallOption(numberLists[0])
+                        }
+                        1 -> {
+                            goToCallOption(numberLists[1])
+                        }
+                    }
+                }
+                val dialog = builder.create()
+                dialog.show()
+            } else {
+                goToCallOption(number!!)
+            }
+
+        }
+
+        dataAdapter.onChat = { merchantId, company, merchantNumber->
+            goToChatActivity(merchantId, company, merchantNumber)
         }
 
         dataAdapter.onChat = { id, name, number ->
@@ -691,6 +722,7 @@ class OrderListFragment : Fragment() {
                         dataAdapter.isCollectionPointGroup = model.collectionFilter
                         dataAdapter.allowLocationAdd = model.allowLocationAdd
                         dataAdapter.allowPrint = model.allowPrint
+                        dataAdapter.isChatVisible = model.isChatVisible
                         dataAdapter.allowImageUpload = model.allowImageUpload
                         dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
                         dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
@@ -907,6 +939,7 @@ class OrderListFragment : Fragment() {
             binding!!.emptyView.visibility = View.VISIBLE
         } else {
             if (filterStatus != "-1") {
+                fetchOrderFilter()
                 //Timber.d("loadOrderOrSearch called from onStart")
                 if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
@@ -1123,6 +1156,32 @@ class OrderListFragment : Fragment() {
         close.setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun goToChatActivity(merchantId: Int?, company: String?, merchantNumber: String?) {
+        val firebaseCredential = FirebaseCredential(
+            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
+        )
+        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.dtUserId}/profileimage.jpg",
+            role = "bondhu",
+            fcmToken = SessionManager.firebaseToken
+        )
+        val receiverData = if (merchantId != null) {
+            ChatUserData(merchantId.toString(), company ?: "", merchantNumber ?: "",
+                imageUrl = "https://static.ajkerdeal.com/delivery_tiger/profile/$merchantId.jpg",
+                role = "dt",
+                fcmToken = SessionManager.firebaseToken
+            )
+        } else {
+            ChatUserData()
+        }
+        ChatConfigure(
+            "dt-bondhu",
+            senderData,
+            firebaseCredential = firebaseCredential,
+            receiver = receiverData
+        ).config(requireContext())
     }
 
     private fun addPictureDialog(listener: ((type: Int) -> Unit)? = null) {
