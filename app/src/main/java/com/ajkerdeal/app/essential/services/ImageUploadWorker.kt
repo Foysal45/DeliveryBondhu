@@ -156,8 +156,9 @@ class ImageUploadWorker(private val context: Context, private val parameters: Wo
             Timber.d("outputData resultMsg: $resultMsg serverImageUrl: $serverImageUrl")
             Result.success(outputData)
         } else {
-            isWorkerDone = true
-            completeProgress("Failed")
+            isWorkerDone = false
+            //completeProgress("Failed")
+            completeProgress("Completed")
             val outputData = Data.Builder().putString("work_result", "$resultMsg").build()
             Result.failure(outputData)
         }

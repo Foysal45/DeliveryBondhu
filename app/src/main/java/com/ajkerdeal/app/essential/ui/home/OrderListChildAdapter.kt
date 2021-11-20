@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.order.Action
+import com.ajkerdeal.app.essential.api.models.order.OrderCustomer
 import com.ajkerdeal.app.essential.api.models.order.OrderModel
 import com.ajkerdeal.app.essential.databinding.ItemViewOrderChildBinding
 import com.ajkerdeal.app.essential.utils.DigitConverter
@@ -34,6 +35,8 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onWeightUpdateClicked: ((model: OrderModel) -> Unit)? = null
     var onItemSelected: ((model: OrderModel, position: Int) -> Unit)? = null
+    var onSingleUploadClicked: ((selectedModel: OrderModel) -> Unit)? = null
+
 
     private var sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
     private var sdf1 = SimpleDateFormat("dd/MM/yyyy", Locale.US)
@@ -286,6 +289,10 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             binding.weightUpdateButton.setOnClickListener {
                 onWeightUpdateClicked?.invoke(dataList[absoluteAdapterPosition])
+            }
+
+            binding.isDocumentUrl.setOnClickListener{
+                onSingleUploadClicked?.invoke(dataList[absoluteAdapterPosition])
             }
         }
 

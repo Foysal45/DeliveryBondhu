@@ -26,10 +26,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onPictureClicked: ((model: OrderModel) -> Unit)? = null
     var onQRCodeClicked: ((model: OrderModel) -> Unit)? = null
     var onWeightUpdateClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
+
     var onLocationReport: ((model: OrderCustomer) -> Unit)? = null
     var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
+    var onSingleImageUploadClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
     var onImageExistsToast: ((toast: String) -> Unit)? = null
@@ -144,6 +146,9 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             dataAdapter.onWeightUpdateClicked = { model1 ->
                 onWeightUpdateClicked?.invoke(model1, model)
+            }
+            dataAdapter.onSingleUploadClicked = { model1 ->
+                onSingleImageUploadClicked?.invoke( model1,model)
             }
             dataAdapter.onItemSelected = { model, position ->
                 if (isSelectedEnable){
