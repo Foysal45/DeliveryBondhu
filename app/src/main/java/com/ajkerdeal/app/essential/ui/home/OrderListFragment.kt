@@ -370,6 +370,7 @@ class OrderListFragment : Fragment() {
                     }
                 }
             }
+            swipeRefresh()
         }
 
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
@@ -563,42 +564,7 @@ class OrderListFragment : Fragment() {
             //requireContext().toast(getString(R.string.development))
         }
 
-        binding!!.swipeRefresh.setOnRefreshListener {
-            binding!!.swipeRefresh.isRefreshing = false
-            if (SessionManager.isOffline) return@setOnRefreshListener
-            Timber.d("loadOrderOrSearch called from swipe refresh")
-            if (isOrderFromDT()) {
-                viewModel.loadOrderOrSearchDT(
-                    userId,
-                    flag = collectionFlag,
-                    statusId = filterStatus,
-                    dtStatusId = dtStatus,
-                    searchKey = searchKey,
-                    type = searchType,
-                    serviceType = serviceTye,
-                    customType = customType,
-                    collectionSlotId = selectedTimeSlotId
-                )
-            } else {
-                viewModel.loadOrderOrSearchAD(
-                    userId,
-                    flag = collectionFlag,
-                    statusId = filterStatus,
-                    dtStatusId = dtStatus,
-                    searchKey = searchKey,
-                    type = searchType,
-                    serviceType = serviceTye,
-                    customType = customType,
-                    collectionSlotId = selectedTimeSlotId
-                )
-            }
-
-            /*binding!!.searchET.text.clear()
-            if (binding!!.chipsGroup.visibility == View.VISIBLE) {
-                binding!!.chipsGroup.visibility = View.GONE
-            }*/
-        }
-
+        swipeRefresh()
         binding!!.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -666,7 +632,43 @@ class OrderListFragment : Fragment() {
 
         fetchOrderFilter()
     }
+    private fun swipeRefresh(){
+        binding!!.swipeRefresh.setOnRefreshListener {
+            binding!!.swipeRefresh.isRefreshing = false
+            if (SessionManager.isOffline) return@setOnRefreshListener
+            Timber.d("loadOrderOrSearch called from swipe refresh")
+            if (isOrderFromDT()) {
+                viewModel.loadOrderOrSearchDT(
+                    userId,
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId
+                )
+            } else {
+                viewModel.loadOrderOrSearchAD(
+                    userId,
+                    flag = collectionFlag,
+                    statusId = filterStatus,
+                    dtStatusId = dtStatus,
+                    searchKey = searchKey,
+                    type = searchType,
+                    serviceType = serviceTye,
+                    customType = customType,
+                    collectionSlotId = selectedTimeSlotId
+                )
+            }
 
+            /*binding!!.searchET.text.clear()
+            if (binding!!.chipsGroup.visibility == View.VISIBLE) {
+                binding!!.chipsGroup.visibility = View.GONE
+            }*/
+        }
+    }
     private fun fetchOrderFilter() {
         viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list ->
             Timber.d("$list")
@@ -706,6 +708,12 @@ class OrderListFragment : Fragment() {
                             //dataAdapter.clearSelection()
                         }
 
+
+                        dataAdapter.onClearSelectionCalledPosition = {positionw->
+                            val view2 = binding?.recyclerView?.findViewHolderForAdapterPosition(positionw)?.itemView;
+                            view2?.findViewById<RecyclerView>(R.id.recyclerView)?.visibility = View.GONE
+                            context?.toast(positionw.toString())
+                        }
                         dataAdapter.clearData()
                         Timber.d("loadOrderOrSearch called from filter spinner")
 
