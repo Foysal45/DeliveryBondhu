@@ -31,6 +31,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
+    var onMerchantCall: ((number: String?) -> Unit)? = null
     var onChat: ((id: Int, name: String, number: String) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
 
@@ -39,10 +40,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionPointGroup: Int = -1
     var allowLocationAdd: Boolean = false
     var allowPrint: Boolean = false
+    var isChatVisible: Boolean = false
     var allowImageUpload: Boolean = false
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+    var isDelivery: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(ItemViewOrderParentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -173,6 +176,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.printBtn.visibility = View.VISIBLE
             } else {
                 holder.binding.printBtn.visibility = View.GONE
+            }
+
+            if (isChatVisible) {
+                holder.binding.chat.visibility = View.VISIBLE
+            } else {
+                holder.binding.chat.visibility = View.GONE
             }
 
             if (allowImageUpload) {
