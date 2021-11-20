@@ -19,6 +19,13 @@
             android:title="প্রোফাইল" />
 
         <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_chat"
+            android:title="চ্যাট"
+            android:visible="true"
+            />
+
+        <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings"
             android:title="সেটিংস" />

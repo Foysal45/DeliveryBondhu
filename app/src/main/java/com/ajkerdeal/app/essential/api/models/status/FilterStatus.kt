@@ -22,6 +22,8 @@ data class FilterStatus(
     var allowLocationAdd: Boolean = false,
     @SerializedName("allowPrint")
     var allowPrint: Boolean = false,
+    @SerializedName("IsChatVisible")
+    var isChatVisible: Boolean = false,
     @SerializedName("AllowImageUpload")
     var allowImageUpload: Boolean = false,
     @SerializedName("IsCollectionTimerShow")

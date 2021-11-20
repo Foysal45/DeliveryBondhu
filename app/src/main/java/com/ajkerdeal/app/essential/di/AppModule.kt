@@ -1,9 +1,6 @@
 package com.ajkerdeal.app.essential.di
 
-import com.ajkerdeal.app.essential.api.ApiInterfaceADCORE
-import com.ajkerdeal.app.essential.api.ApiInterfaceADM
-import com.ajkerdeal.app.essential.api.ApiInterfaceANA
-import com.ajkerdeal.app.essential.api.ApiInterfaceAPI
+import com.ajkerdeal.app.essential.api.*
 import com.ajkerdeal.app.essential.api.RetrofitUtils.createCache
 import com.ajkerdeal.app.essential.api.RetrofitUtils.createOkHttpClient
 import com.ajkerdeal.app.essential.api.RetrofitUtils.createOkHttpClientFile
@@ -12,6 +9,7 @@ import com.ajkerdeal.app.essential.api.RetrofitUtils.retrofitInstance
 import com.ajkerdeal.app.essential.database.AppDatabase
 import com.ajkerdeal.app.essential.repository.AppRepository
 import com.ajkerdeal.app.essential.ui.auth.AuthViewModel
+import com.ajkerdeal.app.essential.ui.chat.compose.ChatComposeViewModel
 import com.ajkerdeal.app.essential.ui.home.HomeActivityViewModel
 import com.ajkerdeal.app.essential.ui.home.HomeViewModel
 import com.ajkerdeal.app.essential.ui.home.dashboard.DashboardViewModel
@@ -35,14 +33,16 @@ val appModule = module {
     single(named("ana")) { retrofitInstance(AppConstant.BASE_URL_ANA, get(), get(named("clientUpload"))) }
     single(named("adm")) { retrofitInstance(AppConstant.BASE_URL_ADM, get(), get(named("clientUpload"))) }
     single(named("adcore")) { retrofitInstance(AppConstant.BASE_URL_ADCORE, get(), get(named("clientUpload"))) }
+    single(named("fcm")) { retrofitInstance(AppConstant.BASE_URL_FCM, get(), get(named("clientUpload"))) }
     single { ApiInterfaceAPI(get(named("api"))) }
     single { ApiInterfaceANA(get(named("ana"))) }
     single { ApiInterfaceADM(get(named("adm"))) }
     single { ApiInterfaceADCORE(get(named("adcore"))) }
+    single { ApiInterfaceFCM(get(named("fcm"))) }
 
     single { AppDatabase.invoke(get()) }
 
-    single { AppRepository(get(), get(), get(), get(), get()) }
+    single { AppRepository(get(), get(), get(), get(), get(), get()) }
 
     single { AuthViewModel(get()) }
     single { HomeActivityViewModel(get()) }
@@ -52,5 +52,6 @@ val appModule = module {
     viewModel { ParcelViewModel(get()) }
     viewModel { WeightSelectionViewModel(get()) }
     viewModel { QuickOrderViewModel(get()) }
+    viewModel { ChatComposeViewModel(get()) }
 
 }

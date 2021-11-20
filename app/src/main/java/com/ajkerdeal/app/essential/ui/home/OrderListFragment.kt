@@ -26,7 +26,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
+import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.merchant_ocation.MerchantLocationRequest
@@ -43,6 +46,7 @@ import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightReques
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.home.action_bottomsheet.ActionCommentSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
@@ -108,6 +112,9 @@ class OrderListFragment : Fragment() {
     private var selectedDate = ""
     private var showSelectedDate = ""
 
+    private var merchantId: Int = 0
+    private var merchantMobile: Int = 0
+
     private val dataAdapter = OrderListParentAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -134,6 +141,7 @@ class OrderListFragment : Fragment() {
             }
             AppConstant.SERVICE_TYPE_DELIVERY -> {
                 collectionFlag = 0
+                dataAdapter.isDelivery  = true
                 //binding!!.appBarLayout.tabLayout.visibility = View.GONE
             }
             AppConstant.SERVICE_TYPE_RETURN -> {
@@ -147,6 +155,7 @@ class OrderListFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = dataAdapter
         }
+
         dataAdapter.onCall = { number: String?, altNumber: String? ->
             if (!number.isNullOrEmpty() && !altNumber.isNullOrEmpty()) {
                 val builder = AlertDialog.Builder(context)
@@ -169,6 +178,37 @@ class OrderListFragment : Fragment() {
             }
 
         }
+        dataAdapter.onMerchantCall = { number: String?->
+            if (!number.isNullOrEmpty()) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("কোন নাম্বার এ কল করতে চান")
+                val numberLists = arrayOf(number)
+                builder.setItems(numberLists) { _, which ->
+                    when (which) {
+                        0 -> {
+                            goToCallOption(numberLists[0])
+                        }
+                        1 -> {
+                            goToCallOption(numberLists[1])
+                        }
+                    }
+                }
+                val dialog = builder.create()
+                dialog.show()
+            } else {
+                goToCallOption(number!!)
+            }
+
+        }
+
+        dataAdapter.onChat = { merchantId, company, merchantNumber->
+            goToChatActivity(merchantId, company, merchantNumber)
+        }
+
+        dataAdapter.onChat = { id, name, number ->
+            goToChatActivity(id, name, number)
+        }
+
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
@@ -698,6 +738,7 @@ class OrderListFragment : Fragment() {
                         dataAdapter.isCollectionPointGroup = model.collectionFilter
                         dataAdapter.allowLocationAdd = model.allowLocationAdd
                         dataAdapter.allowPrint = model.allowPrint
+                        dataAdapter.isChatVisible = model.isChatVisible
                         dataAdapter.allowImageUpload = model.allowImageUpload
                         dataAdapter.isCollectionTimerShow = model.isCollectionTimerShow
                         dataAdapter.isWeightUpdateEnable = model.isWeightUpdateEnable
@@ -831,6 +872,31 @@ class OrderListFragment : Fragment() {
         })
     }
 
+    private fun goToChatActivity(receiverId: Int, name:String, number: String) {
+        val firebaseCredential = FirebaseCredential(
+            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
+        )
+        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.dtUserId}/profileimage.jpg",
+            role = "bondhu",
+            fcmToken = SessionManager.firebaseToken
+        )
+        val receiverData = if (receiverId != null) {
+            ChatUserData(receiverId.toString(), name, number,
+                imageUrl = "https://static.ajkerdeal.com/images/admin_users/dt/${receiverId}.jpg",
+                role = "dt"
+            )
+        } else {
+            ChatUserData()
+        }
+        ChatConfigure(
+            "dt-bondhu",
+            senderData,
+            firebaseCredential = firebaseCredential,
+            receiver = receiverData
+        ).config(requireContext())
+    }
+
     private fun goToaCustomCommentStatusUpdate(flag: Int, requestBodyDT: MutableList<DTStatusUpdateModel>, requestBody: MutableList<StatusUpdateModel>, instructions: String?) {
         val tag: String = ActionCommentSelectionBottomSheet.tag
         val dialog: ActionCommentSelectionBottomSheet = ActionCommentSelectionBottomSheet.newInstance(flag)
@@ -889,6 +955,7 @@ class OrderListFragment : Fragment() {
             binding!!.emptyView.visibility = View.VISIBLE
         } else {
             if (filterStatus != "-1") {
+                fetchOrderFilter()
                 //Timber.d("loadOrderOrSearch called from onStart")
                 if (isOrderFromDT()) {
                     viewModel.loadOrderOrSearchDT(
@@ -1105,6 +1172,32 @@ class OrderListFragment : Fragment() {
         close.setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun goToChatActivity(merchantId: Int?, company: String?, merchantNumber: String?) {
+        val firebaseCredential = FirebaseCredential(
+            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
+        )
+        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
+            imageUrl = "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.dtUserId}/profileimage.jpg",
+            role = "bondhu",
+            fcmToken = SessionManager.firebaseToken
+        )
+        val receiverData = if (merchantId != null) {
+            ChatUserData(merchantId.toString(), company ?: "", merchantNumber ?: "",
+                imageUrl = "https://static.ajkerdeal.com/delivery_tiger/profile/$merchantId.jpg",
+                role = "dt",
+                fcmToken = SessionManager.firebaseToken
+            )
+        } else {
+            ChatUserData()
+        }
+        ChatConfigure(
+            "dt-bondhu",
+            senderData,
+            firebaseCredential = firebaseCredential,
+            receiver = receiverData
+        ).config(requireContext())
     }
 
     private fun addPictureDialog(listener: ((type: Int) -> Unit)? = null) {

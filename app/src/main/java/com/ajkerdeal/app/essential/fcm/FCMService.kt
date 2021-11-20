@@ -12,10 +12,12 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import com.ajkerdeal.app.essential.R
 import com.ajkerdeal.app.essential.api.models.auth.fcm.UpdateTokenRequest
 import com.ajkerdeal.app.essential.repository.AppRepository
+import com.ajkerdeal.app.essential.ui.chat.ChatActivity
 import com.ajkerdeal.app.essential.ui.home.HomeActivity
 import com.ajkerdeal.app.essential.utils.SessionManager
 import com.bumptech.glide.Glide
@@ -78,44 +80,12 @@ class FCMService : FirebaseMessagingService() {
         val jsonElement = gson.toJsonTree(p0.data)
         val fcmModel: FCMData = gson.fromJson(jsonElement, FCMData::class.java)
 
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.putExtra("data", fcmModel)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-
-        val builder = NotificationCompat.Builder(this, getString(R.string.default_notification_channel_id))
-        with(builder) {
-            setSmallIcon(R.drawable.ic_logo_hand)
-            setContentTitle(title)
-            setContentText(body)
-            setAutoCancel(true)
-            color = ContextCompat.getColor(this@FCMService, R.color.colorPrimary)
-            setDefaults(NotificationCompat.DEFAULT_ALL)
-            priority = NotificationCompat.PRIORITY_HIGH
-            setContentIntent(pendingIntent)
-        }
-
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                .build()
-
-            val channel = NotificationChannel(getString(R.string.default_notification_channel_id), "Promotion", NotificationManager.IMPORTANCE_HIGH)
-            with(channel) {
-                description = "Essential delivery offers and promotions"
-                setShowBadge(true)
-                enableLights(true)
-                lightColor = Color.GREEN
-                enableVibration(true)
-                setSound(soundUri, audioAttributes)
-            }
-            notificationManager.createNotificationChannel(channel)
-        }
+        createNotificationChannels(notificationManager)
+        val builder = createNotification(
+            getString(R.string.default_notification_channel_id),
+            title, body, createPendingIntent(fcmModel)
+        )
 
         when (type) {
             // Default
@@ -165,6 +135,13 @@ class FCMService : FirebaseMessagingService() {
                         }
                     })
             }
+            "dt-retention", "dt-complain" -> {
+                val builder1 = createNotification(
+                    getString(R.string.notification_channel_chat),
+                    title, body, createChatPendingIntent(fcmModel)
+                )
+                notificationManager.notify(notificationId, builder1.build())
+            }
             // Notification message handle
             else -> {
                 Timber.d("Notification message handle called")
@@ -193,6 +170,85 @@ class FCMService : FirebaseMessagingService() {
                     notificationManager.notify(notificationId, builder.build())
                 }
             }
+        }
+    }
+
+    private fun createPendingIntent(fcmModel: FCMData): PendingIntent {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.putExtra("data", fcmModel)
+        return PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    private fun createChatPendingIntent(fcmModel: FCMData): PendingIntent {
+        val intent = Intent(this, ChatActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("data", fcmModel)
+            putExtra("notificationType", fcmModel.notificationType)
+        }
+        return TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(System.currentTimeMillis().toInt(), PendingIntent.FLAG_UPDATE_CURRENT)!!
+        }
+    }
+
+    private fun createNotification(
+        channelId: String,
+        title: String,
+        body: String,
+        pendingIntent: PendingIntent
+    ): NotificationCompat.Builder {
+        return NotificationCompat.Builder(this, channelId).apply {
+            setSmallIcon(R.drawable.ic_logo_hand)
+            setContentTitle(title)
+            setContentText(body)
+            setAutoCancel(true)
+            color = ContextCompat.getColor(this@FCMService, R.color.colorPrimary)
+            setDefaults(NotificationCompat.DEFAULT_ALL)
+            priority = NotificationCompat.PRIORITY_DEFAULT
+            setContentIntent(pendingIntent)
+        }
+    }
+
+    private fun createNotificationChannels(notificationManager: NotificationManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build()
+
+            val channelList: MutableList<NotificationChannel> = mutableListOf()
+            val channel1 = NotificationChannel(
+                getString(R.string.default_notification_channel_id),
+                "Promotion",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Delivery Tiger offers and promotions"
+                setShowBadge(true)
+                enableLights(true)
+                lightColor = Color.GREEN
+                enableVibration(true)
+                setSound(soundUri, audioAttributes)
+            }
+            channelList.add(channel1)
+
+            val channel2 = NotificationChannel(
+                getString(R.string.notification_channel_chat),
+                getString(R.string.notification_channel_chat_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Delivery Tiger merchant & retention manager chat"
+                setShowBadge(true)
+                enableLights(true)
+                lightColor = Color.GREEN
+                enableVibration(true)
+                setSound(soundUri, audioAttributes)
+            }
+            channelList.add(channel2)
+
+            notificationManager.createNotificationChannels(channelList)
         }
     }
 
