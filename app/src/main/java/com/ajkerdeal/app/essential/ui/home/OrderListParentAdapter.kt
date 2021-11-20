@@ -33,6 +33,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
     var onSingleImageUploadClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
+    var onMerchantCall: ((number: String?) -> Unit)? = null
     var onChat: ((id: Int, name: String, number: String) -> Unit)? = null
     var onOrderListExpand: ((model: OrderCustomer, state: Boolean) -> Unit)? = null
     var onImageExistsToast: ((toast: String) -> Unit)? = null
@@ -44,10 +45,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isCollectionPointGroup: Int = -1
     var allowLocationAdd: Boolean = false
     var allowPrint: Boolean = false
+    var isChatVisible: Boolean = false
     var allowImageUpload: Boolean = false
     var isCollectionTimerShow: Boolean = false
     var isWeightUpdateEnable: Boolean = false
     var isOrderFromAD: Boolean = false
+    var isDelivery: Boolean = false
     var isSelectedEnable: Boolean = false
 
     private var selectedOrderLists: List<OrderModel> = listOf()
@@ -195,6 +198,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.printBtn.visibility = View.VISIBLE
             } else {
                 holder.binding.printBtn.visibility = View.GONE
+            }
+
+            if (isChatVisible) {
+                holder.binding.chat.visibility = View.VISIBLE
+            } else {
+                holder.binding.chat.visibility = View.GONE
             }
 
             if (allowImageUpload) {

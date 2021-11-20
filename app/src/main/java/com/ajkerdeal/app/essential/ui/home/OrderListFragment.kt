@@ -101,15 +101,15 @@ class OrderListFragment : Fragment() {
     private var userId: Int = 0
     private var selectedTimeSlotId = -1
 
+    private var merchantId: Int = 0
+    private var merchantMobile: Int = 0
+
     //Date picker
     private val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     private val sdf1 = SimpleDateFormat("dd MMM", Locale.US)
 
     private var selectedDate = ""
     private var showSelectedDate = ""
-
-    private var merchantId: Int = 0
-    private var merchantMobile: Int = 0
 
     private val dataAdapter = OrderListParentAdapter()
 

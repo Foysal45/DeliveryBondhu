@@ -101,7 +101,9 @@
                     android:layout_height="30dp"
                     android:contentDescription="@string/cd"
                     android:padding="4dp"
-                    android:src="@drawable/ic_chat1" />
+                    android:src="@drawable/ic_chat1"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
                 <ImageView
                     android:id="@+id/showLocation"
