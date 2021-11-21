@@ -480,7 +480,9 @@ class OrderListFragment : Fragment() {
                                 type = searchType,
                                 serviceType = serviceTye,
                                 customType = customType,
-                                collectionSlotId = selectedTimeSlotId
+                                collectionSlotId = selectedTimeSlotId,
+                                fromDate = selectedDate,
+                                toDate = selectedDate
                             )
                         }
                     }
@@ -533,7 +535,9 @@ class OrderListFragment : Fragment() {
                             serviceType = serviceTye,
                             customType = customType,
                             type = SearchType.None,
-                            collectionSlotId = selectedTimeSlotId
+                            collectionSlotId = selectedTimeSlotId,
+                            fromDate = selectedDate,
+                            toDate = selectedDate
                         )
                     } else {
                         viewModel.loadOrderOrSearchAD(
@@ -573,7 +577,9 @@ class OrderListFragment : Fragment() {
                         type = searchType,
                         serviceType = serviceTye,
                         customType = customType,
-                        collectionSlotId = selectedTimeSlotId
+                        collectionSlotId = selectedTimeSlotId,
+                        fromDate = selectedDate,
+                        toDate = selectedDate
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -607,7 +613,9 @@ class OrderListFragment : Fragment() {
                     type = searchType,
                     serviceType = serviceTye,
                     customType = customType,
-                    collectionSlotId = selectedTimeSlotId
+                    collectionSlotId = selectedTimeSlotId,
+                    fromDate = selectedDate,
+                    toDate = selectedDate
                 )
             } else {
                 viewModel.loadOrderOrSearchAD(
@@ -651,7 +659,9 @@ class OrderListFragment : Fragment() {
                                 type = searchType,
                                 serviceType = serviceTye,
                                 customType = customType,
-                                collectionSlotId = selectedTimeSlotId
+                                collectionSlotId = selectedTimeSlotId,
+                                fromDate = selectedDate,
+                                toDate = selectedDate
                             )
                         } else {
                             viewModel.loadOrderOrSearchAD(
@@ -710,7 +720,9 @@ class OrderListFragment : Fragment() {
                 type = searchType,
                 serviceType = serviceTye,
                 customType = customType,
-                collectionSlotId = selectedTimeSlotId
+                collectionSlotId = selectedTimeSlotId,
+                fromDate = selectedDate,
+                toDate = selectedDate
             )
         } else {
             viewModel.loadOrderOrSearchAD(
@@ -833,7 +845,9 @@ class OrderListFragment : Fragment() {
                                             type = searchType,
                                             serviceType = serviceTye,
                                             customType = customType,
-                                            collectionSlotId = selectedTimeSlotId
+                                            collectionSlotId = selectedTimeSlotId,
+                                            fromDate = selectedDate,
+                                            toDate = selectedDate
                                         )
                                     } else {
                                         viewModel.loadOrderOrSearchAD(
@@ -874,7 +888,9 @@ class OrderListFragment : Fragment() {
                         type = searchType,
                         serviceType = serviceTye,
                         customType = customType,
-                        collectionSlotId = selectedTimeSlotId
+                        collectionSlotId = selectedTimeSlotId,
+                        fromDate = selectedDate,
+                        toDate = selectedDate
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -910,7 +926,9 @@ class OrderListFragment : Fragment() {
                         type = searchType,
                         serviceType = serviceTye,
                         customType = customType,
-                        collectionSlotId = selectedTimeSlotId
+                        collectionSlotId = selectedTimeSlotId,
+                        fromDate = selectedDate,
+                        toDate = selectedDate
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -1039,7 +1057,9 @@ class OrderListFragment : Fragment() {
                         type = searchType,
                         serviceType = serviceTye,
                         customType = customType,
-                        collectionSlotId = selectedTimeSlotId
+                        collectionSlotId = selectedTimeSlotId,
+                        fromDate = selectedDate,
+                        toDate = selectedDate
                     )
                 } else {
                     viewModel.loadOrderOrSearchAD(
@@ -1455,7 +1475,9 @@ class OrderListFragment : Fragment() {
                                 type = searchType,
                                 serviceType = serviceTye,
                                 customType = customType,
-                                collectionSlotId = selectedTimeSlotId
+                                collectionSlotId = selectedTimeSlotId,
+                                fromDate = selectedDate,
+                                toDate = selectedDate
                             )
                         } else {
                             viewModel.loadOrderOrSearchAD(
@@ -1521,7 +1543,7 @@ class OrderListFragment : Fragment() {
                             serviceType = serviceTye,
                             customType = customType,
                             collectionSlotId = selectedTimeSlotId ,
-                            fromDAte = selectedDate,
+                            fromDate = selectedDate,
                             toDate = selectedDate
                         )
                     } else {
@@ -1609,7 +1631,7 @@ class OrderListFragment : Fragment() {
                     serviceType = serviceTye,
                     customType = customType,
                     collectionSlotId = selectedTimeSlotId,
-                    fromDAte = selectedDate,
+                    fromDate = selectedDate,
                     toDate = selectedDate
                 )
             } else {

@@ -222,6 +222,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.parent.setOnClickListener {
                 val state = dataList[absoluteAdapterPosition].state
                 dataList[absoluteAdapterPosition].state = !state
+                for (item in 0 until dataList.size) {
+                    if (item != absoluteAdapterPosition) {
+                        dataList[item].state = false
+                        notifyItemChanged(item)
+                    }
+                }
                 onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
                 notifyItemChanged(absoluteAdapterPosition)
             }
