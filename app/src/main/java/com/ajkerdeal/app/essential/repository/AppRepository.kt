@@ -213,5 +213,5 @@ class AppRepository(
 
     suspend fun sendPushNotifications(authToken: String, @Body requestBody: FCMRequest) = apiInterfaceFCM.sendPushNotifications(authToken, requestBody)
 
-    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequest) = apiInterfaceADCORE.updatePasswordDT(requestBody)
+    suspend fun updatePasswordDT(requestBody: UpdatePasswordRequestDT) = apiInterfaceADCORE.updatePasswordDT(requestBody)
 }

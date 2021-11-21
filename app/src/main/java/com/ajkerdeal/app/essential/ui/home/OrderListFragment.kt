@@ -25,7 +25,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
+import com.ajkerdeal.app.essential.BuildConfig
 import com.ajkerdeal.app.essential.R
+import com.ajkerdeal.app.essential.api.models.chat.ChatUserData
+import com.ajkerdeal.app.essential.api.models.chat.FirebaseCredential
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestAD
 import com.ajkerdeal.app.essential.api.models.location_update.LocationUpdateRequestDT
 import com.ajkerdeal.app.essential.api.models.order.AcceptStatusRequestDT
@@ -40,6 +43,7 @@ import com.ajkerdeal.app.essential.api.models.weight.UpdatePriceWithWeightReques
 import com.ajkerdeal.app.essential.databinding.FragmentOrderListBinding
 import com.ajkerdeal.app.essential.printer.template.PrintInvoice
 import com.ajkerdeal.app.essential.services.ImageUploadWorker
+import com.ajkerdeal.app.essential.ui.chat.ChatConfigure
 import com.ajkerdeal.app.essential.ui.home.action_bottomsheet.ActionCommentSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.home.weight_selection.WeightSelectionBottomSheet
 import com.ajkerdeal.app.essential.ui.print_dialog.PrintSelectionBottomSheet
@@ -172,23 +176,7 @@ class OrderListFragment : Fragment() {
         }
         dataAdapter.onMerchantCall = { number: String?->
             if (!number.isNullOrEmpty()) {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("কোন নাম্বার এ কল করতে চান")
-                val numberLists = arrayOf(number)
-                builder.setItems(numberLists) { _, which ->
-                    when (which) {
-                        0 -> {
-                            goToCallOption(numberLists[0])
-                        }
-                        1 -> {
-                            goToCallOption(numberLists[1])
-                        }
-                    }
-                }
-                val dialog = builder.create()
-                dialog.show()
-            } else {
-                goToCallOption(number!!)
+                goToCallOption(number)
             }
 
         }

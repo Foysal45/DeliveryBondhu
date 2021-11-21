@@ -124,6 +124,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.isCollectionTimerShow = isCollectionTimerShow
             dataAdapter.isWeightUpdateEnable = isWeightUpdateEnable
             dataAdapter.isOrderFromAD = isOrderFromAD
+            dataAdapter.isDelivery = isDelivery
             dataAdapter.loadData(model.orderList as MutableList<OrderModel>)
             with(holder.binding.recyclerView) {
                 setHasFixedSize(false)
@@ -137,6 +138,10 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             dataAdapter.onCall = { number, altNumber ->
                 onCall?.invoke(number, altNumber)
+            }
+
+            dataAdapter.onMerchantCall = { number ->
+                onMerchantCall?.invoke(number)
             }
             dataAdapter.onPictureClicked = { model1 ->
                 onPictureClicked?.invoke(model1)

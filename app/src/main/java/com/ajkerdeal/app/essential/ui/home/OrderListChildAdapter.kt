@@ -95,9 +95,11 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.binding.merchantName.visibility = View.VISIBLE
                 holder.binding.merchantMobile.visibility = View.VISIBLE
                 holder.binding.merchantName.text = "মার্চেন্টের নাম : ${model.collectionSource?.sourcePersonName}"
-                holder.binding.merchantName.text = "মোবাইল নাম্বার : ${model.collectionSource?.sourceMobile}"
-                holder.binding.merchantMobile.setOnClickListener{
-                    onMerchantCall?.invoke(model.collectionSource?.sourceMobile)
+                if (model.collectionSource?.sourceMobile.isNullOrEmpty()){
+                    holder.binding.merchantName.text = "মোবাইল নাম্বার : ${model.collectionSource?.sourceMobile}"
+                    holder.binding.merchantMobile.setOnClickListener{
+                        onMerchantCall?.invoke(model.collectionSource?.sourceMobile)
+                    }
                 }
             }else{
 
