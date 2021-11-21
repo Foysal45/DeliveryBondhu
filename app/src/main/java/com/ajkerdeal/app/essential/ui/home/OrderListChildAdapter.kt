@@ -92,17 +92,23 @@ class OrderListChildAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder.binding.productDeliveryType.text = "টাইপ: ${model.deliveryType}"
 
             if (isDelivery){
-                holder.binding.merchantName.visibility = View.VISIBLE
-                holder.binding.merchantMobile.visibility = View.VISIBLE
-                holder.binding.merchantName.text = "মার্চেন্টের নাম : ${model.collectionSource?.sourcePersonName}"
-                if (model.collectionSource?.sourceMobile.isNullOrEmpty()){
+                if (!model.collectionSource?.sourcePersonName.isNullOrEmpty()){
+                    holder.binding.merchantName.visibility = View.VISIBLE
+                    holder.binding.merchantName.text = "মার্চেন্টের নাম : ${model.collectionSource?.sourcePersonName}"
+                }else{
+                    holder.binding.merchantName.visibility = View.GONE
+                }
+
+                if (!model.collectionSource?.sourceMobile.isNullOrEmpty()){
+                    holder.binding.merchantMobile.visibility = View.VISIBLE
                     holder.binding.merchantName.text = "মোবাইল নাম্বার : ${model.collectionSource?.sourceMobile}"
                     holder.binding.merchantMobile.setOnClickListener{
                         onMerchantCall?.invoke(model.collectionSource?.sourceMobile)
                     }
+                }else{
+                    holder.binding.merchantMobile.visibility = View.GONE
                 }
             }else{
-
                 holder.binding.merchantName.visibility = View.GONE
                 holder.binding.merchantMobile.visibility = View.GONE
             }
