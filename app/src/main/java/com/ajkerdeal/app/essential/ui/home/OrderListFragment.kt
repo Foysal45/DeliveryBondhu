@@ -384,9 +384,20 @@ class OrderListFragment : Fragment() {
         dataAdapter.onUploadClicked = { model, selectedModel ->
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
-                imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                if (selectedModel.isEmpty()){
+                    if (selectedModel.isEmpty()) {
+                        context?.toast("আপনি কোনো অর্ডার সিলেক্ট করেননি")
+                        //imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                    } else {
+                        imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
+                    }
+                }
             } else {
-                imageUploadOrderIdList = model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+                imageUploadOrderIdList = if (selectedModel.isEmpty()) {
+                    model.orderList?.joinToString(",") { it.couponId } ?: "orderIds"
+                } else {
+                    selectedModel?.joinToString(",") { it.couponId } ?: "orderIds"
+                }
             }
             addPictureDialog() {
                 when (it) {
