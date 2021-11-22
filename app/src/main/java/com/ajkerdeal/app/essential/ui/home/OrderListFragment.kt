@@ -772,8 +772,10 @@ class OrderListFragment : Fragment() {
                         Timber.d("isSelectedEnable: $filterStatus, $dtStatus")
                         if (selectedStatus == "364" || selectedDTStatus == "39") {
                             dataAdapter.isSelectedEnable = true
+                            dataAdapter.isExpandClose = true
                         } else {
                             dataAdapter.isSelectedEnable = false
+                            dataAdapter.isExpandClose = false
                             dataAdapter.onClearSelectionCalled = {
                                 it.clearSelections()
                             }

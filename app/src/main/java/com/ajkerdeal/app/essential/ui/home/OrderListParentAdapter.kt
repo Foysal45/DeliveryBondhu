@@ -49,6 +49,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var isOrderFromAD: Boolean = false
     var isDelivery: Boolean = false
     var isSelectedEnable: Boolean = false
+    var isExpandClose: Boolean = false
 
     private var selectedOrderLists: List<OrderModel> = listOf()
 
@@ -222,10 +223,12 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.parent.setOnClickListener {
                 val state = dataList[absoluteAdapterPosition].state
                 dataList[absoluteAdapterPosition].state = !state
-                for (item in 0 until dataList.size) {
-                    if (item != absoluteAdapterPosition) {
-                        dataList[item].state = false
-                        notifyItemChanged(item)
+                if (isExpandClose){
+                    for (item in 0 until dataList.size) {
+                        if (item != absoluteAdapterPosition) {
+                            dataList[item].state = false
+                            notifyItemChanged(item)
+                        }
                     }
                 }
                 onOrderListExpand?.invoke(dataList[absoluteAdapterPosition], dataList[absoluteAdapterPosition].state)
