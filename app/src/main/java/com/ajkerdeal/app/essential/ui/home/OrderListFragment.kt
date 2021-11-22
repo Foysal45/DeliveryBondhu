@@ -382,15 +382,14 @@ class OrderListFragment : Fragment() {
             }
         }
         dataAdapter.onUploadClicked = { model, selectedModel ->
+            Timber.d("testDebug $selectedModel")
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
-                if (selectedModel.isEmpty()){
-                    if (selectedModel.isEmpty()) {
-                        context?.toast("আপনি কোনো অর্ডার সিলেক্ট করেননি")
-                        //imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
-                    } else {
-                        imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
-                    }
+                if (selectedModel.isEmpty()) {
+                    context?.toast("আপনি কোনো অর্ডার সিলেক্ট করেননি")
+                    //imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                } else {
+                    imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
                 }
             } else {
                 imageUploadOrderIdList = if (selectedModel.isEmpty()) {
