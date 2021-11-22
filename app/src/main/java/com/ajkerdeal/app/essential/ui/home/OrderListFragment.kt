@@ -380,7 +380,6 @@ class OrderListFragment : Fragment() {
                     }
                 }
             }
-            refreashView()
         }
         dataAdapter.onUploadClicked = { model, selectedModel ->
             imageUploadMerchantId = model.merchantId.toString()
@@ -399,7 +398,6 @@ class OrderListFragment : Fragment() {
                     }
                 }
             }
-            refreashView()
         }
 
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
@@ -706,7 +704,7 @@ class OrderListFragment : Fragment() {
         fetchOrderFilter()
     }
 
-    private fun refreashView() {
+    private fun refreshView() {
 
         if (isOrderFromDT()) {
             viewModel.loadOrderOrSearchDT(
