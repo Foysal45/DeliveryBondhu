@@ -185,10 +185,6 @@ class OrderListFragment : Fragment() {
             goToChatActivity(merchantId, company, merchantNumber)
         }
 
-        dataAdapter.onChat = { id, name, number ->
-            goToChatActivity(id, name, number)
-        }
-
         dataAdapter.onActionClicked = { model, actionModel, orderModel ->
 
             val requestBody: MutableList<StatusUpdateModel> = mutableListOf()
@@ -977,7 +973,7 @@ class OrderListFragment : Fragment() {
         )
         val receiverData = if (receiverId != null) {
             ChatUserData(receiverId.toString(), name, number,
-                imageUrl = "https://static.ajkerdeal.com/images/admin_users/dt/${receiverId}.jpg",
+                imageUrl = "https://static.ajkerdeal.com/delivery_tiger/profile/${receiverId}.jpg",
                 role = "dt"
             )
         } else {
@@ -1268,32 +1264,6 @@ class OrderListFragment : Fragment() {
         close.setOnClickListener {
             dialog.dismiss()
         }
-    }
-
-    private fun goToChatActivity(merchantId: Int?, company: String?, merchantNumber: String?) {
-        val firebaseCredential = FirebaseCredential(
-            firebaseWebApiKey = BuildConfig.FirebaseWebApiKey
-        )
-        val senderData = ChatUserData(SessionManager.dtUserId.toString(), SessionManager.userName, SessionManager.mobile,
-            imageUrl = "https://static.ajkerdeal.com/images/bondhuprofileimage/${SessionManager.dtUserId}/profileimage.jpg",
-            role = "bondhu",
-            fcmToken = SessionManager.firebaseToken
-        )
-        val receiverData = if (merchantId != null) {
-            ChatUserData(merchantId.toString(), company ?: "", merchantNumber ?: "",
-                imageUrl = "https://static.ajkerdeal.com/delivery_tiger/profile/$merchantId.jpg",
-                role = "dt",
-                fcmToken = SessionManager.firebaseToken
-            )
-        } else {
-            ChatUserData()
-        }
-        ChatConfigure(
-            "dt-bondhu",
-            senderData,
-            firebaseCredential = firebaseCredential,
-            receiver = receiverData
-        ).config(requireContext())
     }
 
     private fun addPictureDialog(listener: ((type: Int) -> Unit)? = null) {
