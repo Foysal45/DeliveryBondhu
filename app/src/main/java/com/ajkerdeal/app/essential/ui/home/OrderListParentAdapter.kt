@@ -28,7 +28,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onLocationUpdate: ((model: OrderCustomer) -> Unit)? = null
     var onPrintClicked: ((model: OrderCustomer) -> Unit)? = null
     var onUploadClicked: ((model: OrderCustomer, selectedModel: List<OrderModel>) -> Unit)? = null
-    var onSingleImageUploadClicked: ((model: OrderModel, model2: OrderCustomer) -> Unit)? = null
+    var onSingleImageUploadClicked: ((model: OrderModel) -> Unit)? = null
     var onCall: ((number: String?, altNumber: String?) -> Unit)? = null
     var onMerchantCall: ((number: String?) -> Unit)? = null
     var onChat: ((id: Int, name: String, number: String) -> Unit)? = null
@@ -154,8 +154,8 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             dataAdapter.onWeightUpdateClicked = { model1 ->
                 onWeightUpdateClicked?.invoke(model1, model)
             }
-            dataAdapter.onSingleUploadClicked = { model1 ->
-                onSingleImageUploadClicked?.invoke( model1,model)
+            dataAdapter.onSingleUploadClicked = { model ->
+                onSingleImageUploadClicked?.invoke( model)
             }
             dataAdapter.onItemSelected = { model, position ->
                 if (isSelectedEnable){
@@ -261,6 +261,7 @@ class OrderListParentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
 
             binding.uploadBtn.setOnClickListener {
+                var data = dataList[absoluteAdapterPosition].orderList?.filter { it.documentUrl!!.isNotEmpty() }
                 onUploadClicked?.invoke(dataList[absoluteAdapterPosition], selectedOrderLists)
             }
 

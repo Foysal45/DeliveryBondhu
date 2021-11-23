@@ -363,7 +363,7 @@ class OrderListFragment : Fragment() {
         dataAdapter.onWeightUpdateClicked = { model1, model2 ->
             goToWeightSelectionBottomSheet(model1, model2)
         }
-        dataAdapter.onSingleImageUploadClicked = { model, selectedModel ->
+        dataAdapter.onSingleImageUploadClicked = { model ->
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
                 imageUploadOrderIdListDT = listOf(model.couponId)
@@ -382,14 +382,33 @@ class OrderListFragment : Fragment() {
             }
         }
         dataAdapter.onUploadClicked = { model, selectedModel ->
-            Timber.d("testDebug $selectedModel")
             imageUploadMerchantId = model.merchantId.toString()
             if (isOrderFromDT()) {
+                var imageWithoutDocumentList: MutableList<OrderModel> = mutableListOf()
                 if (selectedModel.isEmpty()) {
-                    context?.toast("আপনি কোনো অর্ডার সিলেক্ট করেননি")
-                    //imageUploadOrderIdListDT = model.orderList?.map { it.couponId }
+                    imageWithoutDocumentList.clear()
+                    model.orderList?.forEach { orderModel ->
+                        if (orderModel.documentUrl.isNullOrEmpty()){
+                            imageWithoutDocumentList.add(orderModel)
+                        }
+                    }
+                    imageUploadOrderIdListDT = imageWithoutDocumentList.map { it.couponId }
                 } else {
                     imageUploadOrderIdListDT = selectedModel?.map { it.couponId }
+                }
+                if (!imageUploadOrderIdListDT.isNullOrEmpty()){
+                    addPictureDialog() {
+                        when (it) {
+                            1 -> {
+                                pickImageFromCamera()
+                            }
+                            2 -> {
+                                pickImageFromGallery()
+                            }
+                        }
+                    }
+                }else{
+                    context?.toast("ডকুমেন্ট আপলোড করা আছে")
                 }
             } else {
                 imageUploadOrderIdList = if (selectedModel.isEmpty()) {
@@ -397,17 +416,23 @@ class OrderListFragment : Fragment() {
                 } else {
                     selectedModel?.joinToString(",") { it.couponId } ?: "orderIds"
                 }
-            }
-            addPictureDialog() {
-                when (it) {
-                    1 -> {
-                        pickImageFromCamera()
-                    }
-                    2 -> {
-                        pickImageFromGallery()
+                if (!imageUploadOrderIdList.isNullOrEmpty()){
+                    addPictureDialog() {
+                        when (it) {
+                            1 -> {
+                                pickImageFromCamera()
+                            }
+                            2 -> {
+                                pickImageFromGallery()
+                            }
+                        }
                     }
                 }
+                else{
+                    context?.toast("ডকুমেন্ট আপলোড করা আছে")
+                }
             }
+
         }
 
         viewModel.pagingState.observe(viewLifecycleOwner, Observer {
@@ -714,41 +739,6 @@ class OrderListFragment : Fragment() {
         fetchOrderFilter()
     }
 
-    private fun refreshView() {
-
-        if (isOrderFromDT()) {
-            viewModel.loadOrderOrSearchDT(
-                userId,
-                firstCall,
-                20,
-                statusId = filterStatus,
-                dtStatusId = dtStatus,
-                flag = collectionFlag,
-                searchKey = searchKey,
-                type = searchType,
-                serviceType = serviceTye,
-                customType = customType,
-                collectionSlotId = selectedTimeSlotId,
-                fromDate = selectedDate,
-                toDate = selectedDate
-            )
-        } else {
-            viewModel.loadOrderOrSearchAD(
-                userId,
-                firstCall,
-                20,
-                statusId = filterStatus,
-                dtStatusId = dtStatus,
-                flag = collectionFlag,
-                searchKey = searchKey,
-                type = searchType,
-                serviceType = serviceTye,
-                customType = customType,
-                collectionSlotId = selectedTimeSlotId
-            )
-        }
-    }
-
     private fun fetchOrderFilter() {
         viewModel.loadFilterStatus(serviceTye).observe(viewLifecycleOwner, Observer { list ->
             Timber.d("$list")
@@ -790,6 +780,10 @@ class OrderListFragment : Fragment() {
                             //dataAdapter.clearSelection()
                         }
 
+                        if (selectedDTStatus != "40"){
+                            selectedDate = ""
+                            showSelectedDate = ""
+                        }
 
                         dataAdapter.onClearSelectionCalledPosition = { positionw ->
                             val view2 = binding?.recyclerView?.findViewHolderForAdapterPosition(
