@@ -63,11 +63,27 @@ class DashboardFragment : Fragment() {
         viewModel.updateUserStatus().observe(viewLifecycleOwner, Observer { userStatus ->
             when (userStatus.riderType) {
                 "" -> {
+                    binding?.button1?.visibility = View.GONE
+                    binding?.button2?.visibility = View.GONE
+                    binding?.button3?.visibility = View.GONE
+                    binding?.button5?.visibility = View.GONE
+                    binding?.emptyView?.visibility = View.VISIBLE
+                }
+                "collection" -> {
                     binding?.button1?.visibility = View.VISIBLE
                     binding?.button2?.visibility = View.VISIBLE
+                    binding?.button3?.visibility = View.GONE
+                    binding?.button5?.visibility = View.GONE
+                    binding?.button4?.visibility = View.GONE
+                    binding?.emptyView?.visibility = View.GONE
+                }
+                "delivery" -> {
+                    binding?.button1?.visibility = View.GONE
+                    binding?.button2?.visibility = View.GONE
                     binding?.button3?.visibility = View.VISIBLE
                     binding?.button5?.visibility = View.GONE
                     binding?.button4?.visibility = View.GONE
+                    binding?.emptyView?.visibility = View.GONE
                 }
                 "return" -> {
                     binding?.button1?.visibility = View.GONE
@@ -75,6 +91,7 @@ class DashboardFragment : Fragment() {
                     binding?.button3?.visibility = View.GONE
                     binding?.button5?.visibility = View.VISIBLE
                     binding?.button4?.visibility = View.GONE
+                    binding?.emptyView?.visibility = View.GONE
                 }
                 "all" -> {
                     binding?.button1?.visibility = View.VISIBLE
@@ -82,6 +99,7 @@ class DashboardFragment : Fragment() {
                     binding?.button3?.visibility = View.VISIBLE
                     binding?.button5?.visibility = View.VISIBLE
                     binding?.button4?.visibility = View.GONE
+                    binding?.emptyView?.visibility = View.GONE
                 }
             }
             binding?.activeSwitch?.isChecked = !userStatus.isNowOffline
